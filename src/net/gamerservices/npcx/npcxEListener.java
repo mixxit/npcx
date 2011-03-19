@@ -26,28 +26,28 @@ public class npcxEListener extends EntityListener {
 			BasicHumanNpc npc = parent.npclist.getBasicHumanNpc(event.getEntity());
 			if (event instanceof EntityDamageByEntityEvent)
 		    {
-				//System.out.println("npcx : debug: entitybyentity event");
+				
 
 				EntityDamageByEntityEvent edee = (EntityDamageByEntityEvent) event;
 
 		        if (npc != null && edee.getDamager() instanceof Player) {
 	
 		        	Player p = (Player) edee.getDamager();
-		        	//p.setHealth(p.getHealth()-1);
 		        	
-		            npc.attackLivingEntity(p);
-		            p.setHealth(p.getHealth()-1);
+		            npc.follow = p;
+		            npc.aggro = p;
+		            
 		            try
 		            {
-		            	npc.getBukkitEntity().setHealth(npc.getBukkitEntity().getHealth()-1);
+		            	npc.hp = npc.hp - 1;
+		            	if (npc.hp < 1)
+		            	{
+		            		p.sendMessage(npc.getName() + " has been slain!");
+
+		            		NpcSpawner.RemoveBasicHumanNpc(npc);
+		            	}
 	            
-		            /*if (p.getHealth() == 0)
-		            {
-		            	NpcSpawner.RemoveBasicHumanNpc(npc);
-		            }*/
-		            /*
-		            parent.npclist.remove(npc.getUniqueId());
-		             */
+		          
 		            
 		            } 
 		            catch (Exception e)

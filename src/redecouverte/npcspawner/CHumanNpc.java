@@ -33,6 +33,8 @@ public class CHumanNpc extends EntityPlayer {
 
     public void animateArmSwing() {
         this.b.k.a(this, new Packet18ArmAnimation(this, 1));
+        
+        
     }
 
     @Override

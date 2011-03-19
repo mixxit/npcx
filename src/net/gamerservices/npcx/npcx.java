@@ -1,10 +1,12 @@
 package net.gamerservices.npcx;
 import org.bukkit.plugin.PluginManager;
+import java.util.HashMap;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -13,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.CreatureType;
 import java.util.Properties;
+import java.util.Timer;
 import java.util.logging.Level;
 import org.bukkit.event.Event.Type;
 import java.util.logging.Logger;
@@ -44,6 +47,9 @@ public class npcx extends JavaPlugin {
 	
 	private Connection conn = null;
 	private npcxEListener mEntityListener;
+	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
+	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
+	
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
 	private String dsn;
 	private File propfile;
@@ -53,6 +59,8 @@ public class npcx extends JavaPlugin {
 	private String dbpass;
 	private String dbname;
 	private String dbport;
+	private Timer tick = new Timer();
+	
 	
 	
 	@Override
@@ -103,7 +111,44 @@ public class npcx extends JavaPlugin {
 		}
 			
 		loadSettings();
+		think();
 		
+	}
+	
+	public void think()
+	{
+		// check npc logic
+		for (BasicHumanNpc npc : npclist.values())
+		{
+			npc.think();
+			
+		}
+		// check spawngroups
+		
+		for (mySpawngroup spawngroup : spawngroups.values())
+		{
+			
+			if (!spawngroup.active)
+			{
+				//System.out.println("npcx : found inactive spawngroup ("+ spawngroup.id +") with :[" + spawngroup.npcs.size() + "]");
+				int count = 0;
+				for (myNPC npc : spawngroup.npcs.values())
+				{
+					if (!spawngroup.active)
+					{
+						System.out.println("npcx : made spawngroup active");
+						BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld("world"), spawngroup.x, spawngroup.y, spawngroup.z,0 , 0);
+		                this.npclist.put(npc.id, hnpc);
+						spawngroup.active = true;
+					}
+					
+				}
+				
+			}
+		}
+		
+		tick.schedule(new Tick(this), 1 * 400);
+	
 	}
 	
 	public void loadSettings()
@@ -155,6 +200,30 @@ public class npcx extends JavaPlugin {
 	        }
 	}
 
+	public String dbGetNPCname(String string)
+	{
+		try
+		{
+			Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+	        conn = DriverManager.getConnection (dsn, dbuser, dbpass);
+	        Statement s11 = conn.createStatement ();
+	        s11.executeQuery ("SELECT name FROM npc WHERE id ="+string);
+	        ResultSet rs11 = s11.getResultSet ();
+	        
+	        while (rs11.next ())
+	        {
+	        	String name = rs11.getString ("name");
+	        	return name;
+	        	
+	        }
+		} catch (Exception e)
+		{
+	        return "dummy";
+	
+		}
+        return "dummy";
+	}
+	
 	@Override
 	public void onEnable() {
 		// TODO Auto-generated method stub
@@ -173,6 +242,92 @@ public class npcx extends JavaPlugin {
 			 	System.out.println("npcx : initialising database connection");
 			 	Class.forName ("com.mysql.jdbc.Driver").newInstance ();
 	            conn = DriverManager.getConnection (dsn, dbuser, dbpass);
+	            boolean update = false;
+	            if (update == true)
+	            {
+		            /*
+		             * One time Database creation / TODO: Auto Upgrades
+		             * 
+		             * 
+		             * */
+		            Statement s2 = conn.createStatement ();
+		            String droptable = "DROP TABLE IF EXISTS npc; ";
+		            String npctable = "CREATE TABLE npc ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),name CHAR(40),category CHAR(40))";
+		            s2.executeUpdate(droptable);
+		            s2.executeUpdate(npctable);
+		            
+		            
+		            
+		            String droptable2 = "DROP TABLE IF EXISTS spawngroup; ";
+		            String spawngrouptable = "CREATE TABLE spawngroup ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),name CHAR(40),world CHAR(40),category CHAR(40),x CHAR(40), y CHAR(40), z CHAR(40))";
+		            s2.executeUpdate(droptable2);
+		            
+		            s2.executeUpdate(spawngrouptable);
+		            
+		            String droptable3 = "DROP TABLE IF EXISTS spawngroup_entries; ";
+		            String sgetable = "CREATE TABLE spawngroup_entries ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),spawngroupid int,npcid int)";
+		            s2.executeUpdate(droptable3);
+		            
+		            s2.executeUpdate(sgetable);
+		            s2.close();
+		            System.out.println("npcx : finished table configuration");
+	            }
+	            
+	            // Load Spawngroups
+	            
+	            
+	      	            
+	            Statement s1 = conn.createStatement ();
+	            s1.executeQuery ("SELECT id, name, category,x,y,z FROM spawngroup");
+	            ResultSet rs1 = s1.getResultSet ();
+	            int count1 = 0;
+	            System.out.println("npcx : loading spawngroups");
+	            while (rs1.next ())
+	            {
+	            	
+	            	// load spawngroup into cache
+	                int idVal = rs1.getInt ("id");
+	                String nameVal = rs1.getString ("name");
+	                String catVal = rs1.getString ("category");
+	                
+	                //BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
+	                mySpawngroup spawngroup = new mySpawngroup();
+	                spawngroup.name = nameVal;
+	                System.out.println("npcx : + " + nameVal);
+	                spawngroup.id = idVal;
+	                spawngroup.x = Double.parseDouble(rs1.getString ("x"));
+	                spawngroup.y = Double.parseDouble(rs1.getString ("y"));
+	                spawngroup.z = Double.parseDouble(rs1.getString ("z"));
+	                spawngroup.world = getServer().getWorld("world");
+	                this.spawngroups.put(Integer.toString(idVal), spawngroup);
+	                
+	                Statement s11 = conn.createStatement ();
+		            s11.executeQuery ("SELECT spawngroupid,npcid FROM spawngroup_entries WHERE spawngroupid ="+idVal);
+		            ResultSet rs11 = s11.getResultSet ();
+		            
+		            while (rs11.next ())
+		            {
+		            	myNPC npc = new myNPC();
+		            	npc.id = rs11.getString ("npcid");
+		            	npc.name = dbGetNPCname(npc.id);
+		            	System.out.println("npcx : + + " + rs11.getString ("npcid"));
+		            	
+		            	spawngroup.npcs.put(rs11.getString ("npcid"), npc);
+		            	
+		            }
+	                
+	               /* System.out.println (
+	                        "id = " + idVal
+	                        + ", name = " + nameVal
+	                        + ", category = " + catVal);*/
+	                ++count1;
+	                
+	                
+	            }
+	            rs1.close ();
+	            s1.close ();
+	            System.out.println (count1 + " spawngroups loaded");
+
 	            
 	            //this.HumanNPCList = new BasicHumanNpcList();
 			 	System.out.println("npcx : caching npcs");
@@ -236,13 +391,123 @@ public class npcx extends JavaPlugin {
             	// makes the spawngroup spawn at your location
             	// assigns a path to the spawngroup
             	
-            	if (args.length < 3) {
+            	if (args.length < 2) {
             		player.sendMessage("Insufficient arguments /npcx spawngroup create|delete spawngroupname");
-                	player.sendMessage("Insufficient arguments /npcx spawngroup add npcname");
+                	player.sendMessage("Insufficient arguments /npcx spawngroup add groupid npcid");
                 	player.sendMessage("Insufficient arguments /npcx spawngroup place spawngroupname");
                 	player.sendMessage("Insufficient arguments /npcx spawngroup pathgroup pathgroupname");
-            		return false;
+                	
+                	player.sendMessage("Insufficient arguments /npcx spawngroup list");
+                	return false;
+            		
+            		
+            		
                 }
+            	
+            	if (args[1].equals("create")) {
+            		if (args.length < 3) {
+            			player.sendMessage("Insufficient arguments /npcx spawngroup create spawngroupname");
+                    	
+            		} else {
+            			player.sendMessage("Created spawngroup: " + args[2]);
+            			
+            			Statement s2 = conn.createStatement ();
+            			double x = player.getLocation().getX();
+            			double y = player.getLocation().getY();
+            			double z = player.getLocation().getZ();
+            			
+            			
+            			String addspawngroup = "INSERT INTO spawngroup (name,x,y,z) VALUES ('" + args[2] + "','"+ x +"','"+ y +"','"+ z +"');";
+            			Statement stmt = conn.createStatement();
+            			stmt.execute(addspawngroup, Statement.RETURN_GENERATED_KEYS);
+            			ResultSet keyset = stmt.getGeneratedKeys();
+            			int key = 0;
+            			if ( keyset.next() ) {
+            			    // Retrieve the auto generated key(s).
+            			    key = keyset.getInt(1);
+            			    
+            			}
+        	            player.sendMessage("Spawngroup ["+ key + "] now active at your position");
+            			mySpawngroup sg = new mySpawngroup();
+            			sg.id = key;
+            			sg.name = args[2];
+            			sg.x = x;
+            			sg.y = y;
+            			sg.z = z;
+            			sg.world = player.getWorld();
+            			
+            			this.spawngroups.put(Integer.toString(key),sg);
+            			System.out.println("npcx : + cached new spawngroup("+ args[2] + ")");
+        	            s2.close();
+        	            
+            		}
+        			
+        		}
+            	
+            	
+            	if (args[1].equals("add")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx spawngroup add spawngroup npcid");
+                    	
+            		} else {
+            			player.sendMessage("Added to spawngroup " + args[2] + "<"+ args[3]+ ".");
+            			
+            			// add to database
+            			Statement s2 = conn.createStatement ();
+            			String addspawngroup = "INSERT INTO spawngroup_entries (spawngroupid,npcid) VALUES ('" + args[2] + "','" + args[3] + "');";
+            			s2.executeUpdate(addspawngroup);
+        	            player.sendMessage("NPC ["+ args[3] + "] added to group ["+ args[2] + "]");
+            			
+        	            // add to cached spawngroup
+        	            for (mySpawngroup sg : this.spawngroups.values())
+        	            {
+        	            	if (sg.id == Integer.parseInt(args[2]))
+        	            	{
+        	            		myNPC npc = new myNPC();
+        	            		npc.id = args[3];
+        	            		System.out.println("npcx : + cached new spawngroup entry("+ args[3] + ")");
+        	            		sg.npcs.put(args[3], npc);
+        	            		
+        	            	}
+        	            }
+        	            
+        	            
+        	            mySpawngroup sg = new mySpawngroup();
+            			
+            			// close db
+        	            s2.close();
+        	            
+            		}
+        			
+        		}
+            	
+            	
+            	if (args[1].equals("list")) {
+            		player.sendMessage("Spawngroups:");
+            		
+            		Statement s = conn.createStatement ();
+            		   s.executeQuery ("SELECT id, name, category FROM spawngroup");
+            		   ResultSet rs = s.getResultSet ();
+            		   int count = 0;
+            		   while (rs.next ())
+            		   {
+            		       int idVal = rs.getInt ("id");
+            		       String nameVal = rs.getString ("name");
+            		       String catVal = rs.getString ("category");
+            		       player.sendMessage(
+            		               "id = " + idVal
+            		               + ", name = " + nameVal
+            		               + ", category = " + catVal);
+            		       ++count;
+            		   }
+            		   rs.close ();
+            		   s.close ();
+            		   player.sendMessage (count + " rows were retrieved");
+            		
+            	
+        			
+        		}
+        		
             }
             
             
@@ -263,13 +528,13 @@ public class npcx extends JavaPlugin {
             	// creates a new npc with name       
             	
             	
-            	if (args.length < 3) {
+            	if (args.length < 2) {
             		// todo: need to implement npc types here ie: 0 = default 1 = banker 2 = merchant
             		// todo: need to implement '/npcx npc edit' here
                 	player.sendMessage("Insufficient arguments /npcx npc create|delete name");
 
                 	// todo needs to force the player to provide a search term to not spam them with lots of results in the event of a huge npc list
-                	player.sendMessage("Insufficient arguments /npcx npc list all");
+                	player.sendMessage("Insufficient arguments /npcx npc list");
                 	
                 	// spawns the npc temporarily at your current spot for testing
                 	player.sendMessage("Insufficient arguments /npcx npc test name");
@@ -277,12 +542,55 @@ public class npcx extends JavaPlugin {
                     return false;
                 }
             	
+            	if (args[1].equals("create")) {
+            		if (args.length < 3) {
+            			player.sendMessage("Insufficient arguments /npcx npc create npcname");
+                    	
+            		} else {
+            			player.sendMessage("Created npc: " + args[2]);
+                    	
+            			Statement s2 = conn.createStatement ();
+            			String addspawngroup = "INSERT INTO npc (name) VALUES ('" + args[2] + "');";
+        	            s2.executeUpdate(addspawngroup);
+        	            
+        	            s2.close();
+        	            
+            		}
+        			
+        		}
+            	
+            	if (args[1].equals("list")) {
+            		player.sendMessage("Npcs:");
+            		
+            		Statement s = conn.createStatement ();
+            		   s.executeQuery ("SELECT id, name, category FROM npc");
+            		   ResultSet rs = s.getResultSet ();
+            		   int count = 0;
+            		   while (rs.next ())
+            		   {
+            		       int idVal = rs.getInt ("id");
+            		       String nameVal = rs.getString ("name");
+            		       String catVal = rs.getString ("category");
+            		       player.sendMessage(
+            		               "id = " + idVal
+            		               + ", name = " + nameVal
+            		               + ", category = " + catVal);
+            		       ++count;
+            		   }
+            		   rs.close ();
+            		   s.close ();
+            		   player.sendMessage (count + " rows were retrieved");
+            		
+            	
+        			
+        		}
+            	
             	if (args[1].equals("spawn")) {
 	            		player.sendMessage("Spawning new NPC: " + args[2]);
 	                    // temporary
 	            		 BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
 		                 this.npclist.put(args[2], hnpc);
-		                 
+		                
 	            		
 	            		try {
 		            		if (args.length < 4)
@@ -290,11 +598,14 @@ public class npcx extends JavaPlugin {
 		            			if (args[3].equals("1"))
 		            			{
 		            				
-				                    
+		            				
+		            				
+		            				
 				                    ItemStack is = new ItemStack(Material.IRON_SWORD);
 				                    is.setAmount(1);
 				                    hnpc.getBukkitEntity().setItemInHand(is);
-
+				                    
+				                    /*
 				                    ItemStack ic = new ItemStack(Material.IRON_CHESTPLATE);
 				                    ic.setAmount(1);
 				                    hnpc.getBukkitEntity().getInventory().setChestplate(ic);
@@ -310,6 +621,8 @@ public class npcx extends JavaPlugin {
 				                    ItemStack ib = new ItemStack(Material.IRON_BOOTS);
 				                    ib.setAmount(1);
 				                    hnpc.getBukkitEntity().getInventory().setBoots(ib);
+				                    
+				                    */
 				                    
 		            			}
 		            			
