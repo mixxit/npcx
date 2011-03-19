@@ -2,6 +2,7 @@ package net.gamerservices.npcx;
 import java.util.logging.Logger;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.HumanEntity;
 import redecouverte.npcspawner.BasicHumanNpc;
@@ -18,6 +19,50 @@ public class npcxEListener extends EntityListener {
     }
 	
 	@Override
+	public void onEntityDamage(EntityDamageEvent event) {
+		super.onEntityDamage(event);
+		
+		if (event.getEntity() instanceof HumanEntity) {
+			BasicHumanNpc npc = parent.npclist.getBasicHumanNpc(event.getEntity());
+			if (event instanceof EntityDamageByEntityEvent)
+		    {
+				//System.out.println("npcx : debug: entitybyentity event");
+
+				EntityDamageByEntityEvent edee = (EntityDamageByEntityEvent) event;
+
+		        if (npc != null && edee.getDamager() instanceof Player) {
+	
+		        	Player p = (Player) edee.getDamager();
+		        	//p.setHealth(p.getHealth()-1);
+		        	
+		            npc.attackLivingEntity(p);
+		            p.setHealth(p.getHealth()-1);
+		            try
+		            {
+		            	npc.getBukkitEntity().setHealth(npc.getBukkitEntity().getHealth()-1);
+	            
+		            /*if (p.getHealth() == 0)
+		            {
+		            	NpcSpawner.RemoveBasicHumanNpc(npc);
+		            }*/
+		            /*
+		            parent.npclist.remove(npc.getUniqueId());
+		             */
+		            
+		            } 
+		            catch (Exception e)
+		            {
+		            	// do not modify mobs health
+		            }
+		            event.setCancelled(true);
+	
+		        }
+		    }
+
+	    }
+	}
+	
+	@Override
     public void onEntityTarget(EntityTargetEvent event) {
 
         if (event instanceof NpcEntityTargetEvent) {
@@ -30,6 +75,11 @@ public class npcxEListener extends EntityListener {
                     //Player p = (Player) event.getTarget();
                     // player is near the npc
                     // do something here
+                	 
+                     if (npc != null) {
+                         npc.moveTo(event.getTarget().getLocation().getX(), event.getTarget().getLocation().getY(), event.getTarget().getLocation().getZ(), event.getTarget().getLocation().getYaw(), event.getTarget().getLocation().getPitch());
+                         
+                     }
                     event.setCancelled(true);
 
                 } else if (nevent.getNpcReason() == NpcTargetReason.NPC_RIGHTCLICKED) {

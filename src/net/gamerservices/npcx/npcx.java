@@ -197,7 +197,6 @@ public class npcx extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 
         try {
-        	logger.log(Level.WARNING, "npcx : " + command.getName().toLowerCase());
 	           
             if (!command.getName().toLowerCase().equals("npcx")) {
             	
@@ -278,12 +277,51 @@ public class npcx extends JavaPlugin {
                     return false;
                 }
             	
-            	if (args[1].equals("create")) {
-	            		player.sendMessage("Creating new NPC: " + args[2]);
+            	if (args[1].equals("spawn")) {
+	            		player.sendMessage("Spawning new NPC: " + args[2]);
 	                    // temporary
-	                    BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
-	                    this.npclist.put(args[2], hnpc);
-	                    return true;
+	            		 BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
+		                 this.npclist.put(args[2], hnpc);
+		                 
+	            		
+	            		try {
+		            		if (args.length < 4)
+		            		{
+		            			if (args[3].equals("1"))
+		            			{
+		            				
+				                    
+				                    ItemStack is = new ItemStack(Material.IRON_SWORD);
+				                    is.setAmount(1);
+				                    hnpc.getBukkitEntity().setItemInHand(is);
+
+				                    ItemStack ic = new ItemStack(Material.IRON_CHESTPLATE);
+				                    ic.setAmount(1);
+				                    hnpc.getBukkitEntity().getInventory().setChestplate(ic);
+
+				                    ItemStack ih = new ItemStack(Material.IRON_HELMET);
+				                    ih.setAmount(1);
+				                    hnpc.getBukkitEntity().getInventory().setHelmet(ih);
+				                    
+				                    ItemStack il = new ItemStack(Material.IRON_LEGGINGS);
+				                    il.setAmount(1);
+				                    hnpc.getBukkitEntity().getInventory().setLeggings(il);
+				                    
+				                    ItemStack ib = new ItemStack(Material.IRON_BOOTS);
+				                    ib.setAmount(1);
+				                    hnpc.getBukkitEntity().getInventory().setBoots(ib);
+				                    
+		            			}
+		            			
+		            		}
+	            		} catch (Exception e)
+	            		{
+	            			
+		                    
+	            			
+	            		}
+	            		return true;
+	                   
                 }
 
             }

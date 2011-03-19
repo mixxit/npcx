@@ -33,10 +33,14 @@ public class BasicHumanNpc extends BasicNpc {
     public void attackLivingEntity(LivingEntity ent) {
         try {
             this.mcEntity.animateArmSwing();
+            this.moveTo(ent.getLocation().getX(),ent.getLocation().getY(),ent.getLocation().getZ(),ent.getLocation().getYaw()-180,ent.getLocation().getPitch());
+            
+            /*
             Field f = CraftLivingEntity.class.getDeclaredField("entity");
             f.setAccessible(true);
             EntityLiving lEntity = (EntityLiving) f.get(ent);
             this.mcEntity.h(lEntity);
+            */
         } catch (Exception e) {
             e.printStackTrace();
         }
