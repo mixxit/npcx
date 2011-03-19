@@ -11,7 +11,8 @@ import org.bukkit.Server;
 import org.bukkit.event.*;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.entity.MobType;
+import org.bukkit.entity.CreatureType;
+import java.util.Properties;
 import java.util.logging.Level;
 import org.bukkit.event.Event.Type;
 import java.util.logging.Logger;
@@ -22,11 +23,124 @@ import redecouverte.npcspawner.NpcEntityTargetEvent.NpcTargetReason;
 import redecouverte.npcspawner.NpcSpawner;
 import org.bukkit.event.Event.Priority;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.*;
+
 public class npcx extends JavaPlugin {
 
 	private static final Logger logger = Logger.getLogger("Minecraft");
+	private final String FILE_PROPERTIES = "npcx.properties";
+	private final String PROP_DBHOST = "db-host";
+	private final String PROP_DBUSER = "db-user";
+	private final String PROP_DBPASS = "db-pass";
+	private final String PROP_DBNAME = "db-name";
+	private final String PROP_DBPORT = "db-port";
+	
+	private Connection conn = null;
 	private npcxEListener mEntityListener;
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
+	private String dsn;
+	private File propfile;
+	private File propfolder;
+	private String dbhost;
+	private String dbuser;
+	private String dbpass;
+	private String dbname;
+	private String dbport;
+	
+	
+	@Override
+	public void onLoad() {
+		// TODO Auto-generated method stub
+		propfolder = getDataFolder();
+		if (!propfolder.exists())
+		{
+			try
+			{
+				propfolder.mkdir();
+				System.out.println("npcx : config folder generation ended");
+			} catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		if (!propfile.exists())
+		{
+			try
+			{
+				propfile.createNewFile();
+				Properties prop = new Properties();
+				prop.setProperty(PROP_DBHOST, "localhost");
+				prop.setProperty(PROP_DBUSER, "npcx");
+				prop.setProperty(PROP_DBPASS, "p4ssw0rd!");
+				prop.setProperty(PROP_DBNAME, "npcx");
+				prop.setProperty(PROP_DBPORT, "3306");
+				
+				 
+				
+				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+				prop.store(stream, "Default generated settings, please ensure mysqld matches");
+				System.out.println("npcx : properties file generation ended");
+				
+			} catch(IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+					
+			loadSettings();
+			System.out.println("npcx : initial setup ended");
+		
+		}
+			
+		loadSettings();
+		
+	}
+	
+	public void loadSettings()
+	{
+		// Loads configuration settings from the properties files
+		System.out.println("npcx : load settings begun");
+		
+		Properties config = new Properties();
+		BufferedInputStream stream;
+		// Access the defined properties file
+		try {
+			stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
+			
+			try {
+				
+				// Load the configuration
+				config.load(stream);
+				dbhost = config.getProperty("db-host");
+				dbuser = config.getProperty("db-user");
+				dbpass = config.getProperty("db-pass");
+				dbname = config.getProperty("db-name");
+				dbport = config.getProperty("db-port");
+				
+				dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
+				System.out.println(dsn);
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("npcx : loadsettings() ended");
+	}
 	
 	@Override
 	public void onDisable() {
@@ -44,15 +158,32 @@ public class npcx extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		// TODO Auto-generated method stub
-		 try {
-	            PluginManager pm = getServer().getPluginManager();
+		 try {	
+			 	System.out.println("npcx : registering monitored events");
+
+			 	PluginManager pm = getServer().getPluginManager();
 
 	            mEntityListener = new npcxEListener(this);
 	            pm.registerEvent(Type.ENTITY_TARGET, mEntityListener, Priority.Normal, this);
 	            pm.registerEvent(Type.ENTITY_DAMAGED, mEntityListener, Priority.Normal, this);
 
+	            try 
+	            {
+	            
+			 	System.out.println("npcx : initialising database connection");
+			 	Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+	            conn = DriverManager.getConnection (dsn, dbuser, dbpass);
+	            
 	            //this.HumanNPCList = new BasicHumanNpcList();
-
+			 	System.out.println("npcx : caching npcs");
+			 	
+	            } catch (Exception e)
+	            {
+	            	e.printStackTrace();
+	            }
+			 	
+	            
+	            
 	            PluginDescriptionFile pdfFile = this.getDescription();
 	            logger.log(Level.INFO, pdfFile.getName() + " version " + pdfFile.getVersion() + " enabled.");
 	        } catch (Exception e) {
