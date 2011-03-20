@@ -4,6 +4,8 @@ import net.gamerservices.npcx.*;
 
 import java.io.Console;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import net.minecraft.server.EntityLiving;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
@@ -82,31 +84,7 @@ public class BasicHumanNpc extends BasicNpc {
     {
     	//System.out.println("npcx : think");
     			
-    	// Is there like, stuff here?
-    	if (this.parent != null)
-    	{
-    		if(this.follow == null && this.aggro == null)
-    		{
-		    	for (LivingEntity e : this.getBukkitEntity().getServer().getWorld("world").getLivingEntities())
-		    	{
-		    		if (e instanceof Monster)
-		    		{
-		    			//System.out.println("npcx : inmysights!");
-		    			double distancex = this.parent.parent.getDistance(e.getLocation().getX(), this.getBukkitEntity().getLocation().getX());
-		    			double distancey = this.parent.parent.getDistance(e.getLocation().getY(), this.getBukkitEntity().getLocation().getY());
-		    			double distancez = this.parent.parent.getDistance(e.getLocation().getZ(), this.getBukkitEntity().getLocation().getZ());
-		    				
-		    			if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
-		    			{
-		    				//System.out.println("npcx : inmysights!");
-			    			this.aggro = e;
-			    			this.follow = e;
-			    		}
-		    			
-		    		}
-		    	}
-    		}
-    	}
+    	
     	
     	
     	if (follow == null && aggro == null)

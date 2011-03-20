@@ -1,8 +1,12 @@
 package net.gamerservices.npcx;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Zombie;
@@ -25,6 +29,8 @@ public class npcxEListener extends EntityListener
 	@Override
 	public void onEntityDamage(EntityDamageEvent event) {
 		super.onEntityDamage(event);
+		
+		
 		
 		if (event.getEntity() instanceof HumanEntity) 
 		{
@@ -76,11 +82,18 @@ public class npcxEListener extends EntityListener
 	
     public void onEntityTarget(EntityTargetEvent event) {
 
+		
+		
+		
         if (event instanceof NpcEntityTargetEvent) {
             NpcEntityTargetEvent nevent = (NpcEntityTargetEvent)event;
 
             BasicHumanNpc npc = parent.npclist.getBasicHumanNpc(event.getEntity());
-
+            
+            
+            
+            // Targets player
+            
             if (npc != null && event.getTarget() instanceof Player) {
                 if (nevent.getNpcReason() == NpcTargetReason.CLOSEST_PLAYER) {
                     //Player p = (Player) event.getTarget();

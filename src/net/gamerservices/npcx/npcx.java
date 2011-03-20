@@ -7,7 +7,9 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.event.*;
@@ -159,7 +161,32 @@ public class npcx extends JavaPlugin {
 		{
 			npc.think();
 			
-		}
+			
+			//System.out.println("npcx : " + event.getEntity().getClass().toString());
+			//System.out.println("npcx : " + event.getTarget().getClass().toString());
+			
+			
+			for (LivingEntity e : getServer().getWorld(world).getLivingEntities())
+				{
+					double distancex = getDistance(npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
+				    double distancey = getDistance(npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
+				    double distancez = getDistance(npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
+			
+				    if (e instanceof Monster)
+				    
+				    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+				    {
+					    //System.out.println("npcx : inmysights !");
+						npc.aggro =  e;
+						npc.follow =   e;
+					}
+		        	
+				}
+			}
+			
+			
+			
+		
 		// check spawngroups
 		
 		for (mySpawngroup spawngroup : spawngroups.values())
