@@ -63,6 +63,7 @@ public class npcxEListener extends EntityListener {
 	}
 	
 	@Override
+	
     public void onEntityTarget(EntityTargetEvent event) {
 
         if (event instanceof NpcEntityTargetEvent) {
@@ -75,11 +76,12 @@ public class npcxEListener extends EntityListener {
                     //Player p = (Player) event.getTarget();
                     // player is near the npc
                     // do something here
-                	 
+                	 /*
                      if (npc != null) {
                          npc.moveTo(event.getTarget().getLocation().getX(), event.getTarget().getLocation().getY(), event.getTarget().getLocation().getZ(), event.getTarget().getLocation().getYaw(), event.getTarget().getLocation().getPitch());
                          
                      }
+                     */
                     event.setCancelled(true);
 
                 } else if (nevent.getNpcReason() == NpcTargetReason.NPC_RIGHTCLICKED) {
