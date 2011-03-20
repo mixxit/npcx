@@ -64,7 +64,7 @@ public class npcx extends JavaPlugin {
 	private String dbpass;
 	private String dbname;
 	private String dbport;
-	private String world;
+	public String world;
 	private Timer tick = new Timer();
 	
 	
@@ -143,6 +143,12 @@ public class npcx extends JavaPlugin {
 		
 		
 		
+	}
+	
+	
+	public double getDistance(double d, double e)
+	{
+		return d-e;
 	}
 	
 	public void think()
@@ -385,7 +391,7 @@ public class npcx extends JavaPlugin {
 	            
 	      	            
 	            Statement s1 = conn.createStatement ();
-	            s1.executeQuery ("SELECT id, name, category,x,y,z FROM spawngroup");
+	            s1.executeQuery ("SELECT id, name, category,x,y,z,world FROM spawngroup");
 	            ResultSet rs1 = s1.getResultSet ();
 	            int count1 = 0;
 	            System.out.println("npcx : loading spawngroups");
@@ -405,7 +411,7 @@ public class npcx extends JavaPlugin {
 	                spawngroup.x = Double.parseDouble(rs1.getString ("x"));
 	                spawngroup.y = Double.parseDouble(rs1.getString ("y"));
 	                spawngroup.z = Double.parseDouble(rs1.getString ("z"));
-	                spawngroup.world = getServer().getWorld("world");
+	                
 	                this.spawngroups.put(Integer.toString(idVal), spawngroup);
 	                
 	                Statement s11 = conn.createStatement ();
@@ -414,7 +420,7 @@ public class npcx extends JavaPlugin {
 		            
 		            while (rs11.next ())
 		            {
-		            	myNPC npc = new myNPC();
+		            	myNPC npc = new myNPC(this);
 		            	npc.spawngroup = spawngroup;
 		            	npc.id = rs11.getString ("npcid");
 		            	npc.name = dbGetNPCname(npc.id);
@@ -571,7 +577,7 @@ public class npcx extends JavaPlugin {
         	            {
         	            	if (sg.id == Integer.parseInt(args[2]))
         	            	{
-        	            		myNPC npc = new myNPC();
+        	            		myNPC npc = new myNPC(this);
         	            		npc.name = dbGetNPCname(args[3]);
         	            		npc.spawngroup = sg;
         	            		npc.id = args[3];

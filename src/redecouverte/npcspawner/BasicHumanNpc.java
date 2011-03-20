@@ -10,6 +10,9 @@ import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Spider;
+import org.bukkit.entity.Zombie;
 
 public class BasicHumanNpc extends BasicNpc {
 
@@ -78,9 +81,36 @@ public class BasicHumanNpc extends BasicNpc {
     {
     	//System.out.println("npcx : think");
     			
+    	// Is there like, stuff here?
+    	if (this.parent != null)
+    	{
+    		if(this.follow == null && this.aggro == null)
+    		{
+		    	for (LivingEntity e : this.getBukkitEntity().getServer().getWorld("world").getLivingEntities())
+		    	{
+		    		if (e instanceof Zombie || e instanceof Spider || e instanceof Skeleton )
+		    		{
+		    			//System.out.println("npcx : inmysights!");
+		    			double distancex = this.parent.parent.getDistance(e.getLocation().getX(), this.getBukkitEntity().getLocation().getX());
+		    			double distancey = this.parent.parent.getDistance(e.getLocation().getY(), this.getBukkitEntity().getLocation().getY());
+		    			double distancez = this.parent.parent.getDistance(e.getLocation().getZ(), this.getBukkitEntity().getLocation().getZ());
+		    				
+		    			if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+		    			{
+		    				//System.out.println("npcx : inmysights!");
+			    			this.aggro = e;
+			    			this.follow = e;
+			    		}
+		    			
+		    		}
+		    	}
+    		}
+    	}
+    	
+    	
     	if (follow == null && aggro == null)
     	{
-    		
+    		// not aggrod or following, time to go home :)
     		double x2 = this.getBukkitEntity().getLocation().getX();
     		double y2 = this.getBukkitEntity().getLocation().getY();
     		double z2 = this.getBukkitEntity().getLocation().getZ();
@@ -88,18 +118,20 @@ public class BasicHumanNpc extends BasicNpc {
     		if (!(x2 == spawnx && y2 == spawny && z2 == spawnz))
     		{
     		
-	    		System.out.println("npcx : moving  ["+ spawnx + "] ["+ spawny + "] ["+ spawnz + "]");
+	    		//System.out.println("npcx : moving  ["+ spawnx + "] ["+ spawny + "] ["+ spawnz + "]");
 	    		moveTo(spawnx,spawny,spawnz,0,0);
     		}
     	}
     	
-		if (follow instanceof Player)
+		if (follow instanceof LivingEntity)
 		{
+			// lets follow this entity
 				moveto(follow);
 		}
 		
-		if (aggro instanceof Player)
+		if (aggro instanceof LivingEntity)
 		{
+			// lets follow this entity
 			if (!(this.hp == 0))
 			{
 				attackLivingEntity(aggro);
@@ -117,8 +149,7 @@ public class BasicHumanNpc extends BasicNpc {
     {
     	try
     	{
-	    	if (e instanceof Player)
-	    	{
+	    	
 	    		if (e instanceof BasicHumanNpc)
 		    	{
 	    			return;	    			
@@ -177,7 +208,7 @@ public class BasicHumanNpc extends BasicNpc {
 		    	}    
 	    		this.moveTo(newx, newy, newz,e.getLocation().getYaw()+180,e.getLocation().getPitch());
                 
-	    	}
+	    
     	} catch (Exception x)
     	{
     		 x.printStackTrace();

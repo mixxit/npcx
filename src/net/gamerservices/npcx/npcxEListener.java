@@ -5,16 +5,20 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Zombie;
+
 import redecouverte.npcspawner.BasicHumanNpc;
 import redecouverte.npcspawner.NpcEntityTargetEvent;
 import redecouverte.npcspawner.NpcEntityTargetEvent.NpcTargetReason;
 import redecouverte.npcspawner.NpcSpawner;
 
-public class npcxEListener extends EntityListener {
+public class npcxEListener extends EntityListener 
+{
 	
 	private final npcx parent;
 	
-	public npcxEListener(npcx parent) {
+	public npcxEListener(npcx parent) 
+	{
         this.parent = parent;
     }
 	
@@ -22,15 +26,21 @@ public class npcxEListener extends EntityListener {
 	public void onEntityDamage(EntityDamageEvent event) {
 		super.onEntityDamage(event);
 		
-		if (event.getEntity() instanceof HumanEntity) {
+		if (event.getEntity() instanceof HumanEntity) 
+		{
 			BasicHumanNpc npc = parent.npclist.getBasicHumanNpc(event.getEntity());
 			if (event instanceof EntityDamageByEntityEvent)
 		    {
-				
-
 				EntityDamageByEntityEvent edee = (EntityDamageByEntityEvent) event;
 
-		        if (npc != null && edee.getDamager() instanceof Player) {
+				if (npc != null && npc.aggro != null && edee.getDamager() == npc.aggro) 
+				{
+					npc.follow = null;
+					npc.aggro = null;
+						 
+   			    }
+		        if (npc != null && edee.getDamager() instanceof Player) 
+		        {
 	
 		        	Player p = (Player) edee.getDamager();
 		        	
@@ -47,20 +57,19 @@ public class npcxEListener extends EntityListener {
 		            		parent.onNPCDeath(npc);
 		            		
 		            	}
-	            
-		          
-		            
 		            } 
 		            catch (Exception e)
 		            {
+		            	npc.follow = null;
+						npc.aggro = null;
 		            	// do not modify mobs health
 		            }
+		            
 		            event.setCancelled(true);
 	
 		        }
 		    }
-
-	    }
+		}
 	}
 	
 	@Override
