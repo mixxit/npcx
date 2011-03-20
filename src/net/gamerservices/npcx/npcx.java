@@ -44,17 +44,18 @@ public class npcx extends JavaPlugin {
 	private final String PROP_DBPASS = "db-pass";
 	private final String PROP_DBNAME = "db-name";
 	private final String PROP_DBPORT = "db-port";
-	
+	private final String PROP_UPDATE = "update";
 	private Connection conn = null;
 	private npcxEListener mEntityListener;
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
 	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
-	
+	private Properties prop;
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
 	private String dsn;
 	private File propfile;
 	private File propfolder;
 	private String dbhost;
+	private String update;
 	private String dbuser;
 	private String dbpass;
 	private String dbname;
@@ -86,14 +87,14 @@ public class npcx extends JavaPlugin {
 			try
 			{
 				propfile.createNewFile();
-				Properties prop = new Properties();
+				prop = new Properties();
 				prop.setProperty(PROP_DBHOST, "localhost");
 				prop.setProperty(PROP_DBUSER, "npcx");
 				prop.setProperty(PROP_DBPASS, "p4ssw0rd!");
 				prop.setProperty(PROP_DBNAME, "npcx");
 				prop.setProperty(PROP_DBPORT, "3306");
+				prop.setProperty(PROP_UPDATE, "true");
 				
-				 
 				
 				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
 				prop.store(stream, "Default generated settings, please ensure mysqld matches");
@@ -194,6 +195,7 @@ public class npcx extends JavaPlugin {
 				dbpass = config.getProperty("db-pass");
 				dbname = config.getProperty("db-name");
 				dbport = config.getProperty("db-port");
+				update = config.getProperty("update");
 				
 				dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
 				System.out.println(dsn);
@@ -265,9 +267,18 @@ public class npcx extends JavaPlugin {
 			 	System.out.println("npcx : initialising database connection");
 			 	Class.forName ("com.mysql.jdbc.Driver").newInstance ();
 	            conn = DriverManager.getConnection (dsn, dbuser, dbpass);
-	            boolean update = false;
-	            if (update == true)
+	            	            
+	            Properties config = new Properties();
+	    		BufferedInputStream stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
+	            
+	            // Load the configuration
+				config.load(stream);
+				update = config.getProperty("update");
+	            
+	            if (update.matches("true"))
 	            {
+	            	System.out.println("npcx : DB WIPE");
+	            	
 		            /*
 		             * One time Database creation / TODO: Auto Upgrades
 		             * 
@@ -294,6 +305,25 @@ public class npcx extends JavaPlugin {
 		            s2.executeUpdate(sgetable);
 		            s2.close();
 		            System.out.println("npcx : finished table configuration");
+		            dbhost = config.getProperty("db-host");
+					dbuser = config.getProperty("db-user");
+					dbpass = config.getProperty("db-pass");
+					dbname = config.getProperty("db-name");
+					dbport = config.getProperty("db-port");
+					
+					config.setProperty(PROP_DBHOST,dbhost);
+					config.setProperty(PROP_DBUSER,dbuser);
+					config.setProperty(PROP_DBPASS,dbpass);
+					config.setProperty(PROP_DBNAME,dbname);
+					config.setProperty(PROP_DBPORT,dbport);
+		            config.setProperty(PROP_UPDATE,"false");
+		            File propfolder = getDataFolder();
+		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		            propfile.createNewFile();
+		            
+		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+					config.store(stream1, "Default generated settings, please ensure mysqld matches");
+					
 	            }
 	            
 	            // Load Spawngroups
