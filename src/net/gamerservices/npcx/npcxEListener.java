@@ -42,6 +42,7 @@ public class npcxEListener extends EntityListener {
 		            	npc.hp = npc.hp - 10;
 		            	if (npc.hp < 1)
 		            	{
+		            		
 		            		p.sendMessage(npc.getName() + " has been slain!");
 		            		parent.onNPCDeath(npc);
 		            		

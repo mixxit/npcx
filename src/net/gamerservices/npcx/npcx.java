@@ -131,8 +131,15 @@ public class npcx extends JavaPlugin {
 		}
 		
 		
-		npc.parent.spawngroup.activecountdown = 100;
 		NpcSpawner.RemoveBasicHumanNpc(npc);
+		npclist.remove(npc);
+		if (npc.parent != null)
+		{
+			npc.parent.spawngroup.activecountdown = 100;
+		}
+		
+		
+		
 		
 		
 		
@@ -719,11 +726,12 @@ public class npcx extends JavaPlugin {
         		}
             	
             	if (args[1].equals("spawn")) {
-	            		player.sendMessage("Spawning new NPC: " + args[2]);
+	            		player.sendMessage("Spawning new (temporary) NPC: " + args[2]);
 	                    // temporary
 	            		 BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
 		                 
 	            		 this.npclist.put(args[2], hnpc);
+	            		 
 		                
 	            		
 	            		try {

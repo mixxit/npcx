@@ -35,11 +35,17 @@ public class npcxPListener extends PlayerListener {
 			{
 				if (player.target != null)
 				{
+					
 					System.out.println("npcx : player chat event ("+ player.player.getName()+")");
 					player.player.sendMessage("You say to " + player.target.getName() +", '" + event.getMessage() + "'");
 
-					
-					player.target.parent.parseChat(player, event.getMessage());
+					if (player.target.parent != null)
+					{
+						// this is not a temporary spawn
+						player.target.parent.parseChat(player, event.getMessage());
+					} else {
+						player.player.sendMessage("You cannot talk to temporary spawns");
+					}
 					event.setCancelled(true);
 				}
 			}
