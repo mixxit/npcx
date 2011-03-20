@@ -312,7 +312,15 @@ public class npcx extends JavaPlugin {
 		            s2.executeUpdate(droptable);
 		            s2.executeUpdate(npctable);
 		            
+		            String droptable0 = "DROP TABLE IF EXISTS pathgroup; ";
+		            String npctable0 = "CREATE TABLE pathgroup ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),name CHAR(40),category CHAR(40))";
+		            s2.executeUpdate(droptable0);
+		            s2.executeUpdate(npctable0);
 		            
+		            String droptable1 = "DROP TABLE IF EXISTS pathgroup_entries; ";
+		            String npctable1 = "CREATE TABLE pathgroup_entries ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),s int,pathgroup int, name CHAR(40),x CHAR(40),y CHAR(40),z CHAR(40))";
+		            s2.executeUpdate(droptable1);
+		            s2.executeUpdate(npctable1);
 		            
 		            String droptable2 = "DROP TABLE IF EXISTS spawngroup; ";
 		            String spawngrouptable = "CREATE TABLE spawngroup ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),name CHAR(40),world CHAR(40),category CHAR(40),x CHAR(40), y CHAR(40), z CHAR(40))";
@@ -589,7 +597,37 @@ public class npcx extends JavaPlugin {
         		
             }
             
-            
+            if (subCommand.equals("pathgroup"))
+            {
+            	if (args.length < 2) {
+            		// todo: need to implement npc types here ie: 0 = default 1 = banker 2 = merchant
+            		// todo: need to implement '/npcx npc edit' here
+                	player.sendMessage("Insufficient arguments /npcx pathgroup create|delete name");
+
+                	// todo needs to force the player to provide a search term to not spam them with lots of results in the event of a huge npc list
+                	player.sendMessage("Insufficient arguments /npcx pathgroup list");
+                	
+               	
+                    return false;
+                }
+            	
+            	if (args[1].equals("create")) {
+            		if (args.length < 3) {
+            			player.sendMessage("Insufficient arguments /npcx pathgroup create name");
+                    	
+            		} else {
+            			player.sendMessage("Created pathgroup: " + args[2]);
+                    	
+            			Statement s2 = conn.createStatement ();
+            			String addspawngroup = "INSERT INTO pathgroup (name) VALUES ('" + args[2] + "');";
+        	            s2.executeUpdate(addspawngroup);
+        	            
+        	            s2.close();
+        	            
+            		}
+        			
+        		}
+            }
             
             if (subCommand.equals("npc"))
             {

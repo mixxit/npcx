@@ -6,6 +6,7 @@ public class myNPC {
 	String category = "container";
 	BasicHumanNpc npc;
 	mySpawngroup spawngroup;
+
 	
 	myNPC()
 	{

@@ -17,11 +17,22 @@ public class BasicHumanNpc extends BasicNpc {
 	public LivingEntity aggro;
 	public int hp = 100;
 	public int dmg = 3;
+	public double spawnx;
+	public double spawny;
+	public double spawnz;
+	public double seekx;
+	public double seeky;
+	public double seekz;
+	
     private CHumanNpc mcEntity;
     private static final Logger logger = Logger.getLogger("Minecraft");
     public myNPC parent;
-    public BasicHumanNpc(CHumanNpc entity, String uniqueId, String name) {
+    public BasicHumanNpc(CHumanNpc entity, String uniqueId, String name, double spawnx, double spawny, double spawnz) {
         super(uniqueId, name);
+    	this.spawnx = spawnx;
+    	this.spawny = spawny;
+    	this.spawnz = spawnz;
+    	
 
         this.mcEntity = entity;
     }
@@ -67,6 +78,21 @@ public class BasicHumanNpc extends BasicNpc {
     {
     	//System.out.println("npcx : think");
     			
+    	if (follow == null && aggro == null)
+    	{
+    		
+    		double x2 = this.getBukkitEntity().getLocation().getX();
+    		double y2 = this.getBukkitEntity().getLocation().getY();
+    		double z2 = this.getBukkitEntity().getLocation().getZ();
+    		
+    		if (!(x2 == spawnx && y2 == spawny && z2 == spawnz))
+    		{
+    		
+	    		System.out.println("npcx : moving  ["+ spawnx + "] ["+ spawny + "] ["+ spawnz + "]");
+	    		moveTo(spawnx,spawny,spawnz,0,0);
+    		}
+    	}
+    	
 		if (follow instanceof Player)
 		{
 				moveto(follow);
@@ -74,7 +100,11 @@ public class BasicHumanNpc extends BasicNpc {
 		
 		if (aggro instanceof Player)
 		{
-			attackLivingEntity(aggro);
+			if (!(this.hp == 0))
+			{
+				attackLivingEntity(aggro);
+			
+			}
 			
 		}
 		
