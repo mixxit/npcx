@@ -117,7 +117,7 @@ public class npcx extends JavaPlugin {
 	public void onNPCDeath(BasicHumanNpc npc)
 	{
 		
-		npc.parent.spawngroup.activecountdown = 3000;
+		npc.parent.spawngroup.activecountdown = 100;
 		NpcSpawner.RemoveBasicHumanNpc(npc);
 		
 	}
