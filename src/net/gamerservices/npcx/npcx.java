@@ -15,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.CreatureType;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Timer;
 import java.util.logging.Level;
 import org.bukkit.event.Event.Type;
@@ -44,6 +45,7 @@ public class npcx extends JavaPlugin {
 	private final String PROP_DBPASS = "db-pass";
 	private final String PROP_DBNAME = "db-name";
 	private final String PROP_DBPORT = "db-port";
+	private final String PROP_WORLD = "world";
 	private final String PROP_UPDATE = "update";
 	private Connection conn = null;
 	private npcxEListener mEntityListener;
@@ -60,6 +62,7 @@ public class npcx extends JavaPlugin {
 	private String dbpass;
 	private String dbname;
 	private String dbport;
+	private String world;
 	private Timer tick = new Timer();
 	
 	
@@ -95,7 +98,7 @@ public class npcx extends JavaPlugin {
 				prop.setProperty(PROP_DBPORT, "3306");
 				prop.setProperty(PROP_UPDATE, "true");
 				
-				
+				prop.setProperty(PROP_WORLD, "world");
 				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
 				prop.store(stream, "Default generated settings, please ensure mysqld matches");
 				System.out.println("npcx : properties file generation ended");
@@ -125,6 +128,7 @@ public class npcx extends JavaPlugin {
 	
 	public void think()
 	{
+		tick.schedule(new Tick(this), 1 * 400);
 		// check npc logic
 		for (BasicHumanNpc npc : npclist.values())
 		{
@@ -153,25 +157,41 @@ public class npcx extends JavaPlugin {
 					
 				//System.out.println("npcx : found inactive spawngroup ("+ spawngroup.id +") with :[" + spawngroup.npcs.size() + "]");
 				int count = 0;
-				for (myNPC npc : spawngroup.npcs.values())
+				Random generator = new Random();
+				Object[] values = spawngroup.npcs.values().toArray();
+				
+				if (values.length > 0)
 				{
-					if (!spawngroup.active)
+				
+				myNPC npc = (myNPC) values[generator.nextInt(values.length)];
+				
+					try
 					{
-						System.out.println("npcx : made spawngroup active");
-						BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld("world"), spawngroup.x, spawngroup.y, spawngroup.z,0 , 0);
-		                npc.npc = hnpc;
-		                npc.spawngroup = spawngroup;
-		                hnpc.parent = npc;
-						this.npclist.put(npc.id, hnpc);
-						spawngroup.active = true;
+				
+					// is there at least one player in game?
+					if (this.getServer().getOnlinePlayers().length > 0)
+					{
+						if (!spawngroup.active)
+						{
+							//System.out.println("npcx : made spawngroup active");
+							BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,0 , 0);
+			                npc.npc = hnpc;
+			                npc.spawngroup = spawngroup;
+			                hnpc.parent = npc;
+							this.npclist.put(npc.id, hnpc);
+							spawngroup.active = true;
+						}
 					}
-					
+					} catch (Exception e)
+					{
+						
+					}
 				}
 				
 			}
 		}
 		
-		tick.schedule(new Tick(this), 1 * 400);
+		
 	
 	}
 	
@@ -195,6 +215,8 @@ public class npcx extends JavaPlugin {
 				dbpass = config.getProperty("db-pass");
 				dbname = config.getProperty("db-name");
 				dbport = config.getProperty("db-port");
+				world = config.getProperty("world");
+				this.world = world;
 				update = config.getProperty("update");
 				
 				dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
@@ -310,12 +332,13 @@ public class npcx extends JavaPlugin {
 					dbpass = config.getProperty("db-pass");
 					dbname = config.getProperty("db-name");
 					dbport = config.getProperty("db-port");
-					
+					world = config.getProperty("world");
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
 					config.setProperty(PROP_DBPASS,dbpass);
 					config.setProperty(PROP_DBNAME,dbname);
 					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_WORLD,world);
 		            config.setProperty(PROP_UPDATE,"false");
 		            File propfolder = getDataFolder();
 		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
@@ -518,6 +541,7 @@ public class npcx extends JavaPlugin {
         	            	if (sg.id == Integer.parseInt(args[2]))
         	            	{
         	            		myNPC npc = new myNPC();
+        	            		npc.name = dbGetNPCname(args[3]);
         	            		npc.spawngroup = sg;
         	            		npc.id = args[3];
         	            		System.out.println("npcx : + cached new spawngroup entry("+ args[3] + ")");
