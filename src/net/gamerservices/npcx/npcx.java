@@ -49,6 +49,8 @@ public class npcx extends JavaPlugin {
 	private final String PROP_UPDATE = "update";
 	private Connection conn = null;
 	private npcxEListener mEntityListener;
+	private npcxPListener mPlayerListener;
+	public HashMap<String, myPlayer> players = new HashMap<String, myPlayer>();
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
 	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
 	private Properties prop;
@@ -280,9 +282,13 @@ public class npcx extends JavaPlugin {
 			 	PluginManager pm = getServer().getPluginManager();
 
 	            mEntityListener = new npcxEListener(this);
+	            mPlayerListener = new npcxPListener(this);
 	            pm.registerEvent(Type.ENTITY_TARGET, mEntityListener, Priority.Normal, this);
 	            pm.registerEvent(Type.ENTITY_DAMAGED, mEntityListener, Priority.Normal, this);
-
+	            pm.registerEvent(Type.PLAYER_JOIN, mPlayerListener, Priority.Normal, this);
+	            pm.registerEvent(Type.PLAYER_QUIT, mPlayerListener, Priority.Normal, this);
+	            pm.registerEvent(Type.PLAYER_CHAT, mPlayerListener, Priority.Normal, this);
+	            
 	            try 
 	            {
 	            

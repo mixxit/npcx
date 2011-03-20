@@ -86,8 +86,29 @@ public class npcxEListener extends EntityListener {
 
                 } else if (nevent.getNpcReason() == NpcTargetReason.NPC_RIGHTCLICKED) {
                     Player p = (Player) event.getTarget();
+                    /*
                     p.sendMessage("* You say, 'Hail, " + npc.getName() + "!'");
                     p.sendMessage("* " + npc.getName() + " says, 'Hello " + p.getName() + "!");
+                    */
+                    
+                    for (myPlayer player : parent.players.values()){
+                    	
+            			if (player.player == p)
+            			{
+            				if (player.target != null)
+            				{
+                                p.sendMessage("* Target cleared!");
+                                player.target = null;
+            					
+            				} else {
+            					player.target = npc;
+                                p.sendMessage("* Active chat target set as: " + npc.getName());
+            				}
+            				
+            			}
+            		}
+                    
+                    
                     event.setCancelled(true);
                     
                 } else if (nevent.getNpcReason() == NpcTargetReason.NPC_BOUNCED) {

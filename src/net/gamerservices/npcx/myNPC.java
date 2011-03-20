@@ -12,4 +12,9 @@ public class myNPC {
 	{
 		
 	}
+	
+	public void parseChat(myPlayer myplayer, String message)
+	{
+		myplayer.player.sendMessage(npc.getName() + " says to you, 'I'm sorry. I'm rather busy right now.'");
+	}
 }
