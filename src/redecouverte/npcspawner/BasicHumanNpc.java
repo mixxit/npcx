@@ -9,6 +9,7 @@ import net.minecraft.server.EntityLiving;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Spider;
@@ -88,7 +89,7 @@ public class BasicHumanNpc extends BasicNpc {
     		{
 		    	for (LivingEntity e : this.getBukkitEntity().getServer().getWorld("world").getLivingEntities())
 		    	{
-		    		if (e instanceof Zombie || e instanceof Spider || e instanceof Skeleton )
+		    		if (e instanceof Monster)
 		    		{
 		    			//System.out.println("npcx : inmysights!");
 		    			double distancex = this.parent.parent.getDistance(e.getLocation().getX(), this.getBukkitEntity().getLocation().getX());
