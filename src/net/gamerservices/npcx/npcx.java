@@ -114,6 +114,13 @@ public class npcx extends JavaPlugin {
 		think();
 		
 	}
+	public void onNPCDeath(BasicHumanNpc npc)
+	{
+		
+		npc.parent.spawngroup.activecountdown = 3000;
+		NpcSpawner.RemoveBasicHumanNpc(npc);
+		
+	}
 	
 	public void think()
 	{
@@ -128,8 +135,21 @@ public class npcx extends JavaPlugin {
 		for (mySpawngroup spawngroup : spawngroups.values())
 		{
 			
+			if (spawngroup.activecountdown > 0)
+			{
+				spawngroup.activecountdown--;
+				
+				if (spawngroup.activecountdown == 1)
+				{
+					spawngroup.active = false;					
+				}
+				
+			}
+
+			
 			if (!spawngroup.active)
 			{
+					
 				//System.out.println("npcx : found inactive spawngroup ("+ spawngroup.id +") with :[" + spawngroup.npcs.size() + "]");
 				int count = 0;
 				for (myNPC npc : spawngroup.npcs.values())
@@ -138,7 +158,10 @@ public class npcx extends JavaPlugin {
 					{
 						System.out.println("npcx : made spawngroup active");
 						BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld("world"), spawngroup.x, spawngroup.y, spawngroup.z,0 , 0);
-		                this.npclist.put(npc.id, hnpc);
+		                npc.npc = hnpc;
+		                npc.spawngroup = spawngroup;
+		                hnpc.parent = npc;
+						this.npclist.put(npc.id, hnpc);
 						spawngroup.active = true;
 					}
 					
@@ -308,9 +331,10 @@ public class npcx extends JavaPlugin {
 		            while (rs11.next ())
 		            {
 		            	myNPC npc = new myNPC();
+		            	npc.spawngroup = spawngroup;
 		            	npc.id = rs11.getString ("npcid");
 		            	npc.name = dbGetNPCname(npc.id);
-		            	System.out.println("npcx : + + " + rs11.getString ("npcid"));
+		            	System.out.println("npcx : + npc.name + " + rs11.getString ("npcid"));
 		            	
 		            	spawngroup.npcs.put(rs11.getString ("npcid"), npc);
 		            	
@@ -464,6 +488,7 @@ public class npcx extends JavaPlugin {
         	            	if (sg.id == Integer.parseInt(args[2]))
         	            	{
         	            		myNPC npc = new myNPC();
+        	            		npc.spawngroup = sg;
         	            		npc.id = args[3];
         	            		System.out.println("npcx : + cached new spawngroup entry("+ args[3] + ")");
         	            		sg.npcs.put(args[3], npc);
@@ -589,7 +614,8 @@ public class npcx extends JavaPlugin {
 	            		player.sendMessage("Spawning new NPC: " + args[2]);
 	                    // temporary
 	            		 BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
-		                 this.npclist.put(args[2], hnpc);
+		                 
+	            		 this.npclist.put(args[2], hnpc);
 		                
 	            		
 	            		try {

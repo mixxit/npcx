@@ -14,5 +14,5 @@ public class mySpawngroup {
 	public boolean active = false;
 	public World world;
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
-	
+	int activecountdown = 0;
 }

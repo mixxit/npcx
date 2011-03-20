@@ -43,8 +43,8 @@ public class npcxEListener extends EntityListener {
 		            	if (npc.hp < 1)
 		            	{
 		            		p.sendMessage(npc.getName() + " has been slain!");
-
-		            		NpcSpawner.RemoveBasicHumanNpc(npc);
+		            		parent.onNPCDeath(npc);
+		            		
 		            	}
 	            
 		          

@@ -1,5 +1,5 @@
 package redecouverte.npcspawner;
-
+import net.gamerservices.npcx.*;
 
 
 import java.io.Console;
@@ -19,7 +19,7 @@ public class BasicHumanNpc extends BasicNpc {
 	public int dmg = 3;
     private CHumanNpc mcEntity;
     private static final Logger logger = Logger.getLogger("Minecraft");
-
+    public myNPC parent;
     public BasicHumanNpc(CHumanNpc entity, String uniqueId, String name) {
         super(uniqueId, name);
 
