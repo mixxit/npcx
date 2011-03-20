@@ -122,9 +122,19 @@ public class npcx extends JavaPlugin {
 	}
 	public void onNPCDeath(BasicHumanNpc npc)
 	{
+		for (myPlayer player : players.values()){
+				if (player.target == npc)
+				{
+					player.target = null;
+					
+				}
+		}
+		
 		
 		npc.parent.spawngroup.activecountdown = 100;
 		NpcSpawner.RemoveBasicHumanNpc(npc);
+		
+		
 		
 	}
 	
