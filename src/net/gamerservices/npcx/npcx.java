@@ -186,7 +186,7 @@ public class npcx extends JavaPlugin {
 	
 	public void think()
 	{
-		tick.schedule(new Tick(this), 1 * 400);
+		tick.schedule(new Tick(this), 1 * 700);
 		// check npc logic
 		for (BasicHumanNpc npc : npclist.values())
 		{
