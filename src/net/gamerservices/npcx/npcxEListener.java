@@ -56,7 +56,7 @@ public class npcxEListener extends EntityListener
 				{
 					npc.follow = null;
 					npc.aggro = null;
-					System.out.println("npcx : forgot about target");
+					//System.out.println("npcx : forgot about target");
 						 
    			    }
 		        if (npc != null && edee.getDamager() instanceof LivingEntity) 

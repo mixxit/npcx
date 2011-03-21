@@ -198,26 +198,32 @@ public class npcx extends JavaPlugin {
 			
 			if (this.monsters.size() > 0)
 			{
-				for (LivingEntity e : this.monsters.values())
+				try
 				{
-					if (e.getHealth() > 0)
-			    	{
-						double distancex = getDistance(npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
-					    double distancey = getDistance(npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
-					    double distancez = getDistance(npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
-				
-					    if (e instanceof Monster)
-					    {
-						    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+					for (LivingEntity e : this.monsters.values())
+					{
+						if (e.getHealth() > 0)
+				    	{
+							double distancex = getDistance(npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
+						    double distancey = getDistance(npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
+						    double distancez = getDistance(npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
+					
+						    if (e instanceof Monster)
 						    {
-							    //System.out.println("npcx : inmysights !");
-						    	
-						    		npc.aggro =  e;
-						    		npc.follow =   e;
-						    	
-							}
-					    }
-			    	}
+							    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+							    {
+								    //System.out.println("npcx : inmysights !");
+							    	
+							    		npc.aggro =  e;
+							    		npc.follow =   e;
+							    	
+								}
+						    }
+				    	}
+					}
+				} catch (Exception e)
+				{
+					// Concurrent modification occured
 				}
 			  }
 		}
