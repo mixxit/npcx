@@ -58,7 +58,6 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerRespawn(PlayerRespawnEvent event)
 	{
-		
 		for (myPlayer player : this.parent.players.values())
 		{
 				// deal with player death changes

@@ -277,7 +277,7 @@ public class npcx extends JavaPlugin {
 							npc.spawngroup = spawngroup;
 							
 							//System.out.println("npcx : made spawngroup active");
-							BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,0 , 0);
+							BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,(float)spawngroup.yaw , (float)spawngroup.pitch);
 			                npc.npc = hnpc;
 			                
 			                hnpc.parent = npc;
@@ -462,7 +462,7 @@ public class npcx extends JavaPlugin {
 		            s2.executeUpdate(npctable1);
 		            
 		            String droptable2 = "DROP TABLE IF EXISTS spawngroup; ";
-		            String spawngrouptable = "CREATE TABLE spawngroup ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),name CHAR(40),world CHAR(40),category CHAR(40),x CHAR(40), y CHAR(40), z CHAR(40))";
+		            String spawngrouptable = "CREATE TABLE spawngroup ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),name CHAR(40),world CHAR(40),category CHAR(40),x CHAR(40), y CHAR(40), z CHAR(40),yaw CHAR(40), pitch CHAR(40))";
 		            s2.executeUpdate(droptable2);
 		            
 		            s2.executeUpdate(spawngrouptable);
@@ -534,6 +534,9 @@ public class npcx extends JavaPlugin {
 	                spawngroup.x = Double.parseDouble(rs1.getString ("x"));
 	                spawngroup.y = Double.parseDouble(rs1.getString ("y"));
 	                spawngroup.z = Double.parseDouble(rs1.getString ("z"));
+	                spawngroup.yaw = Double.parseDouble(rs1.getString ("yaw"));
+	                spawngroup.pitch = Double.parseDouble(rs1.getString ("pitch"));
+	                
 	                
 	                // Add to our spawngroup hashmap
 	                this.spawngroups.put(Integer.toString(idVal), spawngroup);
@@ -661,9 +664,12 @@ public class npcx extends JavaPlugin {
             			double x = player.getLocation().getX();
             			double y = player.getLocation().getY();
             			double z = player.getLocation().getZ();
+            			double pitch = player.getLocation().getPitch();
+            			double yaw = player.getLocation().getYaw();
             			
             			
-            			String addspawngroup = "INSERT INTO spawngroup (name,x,y,z) VALUES ('" + args[2] + "','"+ x +"','"+ y +"','"+ z +"');";
+            			
+            			String addspawngroup = "INSERT INTO spawngroup (name,x,y,z,pitch,yaw) VALUES ('" + args[2] + "','"+ x +"','"+ y +"','"+ z +"','"+pitch+"','"+yaw+"');";
             			Statement stmt = conn.createStatement();
             			stmt.execute(addspawngroup, Statement.RETURN_GENERATED_KEYS);
             			ResultSet keyset = stmt.getGeneratedKeys();
@@ -680,6 +686,8 @@ public class npcx extends JavaPlugin {
             			sg.x = x;
             			sg.y = y;
             			sg.z = z;
+            			sg.pitch = pitch;
+            			sg.yaw = yaw;
             			sg.world = player.getWorld();
             			
             			this.spawngroups.put(Integer.toString(key),sg);

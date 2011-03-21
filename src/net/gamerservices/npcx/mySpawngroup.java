@@ -15,4 +15,7 @@ public class mySpawngroup {
 	public World world;
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
 	int activecountdown = 0;
+	public double pitch;
+	public double yaw;
+	
 }
