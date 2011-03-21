@@ -822,10 +822,10 @@ public class npcx extends JavaPlugin {
             			// add it to any spawned npcs
             			for (myNPC npc : npcs.values())
             			{
-            				System.out.println("npcx : adding reply ("+ reply + ") and trigger ("+ reply +") for [" + args[3] + "] npc to npc: " + npc.id);
             				if (npc.id.equals(args[3]))
             				{
-            					
+            					System.out.println("npcx : adding reply because ("+ npc.id +") is ("+args[3]+")  ("+ reply + ") and trigger ("+ reply +") for [" + args[3] + "] npc to npc: " + npc.id);
+                				
             					myTriggerword tw = new myTriggerword();
             					tw.word = args[4];
             					tw.id = key;
