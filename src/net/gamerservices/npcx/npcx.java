@@ -114,7 +114,7 @@ public class npcx extends JavaPlugin {
 				e.printStackTrace();
 			}
 					
-			loadSettings();
+			
 			System.out.println("npcx : initial setup ended");
 		
 		}
