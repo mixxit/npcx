@@ -566,7 +566,14 @@ public class npcx extends JavaPlugin {
             	
                 return false;
             }
+            
+            
             if (!(sender instanceof Player)) {
+
+                return false;
+            }
+            
+            if (sender.isOp() == false) {
 
                 return false;
             }
