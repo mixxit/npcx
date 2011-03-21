@@ -24,7 +24,7 @@ public class npcxPListener extends PlayerListener {
 	public void onPlayerJoin(PlayerEvent event) 
     {
 		myPlayer player = new myPlayer(event.getPlayer());
-		System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
+		//System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
 		parent.players.put(player.player.getName(), player);
 		
     }
@@ -57,7 +57,7 @@ public class npcxPListener extends PlayerListener {
 		for (myPlayer player : parent.players.values()){
 			if (player.player == event.getPlayer())
 			{
-				System.out.println("npcx : removed player ("+ player.player.getName()+")");
+				//System.out.println("npcx : removed player ("+ player.player.getName()+")");
 				parent.players.remove(player);
 			}
 		}
