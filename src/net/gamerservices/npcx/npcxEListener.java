@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -30,7 +31,19 @@ public class npcxEListener extends EntityListener
 	public void onEntityDamage(EntityDamageEvent event) {
 		super.onEntityDamage(event);
 		
-		
+		if (event instanceof EntityDamageByEntityEvent )
+		{
+			if (event.getEntity() instanceof Monster)
+			{
+				EntityDamageByEntityEvent edee1 = (EntityDamageByEntityEvent)event;
+				if (edee1.getDamager() instanceof HumanEntity) 
+				{
+					System.out.println("npcx : monster go ow");
+				}
+					
+				
+		    }
+		}
 		
 		if (event.getEntity() instanceof HumanEntity) 
 		{
@@ -43,15 +56,16 @@ public class npcxEListener extends EntityListener
 				{
 					npc.follow = null;
 					npc.aggro = null;
+					System.out.println("npcx : forgot about target");
 						 
    			    }
-		        if (npc != null && edee.getDamager() instanceof Player) 
+		        if (npc != null && edee.getDamager() instanceof LivingEntity) 
 		        {
 	
-		        	Player p = (Player) edee.getDamager();
+		        	Entity p = edee.getDamager();
 		        	
-		            npc.follow = p;
-		            npc.aggro = p;
+		            npc.follow = (LivingEntity)p;
+		            npc.aggro = (LivingEntity)p;
 		            
 		            try
 		            {
@@ -59,7 +73,7 @@ public class npcxEListener extends EntityListener
 		            	if (npc.hp < 1)
 		            	{
 		            		
-		            		p.sendMessage(npc.getName() + " has been slain!");
+		            		//p.sendMessage(npc.getName() + " has been slain!");
 		            		parent.onNPCDeath(npc);
 		            		
 		            	}
@@ -68,6 +82,7 @@ public class npcxEListener extends EntityListener
 		            {
 		            	npc.follow = null;
 						npc.aggro = null;
+						System.out.println("npcx : forgot about target");
 		            	// do not modify mobs health
 		            }
 		            
@@ -77,6 +92,28 @@ public class npcxEListener extends EntityListener
 		    }
 		}
 	}
+	@Override
+	public void onEntityDeath	(	EntityDeathEvent 	event	)
+	{
+		if (event.getEntity() instanceof Monster)
+		{
+			
+			//System.out.println("npcx : deregistered monster");
+			this.parent.monsters.remove((Monster)event.getEntity());	
+
+		}
+	}
+	@Override
+	public void onCreatureSpawn	( CreatureSpawnEvent event)	
+	{
+		
+		if (event.getEntity() instanceof Monster)
+		{
+			//System.out.println("npcx : registered monster");
+			this.parent.monsters.put(Integer.toString(event.getEntity().getEntityId()), (Monster)event.getEntity());
+		}
+	}
+
 	
 	@Override
 	

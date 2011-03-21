@@ -55,6 +55,7 @@ public class npcx extends JavaPlugin {
 	public HashMap<String, myPlayer> players = new HashMap<String, myPlayer>();
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
 	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
+	public HashMap<String, Monster> monsters = new HashMap<String, Monster>();
 	private Properties prop;
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
 	private String dsn;
@@ -163,24 +164,29 @@ public class npcx extends JavaPlugin {
 			
 			
 			//System.out.println("npcx : " + event.getEntity().getClass().toString());
-			//System.out.println("npcx : " + event.getTarget().getClass().toString());
+			//System.out.printlnf("npcx : " + event.getTarget().getClass().toString());
 			
 			
-			for (LivingEntity e : getServer().getWorld(world).getLivingEntities())
+			for (LivingEntity e : this.monsters.values())
 				{
+				if (e.getHealth() > 0)
+		    	{
 					double distancex = getDistance(npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
 				    double distancey = getDistance(npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
 				    double distancez = getDistance(npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
 			
 				    if (e instanceof Monster)
-				    
-				    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
 				    {
-					    //System.out.println("npcx : inmysights !");
-						npc.aggro =  e;
-						npc.follow =   e;
-					}
-		        	
+					    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+					    {
+						    //System.out.println("npcx : inmysights !");
+					    	
+					    		npc.aggro =  e;
+					    		npc.follow =   e;
+					    	
+						}
+				    }
+		    	}
 				}
 			}
 			
@@ -335,6 +341,9 @@ public class npcx extends JavaPlugin {
 	            mPlayerListener = new npcxPListener(this);
 	            pm.registerEvent(Type.ENTITY_TARGET, mEntityListener, Priority.Normal, this);
 	            pm.registerEvent(Type.ENTITY_DAMAGED, mEntityListener, Priority.Normal, this);
+	            pm.registerEvent(Type.ENTITY_DEATH, mEntityListener, Priority.Normal, this);
+	            pm.registerEvent(Type.CREATURE_SPAWN, mEntityListener, Priority.Normal, this);
+	            
 	            pm.registerEvent(Type.PLAYER_JOIN, mPlayerListener, Priority.Normal, this);
 	            pm.registerEvent(Type.PLAYER_QUIT, mPlayerListener, Priority.Normal, this);
 	            pm.registerEvent(Type.PLAYER_CHAT, mPlayerListener, Priority.Normal, this);

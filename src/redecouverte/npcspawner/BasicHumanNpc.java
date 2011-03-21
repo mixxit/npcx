@@ -89,6 +89,8 @@ public class BasicHumanNpc extends BasicNpc {
     	
     	if (follow == null && aggro == null)
     	{
+    		//System.out.println("npcx : moving  ["+ spawnx + "] ["+ spawny + "] ["+ spawnz + "]");
+    		
     		// not aggrod or following, time to go home :)
     		double x2 = this.getBukkitEntity().getLocation().getX();
     		double y2 = this.getBukkitEntity().getLocation().getY();
@@ -96,25 +98,45 @@ public class BasicHumanNpc extends BasicNpc {
     		
     		if (!(x2 == spawnx && y2 == spawny && z2 == spawnz))
     		{
-    		
-	    		//System.out.println("npcx : moving  ["+ spawnx + "] ["+ spawny + "] ["+ spawnz + "]");
+    			
+    			System.out.println("Going home");
 	    		moveTo(spawnx,spawny,spawnz,0,0);
     		}
     	}
     	
 		if (follow instanceof LivingEntity)
 		{
-			// lets follow this entity
-				moveto(follow);
+			if (this.follow != null)
+			{
+	    		System.out.println("follow" + follow.toString()+":"+follow.getHealth());
+				// lets follow this entity
+				if (this.hp == 0 || this.follow.getHealth() == 0)
+				{
+					this.follow = null;
+					this.aggro = null;
+				} else {
+					moveto(follow);
+				}
+			}
 		}
 		
 		if (aggro instanceof LivingEntity)
 		{
+    		System.out.println("GRR");
+
 			// lets follow this entity
-			if (!(this.hp == 0))
-			{
-				attackLivingEntity(aggro);
-			
+			if (this.aggro != null)
+				{
+				if (this.hp == 0)
+				{
+	
+					this.follow = null;
+					this.aggro = null;
+	
+				} else {
+					attackLivingEntity(aggro);
+	
+				}
 			}
 			
 		}
@@ -201,7 +223,8 @@ public class BasicHumanNpc extends BasicNpc {
 
     public void attackLivingEntity(LivingEntity ent) {
         try {
-            this.mcEntity.animateArmSwing();
+        	
+            
             if ((ent.getHealth() - dmg) < 0)
             {
             	ent.setHealth(0);
@@ -214,6 +237,7 @@ public class BasicHumanNpc extends BasicNpc {
             		
             	}
             } else {
+            	this.mcEntity.animateArmSwing();
             	ent.damage(dmg);
             }
         } catch (Exception e) {
