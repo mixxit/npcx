@@ -123,6 +123,35 @@ public class npcx extends JavaPlugin {
 		think();
 		
 	}
+	
+	public HashMap<String, myTriggerword> fetchTriggerWords(int npcid) throws SQLException
+	{
+		//CREATE TABLE npc_triggerwords ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),npcid int,triggerword CHAR(40),reply VARCHAR(256),category CHAR(40))
+		
+		
+		HashMap<String, myTriggerword> triggerwords = new HashMap<String, myTriggerword>();
+
+		Statement s = conn.createStatement ();
+		s.executeQuery ("SELECT id, npcid, triggerword, reply, category FROM npc_triggerwords WHERE npcid =" + npcid );
+		
+		ResultSet rs = s.getResultSet ();
+			int count = 0;
+		   while (rs.next ())
+		   {
+			   count++;
+			   myTriggerword tw = new myTriggerword();
+			   tw.response = rs.getString ("reply");
+			   tw.word = rs.getString ("triggerword");
+		       tw.id = rs.getInt ("id");
+		       triggerwords.put(Integer.toString(tw.id), tw);
+		   }
+		   System.out.println("npcx : fetched "+count+" triggerwords");
+		   rs.close ();
+		   s.close ();
+		   
+		return triggerwords;		
+	}
+	
 	public void onNPCDeath(BasicHumanNpc npc)
 	{
 		for (myPlayer player : players.values()){
@@ -133,9 +162,10 @@ public class npcx extends JavaPlugin {
 				}
 		}
 		
-		
-		NpcSpawner.RemoveBasicHumanNpc(npc);
 		npclist.remove(npc);
+		npcs.remove(npc);
+		NpcSpawner.RemoveBasicHumanNpc(npc);
+		
 		if (npc.parent != null)
 		{
 			npc.parent.spawngroup.activecountdown = 100;
@@ -231,12 +261,16 @@ public class npcx extends JavaPlugin {
 					{
 						if (!spawngroup.active)
 						{
+							npc.spawngroup = spawngroup;
+							
 							//System.out.println("npcx : made spawngroup active");
 							BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,0 , 0);
 			                npc.npc = hnpc;
-			                npc.spawngroup = spawngroup;
+			                
 			                hnpc.parent = npc;
+			                
 							this.npclist.put(npc.id, hnpc);
+							this.npcs.put(npc.id,npc);
 							spawngroup.active = true;
 						}
 					}
@@ -393,11 +427,22 @@ public class npcx extends JavaPlugin {
 		            
 		            s2.executeUpdate(spawngrouptable);
 		            
+		            
+		            
+		            
+		            
 		            String droptable3 = "DROP TABLE IF EXISTS spawngroup_entries; ";
 		            String sgetable = "CREATE TABLE spawngroup_entries ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),spawngroupid int,npcid int)";
 		            s2.executeUpdate(droptable3);
 		            
 		            s2.executeUpdate(sgetable);
+		            
+		            
+		            String droptable4 = "DROP TABLE IF EXISTS npc_triggerwords; ";
+		            String spawngrouptable4 = "CREATE TABLE npc_triggerwords ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),npcid int,triggerword CHAR(40),reply VARCHAR(256),category CHAR(40))";
+		            s2.executeUpdate(droptable4);
+		            s2.executeUpdate(spawngrouptable4);
+		            
 		            s2.close();
 		            System.out.println("npcx : finished table configuration");
 		            dbhost = config.getProperty("db-host");
@@ -440,6 +485,8 @@ public class npcx extends JavaPlugin {
 	                String catVal = rs1.getString ("category");
 	                
 	                //BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
+	                
+	                // Create a new spawngroup
 	                mySpawngroup spawngroup = new mySpawngroup();
 	                spawngroup.name = nameVal;
 	                System.out.println("npcx : + " + nameVal);
@@ -448,15 +495,17 @@ public class npcx extends JavaPlugin {
 	                spawngroup.y = Double.parseDouble(rs1.getString ("y"));
 	                spawngroup.z = Double.parseDouble(rs1.getString ("z"));
 	                
+	                // Add to our spawngroup hashmap
 	                this.spawngroups.put(Integer.toString(idVal), spawngroup);
 	                
+	                // Load npcs into spawngroups
 	                Statement s11 = conn.createStatement ();
 		            s11.executeQuery ("SELECT spawngroupid,npcid FROM spawngroup_entries WHERE spawngroupid ="+idVal);
 		            ResultSet rs11 = s11.getResultSet ();
 		            
 		            while (rs11.next ())
 		            {
-		            	myNPC npc = new myNPC(this);
+		            	myNPC npc = new myNPC(this,fetchTriggerWords(rs11.getInt ("npcid")));
 		            	npc.spawngroup = spawngroup;
 		            	npc.id = rs11.getString ("npcid");
 		            	npc.name = dbGetNPCname(npc.id);
@@ -480,7 +529,7 @@ public class npcx extends JavaPlugin {
 
 	            
 	            //this.HumanNPCList = new BasicHumanNpcList();
-			 	System.out.println("npcx : caching npcs");
+			 	//System.out.println("npcx : caching npcs");
 			 	
 	            } catch (Exception e)
 	            {
@@ -613,7 +662,10 @@ public class npcx extends JavaPlugin {
         	            {
         	            	if (sg.id == Integer.parseInt(args[2]))
         	            	{
-        	            		myNPC npc = new myNPC(this);
+        	            		
+        	            		
+        	            		
+        	            		myNPC npc = new myNPC(this,fetchTriggerWords(Integer.parseInt(args[3])));
         	            		npc.name = dbGetNPCname(args[3]);
         	            		npc.spawngroup = sg;
         	            		npc.id = args[3];
@@ -694,6 +746,9 @@ public class npcx extends JavaPlugin {
         		}
             }
             
+            
+            
+            
             if (subCommand.equals("npc"))
             {
             	// Overview:
@@ -719,10 +774,53 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx npc list");
                 	
                 	// spawns the npc temporarily at your current spot for testing
-                	player.sendMessage("Insufficient arguments /npcx npc test name");
+                	player.sendMessage("Insufficient arguments /npcx npc spawn name");
+                	
+                	player.sendMessage("Insufficient arguments /npcx npc triggerword add npcid triggerword response");
                 	
                     return false;
                 }
+            	
+            	if (args[1].equals("triggerword")) {
+            		if (args.length < 6) {
+            			player.sendMessage("Insufficient arguments /npcx npc triggerword add npcid triggerword response");
+            		
+            		} else {
+            			Statement s2 = conn.createStatement ();
+            			
+            			String addspawngroup = "INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES ('" + args[3] + "','" + args[4]+"','"+args[5]+"');";
+        	            Statement stmt = conn.createStatement();
+            			stmt.execute(addspawngroup, Statement.RETURN_GENERATED_KEYS);
+            			ResultSet keyset = stmt.getGeneratedKeys();
+            			int key = 0;
+            			if ( keyset.next() ) {
+            			    // Retrieve the auto generated key(s).
+	            			key = keyset.getInt(1);
+	            			
+            			}
+            			player.sendMessage("Added ("+npcs.values().size()+") triggerword ["+key+"] to npc "+args[3]);
+            			
+            			
+            			// add it to any spawned npcs
+            			for (myNPC npc : npcs.values())
+            			{
+            				System.out.println("npcx : adding trigger for [" + args[3] + "] npc to npc: " + npc.id);
+            				if (npc.id.equals(args[3]))
+            				{
+            					
+            					myTriggerword tw = new myTriggerword();
+            					tw.word = args[5];
+            					tw.id = key;
+            					tw.response = args[5];
+            					player.sendMessage("Added triggerword to Active npc "+args[3]);
+            					npc.triggerwords.put(Integer.toString(tw.id), tw);
+            				
+            				}
+            			}
+            			
+            		}
+            		
+            	}
             	
             	if (args[1].equals("create")) {
             		if (args.length < 3) {
