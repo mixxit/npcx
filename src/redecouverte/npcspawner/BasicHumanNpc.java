@@ -99,7 +99,7 @@ public class BasicHumanNpc extends BasicNpc {
     		if (!(x2 == spawnx && y2 == spawny && z2 == spawnz))
     		{
     			
-    			System.out.println("Going home");
+    		//	System.out.println("Going home");
 	    		moveTo(spawnx,spawny,spawnz,0,0);
     		}
     	}
@@ -108,7 +108,7 @@ public class BasicHumanNpc extends BasicNpc {
 		{
 			if (this.follow != null)
 			{
-	    		System.out.println("follow" + follow.toString()+":"+follow.getHealth());
+	    		//System.out.println("follow" + follow.toString()+":"+follow.getHealth());
 				// lets follow this entity
 				if (this.hp == 0 || this.follow.getHealth() == 0)
 				{
@@ -122,7 +122,7 @@ public class BasicHumanNpc extends BasicNpc {
 		
 		if (aggro instanceof LivingEntity)
 		{
-    		System.out.println("GRR");
+//    		System.out.println("GRR");
 
 			// lets follow this entity
 			if (this.aggro != null)
