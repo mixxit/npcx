@@ -729,11 +729,20 @@ public class npcx extends JavaPlugin {
             			player.sendMessage("Insufficient arguments /npcx npc create npcname");
                     	
             		} else {
-            			player.sendMessage("Created npc: " + args[2]);
                     	
             			Statement s2 = conn.createStatement ();
+            			
             			String addspawngroup = "INSERT INTO npc (name) VALUES ('" + args[2] + "');";
-        	            s2.executeUpdate(addspawngroup);
+        	            Statement stmt = conn.createStatement();
+            			stmt.execute(addspawngroup, Statement.RETURN_GENERATED_KEYS);
+            			ResultSet keyset = stmt.getGeneratedKeys();
+            			int key = 0;
+            			if ( keyset.next() ) {
+            			    // Retrieve the auto generated key(s).
+            			    key = keyset.getInt(1);
+            			    
+            			}
+            			player.sendMessage("Created npc: " + args[2] + "ID:[" + key  + "]");
         	            
         	            s2.close();
         	            
