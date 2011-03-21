@@ -32,7 +32,7 @@ public class myNPC {
 				for (myTriggerword tw : triggerwords.values())
 				{
 					//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
-					if (word.matches(tw.word))
+					if (word.toLowerCase().contains(tw.word.toLowerCase()))
 					{
 						
 							myplayer.player.sendMessage(npc.getName() + " says to you, '"+ tw.response +"'");
