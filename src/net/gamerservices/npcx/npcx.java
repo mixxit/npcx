@@ -186,25 +186,25 @@ public class npcx extends JavaPlugin {
 	
 	public void think()
 	{
-		tick.schedule(new Tick(this), 400);
+		tick.schedule(new Tick(this), 1 * 400);
 		// check npc logic
-		for (BasicHumanNpc npc2 : npclist.values())
+		for (BasicHumanNpc npc : npclist.values())
 		{
-			npc2.think();
+			npc.think();
 			
 			
 			//System.out.println("npcx : " + event.getEntity().getClass().toString());
 			//System.out.printlnf("npcx : " + event.getTarget().getClass().toString());
 			
-			try	
+			if (this.monsters.size() > 0)
 			{
 				for (LivingEntity e : this.monsters.values())
 				{
 					if (e.getHealth() > 0)
 			    	{
-						double distancex = getDistance(npc2.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
-					    double distancey = getDistance(npc2.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
-					    double distancez = getDistance(npc2.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
+						double distancex = getDistance(npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
+					    double distancey = getDistance(npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
+					    double distancez = getDistance(npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
 				
 					    if (e instanceof Monster)
 					    {
@@ -212,20 +212,19 @@ public class npcx extends JavaPlugin {
 						    {
 							    //System.out.println("npcx : inmysights !");
 						    	
-						    		npc2.aggro =  e;
-						    		npc2.follow =   e;
+						    		npc.aggro =  e;
+						    		npc.follow =   e;
 						    	
 							}
 					    }
 			    	}
 				}
+			  }
+		}
 			
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-			}
 			
-		}	
+		
+			
 			
 		
 		// check spawngroups

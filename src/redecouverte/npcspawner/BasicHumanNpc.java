@@ -264,8 +264,23 @@ public class BasicHumanNpc extends BasicNpc {
             		
             	}
             } else {
-            	this.mcEntity.animateArmSwing();
-            	ent.damage(dmg);
+            	if (ent instanceof Monster)
+            	{
+            		
+	            	//System.out.println("Gahh! ");
+	            	this.mcEntity.animateArmSwing();
+	            	ent.setHealth(ent.getHealth()-dmg);
+		            //ent.damage(dmg);
+		            
+	            	
+	            	
+	            } else {
+	            	if (ent instanceof Player)
+	            	{
+		            	this.mcEntity.animateArmSwing();
+		            	ent.damage(dmg);
+		            }
+	            }
             }
         } catch (Exception e) {
             e.printStackTrace();
