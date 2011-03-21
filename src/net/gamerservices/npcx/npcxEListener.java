@@ -96,6 +96,8 @@ public class npcxEListener extends EntityListener
 	@Override
 	public void onEntityDeath	(	EntityDeathEvent 	event	)
 	{
+		
+		
 		if (event.getEntity() instanceof Monster)
 		{
 			
@@ -116,25 +118,32 @@ public class npcxEListener extends EntityListener
 	}
 
 	
+	
+	
 	@Override
 	
     public void onEntityTarget(EntityTargetEvent event) {
 
 		
-		
+		//System.out.println("npcx : target onentityevent");
 		
         if (event instanceof NpcEntityTargetEvent) {
             NpcEntityTargetEvent nevent = (NpcEntityTargetEvent)event;
 
             BasicHumanNpc npc = parent.npclist.getBasicHumanNpc(event.getEntity());
             
+    		//System.out.println("npcx : this is an instance of npcentitytargetevent");
             
             
             // Targets player
             
             if (npc != null && event.getTarget() instanceof Player) {
-                if (nevent.getNpcReason() == NpcTargetReason.CLOSEST_PLAYER) {
-                    //Player p = (Player) event.getTarget();
+        		//System.out.println("npcx : npc is not null and target is a player");
+
+            	if (nevent.getNpcReason() == NpcTargetReason.CLOSEST_PLAYER) {
+            		//System.out.println("npcx : reason of event was closest player");
+
+            		//Player p = (Player) event.getTarget();
                     // player is near the npc
                     // do something here
                 	 /*
@@ -146,13 +155,17 @@ public class npcxEListener extends EntityListener
                     event.setCancelled(true);
 
                 } else if (nevent.getNpcReason() == NpcTargetReason.NPC_RIGHTCLICKED) {
-                    Player p = (Player) event.getTarget();
+            		//System.out.println("npcx : reason of event was rightclicked");
+
+                	Player p = (Player) event.getTarget();
+
                     /*
                     p.sendMessage("* You say, 'Hail, " + npc.getName() + "!'");
                     p.sendMessage("* " + npc.getName() + " says, 'Hello " + p.getName() + "!");
                     */
                     
                     for (myPlayer player : parent.players.values()){
+                    	
                     	
             			if (player.player == p)
             			{
@@ -164,6 +177,12 @@ public class npcxEListener extends EntityListener
             				} else {
             					player.target = npc;
                                 p.sendMessage("* Active chat target set as: " + npc.getName());
+            				}
+            				
+            			} else {
+            				if (player.name == p.getName())
+            				{
+            					p.sendMessage("Your name is right but your player is wrong");
             				}
             				
             			}

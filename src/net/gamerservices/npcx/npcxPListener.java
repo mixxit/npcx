@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.HumanEntity;
 import redecouverte.npcspawner.BasicHumanNpc;
@@ -23,11 +24,14 @@ public class npcxPListener extends PlayerListener {
     }
 	public void onPlayerJoin(PlayerEvent event) 
     {
-		myPlayer player = new myPlayer(event.getPlayer());
+		myPlayer player = new myPlayer(event.getPlayer(),event.getPlayer().getName());
 		//System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
 		parent.players.put(player.player.getName(), player);
 		
     }
+	
+	
+	
 	public void onPlayerChat(PlayerChatEvent event)
     {
 		for (myPlayer player : parent.players.values()){
@@ -51,6 +55,23 @@ public class npcxPListener extends PlayerListener {
 			}
 		}
     }
+	
+	public void onPlayerRespawn(PlayerRespawnEvent event)
+	{
+		
+		for (myPlayer player : this.parent.players.values())
+		{
+				// deal with player death changes
+				if (player.player == event.getPlayer())
+				{
+					//System.out.println("npcx : player about to respawn, assigning them to the dead list");
+					player.dead = true;
+					
+				}
+			
+		}
+		
+	}
 	
 	public void onPlayerQuit(PlayerEvent event)
     {

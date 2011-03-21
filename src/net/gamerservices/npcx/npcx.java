@@ -187,6 +187,9 @@ public class npcx extends JavaPlugin {
 	public void think()
 	{
 		tick.schedule(new Tick(this), 1 * 400);
+		
+		fixDead();
+		
 		// check npc logic
 		for (BasicHumanNpc npc : npclist.values())
 		{
@@ -373,6 +376,31 @@ public class npcx extends JavaPlugin {
         return "dummy";
 	}
 	
+	public void fixDead()
+	{
+		int count = 0;
+		for (myPlayer player : players.values())
+		{
+			if (player.dead == true)
+			{
+				for (Player p : getServer().getWorld(this.world).getPlayers())
+				{
+					if (player.name == p.getName())
+					{
+						player.player = p;
+						player.dead = false;
+						count++;
+					}
+				}
+			}
+		}
+		if (count > 0)
+		{
+			System.out.println("npcx : reestablished " + count + " dead players.");
+		}
+		
+	}
+	
 	@Override
 	public void onEnable() {
 		// TODO Auto-generated method stub
@@ -387,6 +415,8 @@ public class npcx extends JavaPlugin {
 	            pm.registerEvent(Type.ENTITY_DAMAGED, mEntityListener, Priority.Normal, this);
 	            pm.registerEvent(Type.ENTITY_DEATH, mEntityListener, Priority.Normal, this);
 	            pm.registerEvent(Type.CREATURE_SPAWN, mEntityListener, Priority.Normal, this);
+	            
+	            pm.registerEvent(Type.PLAYER_RESPAWN, mPlayerListener, Priority.Normal, this);
 	            
 	            pm.registerEvent(Type.PLAYER_JOIN, mPlayerListener, Priority.Normal, this);
 	            pm.registerEvent(Type.PLAYER_QUIT, mPlayerListener, Priority.Normal, this);

@@ -8,11 +8,13 @@ public class myPlayer {
 
 	public Player player;
 	public BasicHumanNpc target;
+	public boolean dead = false;
+	public String name;
 	
-	myPlayer(Player player)
+	myPlayer(Player player, String name)
 	{
 		this.player = player;
-		
+		this.name = name;
 		
 	}
 	
