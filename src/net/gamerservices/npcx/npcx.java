@@ -788,7 +788,15 @@ public class npcx extends JavaPlugin {
             		} else {
             			Statement s2 = conn.createStatement ();
             			
-            			String addspawngroup = "INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES ('" + args[3] + "','" + args[4]+"','"+args[5]+"');";
+            			String reply = "";
+            			int current = 6;
+            			while (current <=  args.length)
+            			{
+            				reply = reply + " "+args[current-1];
+            				current++;
+            			}
+            			
+            			String addspawngroup = "INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES ('" + args[3] + "','" + args[4]+"','"+reply+"');";
         	            Statement stmt = conn.createStatement();
             			stmt.execute(addspawngroup, Statement.RETURN_GENERATED_KEYS);
             			ResultSet keyset = stmt.getGeneratedKeys();
@@ -804,14 +812,14 @@ public class npcx extends JavaPlugin {
             			// add it to any spawned npcs
             			for (myNPC npc : npcs.values())
             			{
-            				System.out.println("npcx : adding trigger for [" + args[3] + "] npc to npc: " + npc.id);
+            				System.out.println("npcx : adding reply ("+ reply + ") and trigger ("+ reply +") for [" + args[3] + "] npc to npc: " + npc.id);
             				if (npc.id.equals(args[3]))
             				{
             					
             					myTriggerword tw = new myTriggerword();
-            					tw.word = args[5];
+            					tw.word = args[4];
             					tw.id = key;
-            					tw.response = args[5];
+            					tw.response = reply;
             					player.sendMessage("Added triggerword to Active npc "+args[3]);
             					npc.triggerwords.put(Integer.toString(tw.id), tw);
             				
