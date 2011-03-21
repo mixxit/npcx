@@ -36,7 +36,7 @@ public class npcxPListener extends PlayerListener {
 				if (player.target != null)
 				{
 					
-					System.out.println("npcx : player chat event ("+ player.player.getName()+")");
+					//System.out.println("npcx : player chat event ("+ player.player.getName()+")");
 					player.player.sendMessage("You say to " + player.target.getName() +", '" + event.getMessage() + "'");
 
 					if (player.target.parent != null)

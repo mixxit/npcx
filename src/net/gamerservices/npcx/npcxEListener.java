@@ -38,7 +38,8 @@ public class npcxEListener extends EntityListener
 				EntityDamageByEntityEvent edee1 = (EntityDamageByEntityEvent)event;
 				if (edee1.getDamager() instanceof HumanEntity) 
 				{
-					System.out.println("npcx : monster go ow");
+					
+					//System.out.println("npcx : monster go ow");
 				}
 					
 				
