@@ -669,7 +669,6 @@ public class npcx extends JavaPlugin {
             		} else {
             			player.sendMessage("Created spawngroup: " + args[2]);
             			
-            			Statement s2 = conn.createStatement ();
             			double x = player.getLocation().getX();
             			double y = player.getLocation().getY();
             			double z = player.getLocation().getZ();
@@ -678,9 +677,14 @@ public class npcx extends JavaPlugin {
             			
             			
             			
-            			String addspawngroup = "INSERT INTO spawngroup (name,x,y,z,pitch,yaw) VALUES ('" + args[2] + "','"+ x +"','"+ y +"','"+ z +"','"+pitch+"','"+yaw+"');";
-            			Statement stmt = conn.createStatement();
-            			stmt.execute(addspawngroup, Statement.RETURN_GENERATED_KEYS);
+            			PreparedStatement stmt = conn.prepareStatement("INSERT INTO spawngroup (name,x,y,z,pitch,yaw) VALUES (?,?,?,?,?,?);");
+            			stmt.setString(1,args[2]);
+            			stmt.setString(2, Double.toString(x));
+            		    stmt.setString(3, Double.toString(y));
+            		    stmt.setString(4, Double.toString(z));
+            		    stmt.setString(5, Double.toString(pitch));
+            		    stmt.setString(6, Double.toString(yaw));
+            			stmt.executeUpdate();
             			ResultSet keyset = stmt.getGeneratedKeys();
             			int key = 0;
             			if ( keyset.next() ) {
@@ -688,6 +692,8 @@ public class npcx extends JavaPlugin {
             			    key = keyset.getInt(1);
             			    
             			}
+            			stmt.close();
+            			
         	            player.sendMessage("Spawngroup ["+ key + "] now active at your position");
             			mySpawngroup sg = new mySpawngroup();
             			sg.id = key;
@@ -701,7 +707,7 @@ public class npcx extends JavaPlugin {
             			
             			this.spawngroups.put(Integer.toString(key),sg);
             			System.out.println("npcx : + cached new spawngroup("+ args[2] + ")");
-        	            s2.close();
+        	            
         	            
             		}
         			
@@ -716,9 +722,13 @@ public class npcx extends JavaPlugin {
             			player.sendMessage("Added to spawngroup " + args[2] + "<"+ args[3]+ ".");
             			
             			// add to database
-            			Statement s2 = conn.createStatement ();
-            			String addspawngroup = "INSERT INTO spawngroup_entries (spawngroupid,npcid) VALUES ('" + args[2] + "','" + args[3] + "');";
-            			s2.executeUpdate(addspawngroup);
+            		
+            			
+            			PreparedStatement s2 = conn.prepareStatement("INSERT INTO spawngroup_entries (spawngroupid,npcid) VALUES (?,?);");
+            			s2.setString(1,args[2]);
+            			s2.setString(2,args[3]);
+            		    
+            			s2.executeUpdate();
         	            player.sendMessage("NPC ["+ args[3] + "] added to group ["+ args[2] + "]");
             			
         	            // add to cached spawngroup
@@ -797,13 +807,20 @@ public class npcx extends JavaPlugin {
             			player.sendMessage("Insufficient arguments /npcx pathgroup create name");
                     	
             		} else {
-            			player.sendMessage("Created pathgroup: " + args[2]);
-                    	
-            			Statement s2 = conn.createStatement ();
-            			String addspawngroup = "INSERT INTO pathgroup (name) VALUES ('" + args[2] + "');";
-        	            s2.executeUpdate(addspawngroup);
-        	            
-        	            s2.close();
+            			
+            			
+            			PreparedStatement statementPCreate = conn.prepareStatement("INSERT INTO pathgroup (name) VALUES (?)");
+            			statementPCreate.setString(1, args[2]);
+            			statementPCreate.executeUpdate();
+        	            statementPCreate.close();
+        	            ResultSet keyset = statementPCreate.getGeneratedKeys();
+            			int key = 0;
+            			if ( keyset.next() ) {
+            			    // Retrieve the auto generated key(s).
+	            			key = keyset.getInt(1);
+	            			
+            			}
+        	            player.sendMessage("Created pathgroup ["+key+"]: " + args[2]);
         	            
             		}
         			
@@ -860,10 +877,14 @@ public class npcx extends JavaPlugin {
             				current++;
             			}
             			
-            			String addspawngroup = "INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES ('" + args[3] + "','" + args[4]+"','"+reply+"');";
-        	            Statement stmt = conn.createStatement();
-            			stmt.execute(addspawngroup, Statement.RETURN_GENERATED_KEYS);
-            			ResultSet keyset = stmt.getGeneratedKeys();
+            			
+            			PreparedStatement statementTword = conn.prepareStatement("INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES (?,?,?)");
+            			statementTword.setString(1,args[3]);
+            			statementTword.setString(1,args[4]);
+            			statementTword.setString(1,reply);
+            			
+            			statementTword.executeUpdate();
+            			ResultSet keyset = statementTword.getGeneratedKeys();
             			int key = 0;
             			if ( keyset.next() ) {
             			    // Retrieve the auto generated key(s).
