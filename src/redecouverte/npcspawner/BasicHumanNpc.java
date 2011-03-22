@@ -26,18 +26,27 @@ public class BasicHumanNpc extends BasicNpc {
 	public double spawnx;
 	public double spawny;
 	public double spawnz;
+	public double spawnyaw;
+	public double spawnpitch;
+	
 	public double seekx;
 	public double seeky;
 	public double seekz;
+	public double seekyaw;
+	public double seekpitch;
+	
 	
     private CHumanNpc mcEntity;
     private static final Logger logger = Logger.getLogger("Minecraft");
     public myNPC parent;
-    public BasicHumanNpc(CHumanNpc entity, String uniqueId, String name, double spawnx, double spawny, double spawnz) {
+    public BasicHumanNpc(CHumanNpc entity, String uniqueId, String name, double spawnx, double spawny, double spawnz,double spawnyaw, double spawnpitch) {
         super(uniqueId, name);
     	this.spawnx = spawnx;
     	this.spawny = spawny;
     	this.spawnz = spawnz;
+    	this.spawnyaw = spawnyaw;
+    	this.spawnpitch = spawnpitch;
+    	
     	
 
         this.mcEntity = entity;
@@ -130,7 +139,11 @@ public class BasicHumanNpc extends BasicNpc {
     		{
     			
     		//	System.out.println("Going home");
-	    		moveTo(spawnx,spawny,spawnz,0,0);
+    			
+    			Double yaw2 = new Double(spawnyaw);
+                Double pitch2 = new Double(spawnpitch);
+                
+	    		moveTo(spawnx,spawny,spawnz,yaw2.floatValue(),pitch2.floatValue());
     		}
     	}
     	

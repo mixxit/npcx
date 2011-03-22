@@ -88,7 +88,7 @@ public class NpcSpawner {
             method.invoke(ws, margs);
 
 
-            return new BasicHumanNpc(eh, uniqueId, name, x,y,z);
+            return new BasicHumanNpc(eh, uniqueId, name, x,y,z, yaw2, pitch2);
 
         } catch (Exception e) {
             e.printStackTrace();
