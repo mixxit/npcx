@@ -414,6 +414,34 @@ public class npcx extends JavaPlugin {
 	public void onEnable() {
 		// TODO Auto-generated method stub
 		 try {	
+	            try 
+	            {
+	            
+			 	System.out.println("npcx : initialising database connection");
+			 	
+			 	try 
+			 	{
+				 	Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+				 		
+			 	} catch (ClassNotFoundException e)
+			 	{
+			 		System.out.println("*****************************************");
+			 		System.out.println("npcx : ERROR - Cannot find MySQL Library!");
+			 		System.out.println("*****************************************");
+			 		return;
+			 	}
+			 	
+			 	try
+			 	{
+			 		conn = DriverManager.getConnection (dsn, dbuser, dbpass);
+			 	} catch (SQLException e)
+			 	{
+			 		System.out.println("*****************************************");
+			 		System.out.println("npcx : ERROR - Error during MySQL login ");
+			 		System.out.println("*****************************************");
+			 		return;
+			 	}
+			 	
 			 	System.out.println("npcx : registering monitored events");
 
 			 	PluginManager pm = getServer().getPluginManager();
@@ -431,12 +459,6 @@ public class npcx extends JavaPlugin {
 	            pm.registerEvent(Type.PLAYER_QUIT, mPlayerListener, Priority.Normal, this);
 	            pm.registerEvent(Type.PLAYER_CHAT, mPlayerListener, Priority.Normal, this);
 	            
-	            try 
-	            {
-	            
-			 	System.out.println("npcx : initialising database connection");
-			 	Class.forName ("com.mysql.jdbc.Driver").newInstance ();
-	            conn = DriverManager.getConnection (dsn, dbuser, dbpass);
 	            	            
 	            Properties config = new Properties();
 	    		BufferedInputStream stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
@@ -516,69 +538,71 @@ public class npcx extends JavaPlugin {
 					
 	            }
 	            
-	            // Load Spawngroups
 	            
-	            
-	      	            
-	            Statement s1 = conn.createStatement ();
-	            s1.executeQuery ("SELECT id, name, category,x,y,z,world,yaw,pitch FROM spawngroup");
-	            ResultSet rs1 = s1.getResultSet ();
-	            int count1 = 0;
-	            System.out.println("npcx : loading spawngroups");
-	            while (rs1.next ())
+	            try 
 	            {
-	            	
-	            	// load spawngroup into cache
-	                int idVal = rs1.getInt ("id");
-	                String nameVal = rs1.getString ("name");
-	                String catVal = rs1.getString ("category");
-	                
-	                //BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
-	                
-	                // Create a new spawngroup
-	                mySpawngroup spawngroup = new mySpawngroup();
-	                spawngroup.name = nameVal;
-	                System.out.println("npcx : + " + nameVal);
-	                spawngroup.id = idVal;
-	                spawngroup.x = Double.parseDouble(rs1.getString ("x"));
-	                spawngroup.y = Double.parseDouble(rs1.getString ("y"));
-	                spawngroup.z = Double.parseDouble(rs1.getString ("z"));
-	                spawngroup.yaw = Double.parseDouble(rs1.getString ("yaw"));
-	                spawngroup.pitch = Double.parseDouble(rs1.getString ("pitch"));
-	                
-	                
-	                // Add to our spawngroup hashmap
-	                this.spawngroups.put(Integer.toString(idVal), spawngroup);
-	                
-	                // Load npcs into spawngroups
-	                Statement s11 = conn.createStatement ();
-		            s11.executeQuery ("SELECT spawngroupid,npcid FROM spawngroup_entries WHERE spawngroupid ="+idVal);
-		            ResultSet rs11 = s11.getResultSet ();
-		            
-		            while (rs11.next ())
+		            // Load Spawngroups
+		            Statement s1 = conn.createStatement ();
+		            s1.executeQuery ("SELECT id, name, category,x,y,z,world,yaw,pitch FROM spawngroup");
+		            ResultSet rs1 = s1.getResultSet ();
+		            int count1 = 0;
+		            System.out.println("npcx : loading spawngroups");
+		            while (rs1.next ())
 		            {
-		            	myNPC npc = new myNPC(this,fetchTriggerWords(rs11.getInt ("npcid")));
-		            	npc.spawngroup = spawngroup;
-		            	npc.id = rs11.getString ("npcid");
-		            	npc.name = dbGetNPCname(npc.id);
-		            	System.out.println("npcx : + npc.name + " + rs11.getString ("npcid"));
 		            	
-		            	spawngroup.npcs.put(rs11.getString ("npcid"), npc);
-		            	
+		            	// load spawngroup into cache
+		                int idVal = rs1.getInt ("id");
+		                String nameVal = rs1.getString ("name");
+		                String catVal = rs1.getString ("category");
+		                
+		                //BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
+		                
+		                // Create a new spawngroup
+		                mySpawngroup spawngroup = new mySpawngroup();
+		                spawngroup.name = nameVal;
+		                System.out.println("npcx : + " + nameVal);
+		                spawngroup.id = idVal;
+		                spawngroup.x = Double.parseDouble(rs1.getString ("x"));
+		                spawngroup.y = Double.parseDouble(rs1.getString ("y"));
+		                spawngroup.z = Double.parseDouble(rs1.getString ("z"));
+		                spawngroup.yaw = Double.parseDouble(rs1.getString ("yaw"));
+		                spawngroup.pitch = Double.parseDouble(rs1.getString ("pitch"));
+		                
+		                
+		                // Add to our spawngroup hashmap
+		                this.spawngroups.put(Integer.toString(idVal), spawngroup);
+		                
+		                // Load npcs into spawngroups
+		                Statement s11 = conn.createStatement ();
+			            s11.executeQuery ("SELECT spawngroupid,npcid FROM spawngroup_entries WHERE spawngroupid ="+idVal);
+			            ResultSet rs11 = s11.getResultSet ();
+			            
+			            while (rs11.next ())
+			            {
+			            	myNPC npc = new myNPC(this,fetchTriggerWords(rs11.getInt ("npcid")));
+			            	npc.spawngroup = spawngroup;
+			            	npc.id = rs11.getString ("npcid");
+			            	npc.name = dbGetNPCname(npc.id);
+			            	System.out.println("npcx : + npc.name + " + rs11.getString ("npcid"));
+			            	
+			            	spawngroup.npcs.put(rs11.getString ("npcid"), npc);
+			            	
+			            }
+		                
+		               /* System.out.println (
+		                        "id = " + idVal
+		                        + ", name = " + nameVal
+		                        + ", category = " + catVal);*/
+		                ++count1;
+		                
+		                
 		            }
-	                
-	               /* System.out.println (
-	                        "id = " + idVal
-	                        + ", name = " + nameVal
-	                        + ", category = " + catVal);*/
-	                ++count1;
-	                
-	                
+		            rs1.close ();
+		            s1.close ();
+		            System.out.println (count1 + " spawngroups loaded");
+	            } catch (NullPointerException e) { 
+			 		System.out.println("npcx : ERROR - spawngroup loading cancelled!");
 	            }
-	            rs1.close ();
-	            s1.close ();
-	            System.out.println (count1 + " spawngroups loaded");
-
 	            
 	            //this.HumanNPCList = new BasicHumanNpcList();
 			 	//System.out.println("npcx : caching npcs");
