@@ -880,8 +880,8 @@ public class npcx extends JavaPlugin {
             			
             			PreparedStatement statementTword = conn.prepareStatement("INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES (?,?,?)");
             			statementTword.setString(1,args[3]);
-            			statementTword.setString(1,args[4]);
-            			statementTword.setString(1,reply);
+            			statementTword.setString(2,args[4]);
+            			statementTword.setString(3,reply);
             			
             			statementTword.executeUpdate();
             			ResultSet keyset = statementTword.getGeneratedKeys();
