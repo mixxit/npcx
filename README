@@ -1,0 +1,273 @@
+NPCX
+=========================
+
+npcx - npc spawngroups 0.01 
+
+Source: https://github.com/mixxit/npcx
+Test Jar: http://www.gamerservices.net/gs/npcx.jar
+
+Implements everquest style npc spawngroups and allows you to make 
+persistent npcs/rare npcs spawn around your map. Npcs will also fight 
+back if attacked and even talk on right click.
+
+Version 0.01 - Got a basic implementation going
+Test Server: 89.145.87.92
+
+
+_____________
+
+Commands
+Code:
+/npcx spawngroup create spawngroupname - Adds a new blank spawngroup 
+container at your position facing your direction
+/npcx spawngroup add spawngroupid npcid - Adds an npcID to the 
+spawngroup container
+/npcx spawngroup list - lists all spawngroups and their spawngroup IDs
+/npcx npc spawn name - Temporarily spawns an npc at your spot
+/npcx npc create name - Creates a new npc (that needs to be added to a 
+spawngroup)
+/npcx npc list Lists all npcs and their NPC IDs
+/npcx npc triggerword add NPCID TRIGGERWORD NPCS RESPONSE
+Special Trigger Words:
+'default' - sets default response to unknown word
+EG: /npcx npc triggerword add 1 default My default response!
+
+Installation Steps
+Before you begin you need to make sure you have the mysql connector in 
+your jre lib/ext directory, there's a few threads on this forum on how 
+to do that or see below.
+
+YOU MUST DO THIS
+Extract the mysql connect jar file from the following MySQL Connector 
+zip): 
+http://mysql.eukhost.com/Downloads/Connector-J/mysql-connector-java-5.1.6.tar.gz
+
+Copy the JAR file from the zip:
+> into the following location on Linux
+/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/ext
+
+> on my Windows machine i have it here
+C:\Program Files\Java\jre6\lib\ext
+
+Mysql Tables
+
+Step1
+Ensure you create a user with access to the following database access in 
+MySQL
+
+prop.setProperty(PROP_DBHOST, "localhost");
+prop.setProperty(PROP_DBUSER, "npcx");
+prop.setProperty(PROP_DBPASS, "p4ssw0rd!");
+prop.setProperty(PROP_DBNAME, "npcx");
+prop.setProperty(PROP_DBPORT, "3306");
+
+Step2
+if this is your first time, the following tables will be created for you 
+automatically
+
+If it's not the first time and you want to reset your tables, change 
+your properties file 'update' to true.
+
+Or manually add them yourself and change updates to false:
+
+Code:
+CREATE TABLE npc ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY 
+(id),name CHAR(40),category CHAR(40))[/FONT]
+CREATE TABLE spawngroup ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, 
+PRIMARY KEY (id),name CHAR(40),world CHAR(40),category CHAR(40),x 
+CHAR(40), y CHAR(40), z CHAR(40),yaw CHAR(40), pitch CHAR(40))
+CREATE TABLE spawngroup_entries ( id INT UNSIGNED NOT NULL 
+AUTO_INCREMENT, PRIMARY KEY (id),spawngroupid int,npcid int)
+CREATE TABLE pathgroup ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, 
+PRIMARY KEY (id),name CHAR(40),category CHAR(40))
+CREATE TABLE pathgroup_entries ( id INT UNSIGNED NOT NULL 
+AUTO_INCREMENT, PRIMARY KEY (id),s int,pathgroup int, name CHAR(40),x 
+CHAR(40),y CHAR(40),z CHAR(40))
+Step3
+
+Now copy the npcx.jar into your plugins folder and launch bukkit
+The tables above will be generated.
+
+Step4
+
+If your world name is different to 'world' you will need to now close 
+bukkit, edit your npcx.properties file and change world to the correct 
+worldname
+
+Step5
+
+Launch bukkit and begin creating your first spawn group at your location 
+with
+Code:
+/npcx spawngroup create myfirstgroup
+Now create an npc called Guard
+Code:
+/npcx npc create Guard
+Now add guard's id to your spawn group number
+Code:
+/npcx spawngroup add 1 1
+
+
+Guard should now spawn permanently at the spawngroups location.
+
+Right clicking will begin (T) chat with him. Moving out of range or 
+right clicking him again will end chat.
+
+To have him respond to words or change his default response, see the 
+sections below.
+
+Using NPCX
+
+Creating Spawngroups
+
+Spawngroups are placed at any X Y Z co-ordinate and contain a group of 
+npcs. Any one of them could spawn. Spawngroups can also be empty. They 
+are the basis for static npc spawning.
+
+Add npcs to the spawngroup by using the /npcx spawngroup add command. An 
+npc out of this group will now spawn at the designated position.
+
+Code:
+/npcx spawngroup create spawngroupname - Adds a new blank spawngroup 
+container at your position
+/npcx spawngroup add spawngroupid npcid - Adds an npc to the spawngroup 
+container
+/npcx spawngroup list - lists all spawngroups
+Overview:
+
+A spawngroup is like a container. It contains many npcs and any one of 
+them could spawn randomly. If you placed just one npc in the group only 
+one npc would spawn. This allows you to create 'rare' npcs by having 
+lots of the same npc in a container and then 1 rare.
+Spawngroups need to be assigned to a location, which is assigned based 
+on the admins location. Once assigned that group will spawn in that 
+location and remain stationary
+
+If a path is assigned to the spawn group, the npc will follow the path 
+continuously after spawning
+
+Once an NPC in a SpawnGroup dies a new npc will be chosen out of the 
+spawn group to spawn in its place after a default set time (ie 20 
+minutes) at the location of 'spawngroup place'
+
+todo: functionality
+adds an npc to a spawngroup with a chance to spawn percentage
+move spawngroup spawn at your location
+assigns a path to the spawngroup
+
+Creating NPCs
+
+Code:
+/npcx npc spawn name - Temporarily spawns an npc at your spot
+/npcx npc create name - Creates a new npc (that needs to be added to a 
+spawngroup)
+/npcx npc list Lists all npcs (this needs to support querying by name 
+output limits)
+Overview:
+NPCs are just that, definitions of the mob you want to appear in game. 
+There can be multiple of the same. They are temporary and do not return 
+after death.
+
+An npc can be in many spawngroups, for example if you wanted a custom 
+npc called 'Thief' to spawn in several locations you would put the npc 
+into many spawn groups
+Npcs have chat responses attached to them that allow them to offer 
+quests and have alternate greeting messages.
+
+In the future these npcs will support npctypes which determines how the 
+npc will respond to 
+right click, attack, etc events
+
+ie for: bankers, normal npcs, merchants etc
+Also loottables will be assignable
+
+todo: functionality
+creates a new npc with name
+
+Adding NPCs to containers
+
+Code:
+/npcx spawngroup add groupid npcid
+
+get these from spawngroup list and npc list
+
+Quest System / Chat to NPCs
+
+Right clicking an npc sets it as your chat target. You can say anything 
+to the npc using the usual (T) chat command. The npc will then run this 
+text through myNPC.parseChat()
+You can get an npc to respond to triggerwords with predefined responses 
+which admins will be able to attach to an npc using slash commands such 
+as 'Hello' responding with 'Hello, do you want to help with a [quest]' 
+which leads onto the next chat response of 'Quest'
+Syntax
+
+Code:
+/npcx npc triggerword add NPCID word response as long as you like
+Adding a new triggerword called 'default' to an npc will override the 
+npcs default response to unknown questions
+
+ie:
+Code:
+/npcx npc triggerword add 1 default My default response!
+Note: An npc without any triggerwords will respond with 'Im sorry name 
+im rather busy right now'
+Note: you cannot talk to temporary 'spawn' npcs as they have no 
+responses configured
+
+NPC Combat
+
+Npcs will currently engage in combat and chase anyone that attacks them. 
+When they die, they will be gone forever unless a spawngroup respawns 
+them.
+Npcs will also attack nearby monsters
+Need to add loottables to onnpcdeath and perhaps an area of effect 
+'panic' that will request other npcs around it come to its aid
+Also need to implement factions to cause a permanent faction hit for a 
+player when murdering an npc
+
+Path Groups - (WIP)
+
+NOT IMPLEMENTED YET
+
+Code:
+/npcx pathgroup create|delete name - Creates/deletes a pathgroup
+/npcx pathgroup add pathgroupname orderinteger - Adds your current 
+position to the path group with the necessary integer
+/npcx pathgroup list name - Lists the coordinates and points in the path 
+group
+Overview:
+
+Path groups are containers of path locations assigned to SpawnGroups. 
+They are used to determine the route of an npc after it spawns
+
+When a path group is created, it is given several orderIDs beginning 
+with 1, the npc will move from point to point in the order of the 
+orderID
+
+In the future this will allow different types of pathgroups which will 
+effect the way the npc traverses the order
+ie random, byID and circular
+todo: functionality
+creates a new path group
+assigns a location to a path group
+
+FAQ
+
+Q I get error .... [SEVERE] 
+com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications 
+link failure ......
+
+A Did you create the user npcx + password and database npcx and assign 
+permissions in MySQL?
+
+Q I get error ..... java.lang.ClassNotFoundException: 
+com.mysql.jdbc.Driver 
+
+A Did you copy the mysql connector into your lib/ext folder?
+
+Q 
+....sun.reflect.UnsafeQualifiedObjectFieldAccessorImpl.get(UnsafeQualifiedObjectFieldAccessorImpl.java:38) 
+....
+A Did you change your world name in the npcx.properties file?
+
