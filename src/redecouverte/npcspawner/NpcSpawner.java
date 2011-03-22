@@ -59,13 +59,16 @@ public class NpcSpawner {
         return null;
     }
 
-    public static BasicHumanNpc SpawnBasicHumanNpc(String uniqueId, String name, World world, double x, double y, double z, float yaw, float pitch) {
+    public static BasicHumanNpc SpawnBasicHumanNpc(String uniqueId, String name, World world, double x, double y, double z, double yaw, double pitch) {
         try {
             WorldServer ws = GetWorldServer(world);
             MinecraftServer ms = GetMinecraftServer(ws.getServer());
 
             CHumanNpc eh = new CHumanNpc(ms, ws, name, new ItemInWorldManager(ws));
-            eh.c(x, y, z, yaw, pitch);
+            Double yaw2 = new Double(yaw);
+            Double pitch2 = new Double(pitch);
+            
+            eh.c(x, y, z, yaw2.floatValue(), pitch2.floatValue());
 
             int m = MathHelper.b(eh.locX / 16.0D);
             int n = MathHelper.b(eh.locZ / 16.0D);

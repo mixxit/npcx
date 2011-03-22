@@ -277,7 +277,9 @@ public class npcx extends JavaPlugin {
 							npc.spawngroup = spawngroup;
 							
 							//System.out.println("npcx : made spawngroup active");
-							BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,(float)spawngroup.yaw , (float)spawngroup.pitch);
+							Double  pitch = new Double(spawngroup.pitch);
+							Double yaw = new Double(spawngroup.yaw);
+							BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
 			                npc.npc = hnpc;
 			                
 			                hnpc.parent = npc;
@@ -512,7 +514,7 @@ public class npcx extends JavaPlugin {
 	            
 	      	            
 	            Statement s1 = conn.createStatement ();
-	            s1.executeQuery ("SELECT id, name, category,x,y,z,world FROM spawngroup");
+	            s1.executeQuery ("SELECT id, name, category,x,y,z,world,yaw,pitch FROM spawngroup");
 	            ResultSet rs1 = s1.getResultSet ();
 	            int count1 = 0;
 	            System.out.println("npcx : loading spawngroups");

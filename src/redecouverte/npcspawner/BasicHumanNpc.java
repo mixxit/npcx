@@ -84,33 +84,36 @@ public class BasicHumanNpc extends BasicNpc {
     {
     	//System.out.println("npcx : think");
     			
-    	for (myPlayer p : this.parent.parent.players.values())
+    	if (this.parent != null)
     	{
-    		if (p.target == this)
-    		{
-	    		double x1 = p.player.getLocation().getX();
-	    		double y1 = p.player.getLocation().getX();
-	    		double z1 = p.player.getLocation().getX();
-	    		
-	    		double x2 = this.getBukkitEntity().getLocation().getX();
-	    		double y2 = this.getBukkitEntity().getLocation().getY();
-	    		double z2 = this.getBukkitEntity().getLocation().getZ();
-	    		int xdist = (int) (x1 - x2);
-	    		int ydist = (int) (y1 - y2);
-	    		int zdist = (int) (z1 - z2);
-	    		//System.out.println("Checking player: " + xdist );
-	    		if ((xdist < -1 || xdist > 1) && (ydist < -1 || ydist > 1) && (zdist < -1 || zdist > 1))
+	    	for (myPlayer p : this.parent.parent.players.values())
+	    	{
+	    		if (p.target == this)
 	    		{
-	    			//System.out.println("player out of range, removing target");
-		    		p.target = null;
-		    		p.player.sendMessage("You have lost your target");
+		    		double x1 = p.player.getLocation().getX();
+		    		double y1 = p.player.getLocation().getX();
+		    		double z1 = p.player.getLocation().getX();
+		    		
+		    		double x2 = this.getBukkitEntity().getLocation().getX();
+		    		double y2 = this.getBukkitEntity().getLocation().getY();
+		    		double z2 = this.getBukkitEntity().getLocation().getZ();
+		    		int xdist = (int) (x1 - x2);
+		    		int ydist = (int) (y1 - y2);
+		    		int zdist = (int) (z1 - z2);
+		    		//System.out.println("Checking player: " + xdist );
+		    		if ((xdist < -1 || xdist > 1) && (ydist < -1 || ydist > 1) && (zdist < -1 || zdist > 1))
+		    		{
+		    			//System.out.println("player out of range, removing target");
+			    		p.target = null;
+			    		p.player.sendMessage("You have lost your target");
+		    		}
+		    			
+		    		
+		    		
+			    	// remove target
 	    		}
-	    			
 	    		
-	    		
-		    	// remove target
-    		}
-    		
+	    	}
     	}
     	
     	
