@@ -58,7 +58,7 @@ public class npcx extends JavaPlugin {
 	public HashMap<String, myPlayer> players = new HashMap<String, myPlayer>();
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
 	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
-	public HashMap<String, Monster> monsters = new HashMap<String, Monster>();
+	public List< Monster > monsters = new CopyOnWriteArrayList< Monster >();
 	private Properties prop;
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
 	private String dsn;
@@ -209,11 +209,7 @@ public class npcx extends JavaPlugin {
 				try
 				{
 					
-					List< Monster > list = new CopyOnWriteArrayList< Monster >();
-			        
-					list = (List<Monster>) this.monsters.values();
-					
-					for (LivingEntity e : this.monsters.values())
+					for (LivingEntity e : this.monsters)
 					{
 						if (e.getHealth() > 0)
 				    	{
@@ -237,6 +233,7 @@ public class npcx extends JavaPlugin {
 				} catch (Exception e)
 				{
 					// Concurrent modification occured
+					e.printStackTrace();
 				}
 			  }
 		}

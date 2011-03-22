@@ -113,7 +113,7 @@ public class npcxEListener extends EntityListener
 		if (event.getEntity() instanceof Monster)
 		{
 			//System.out.println("npcx : registered monster");
-			this.parent.monsters.put(Integer.toString(event.getEntity().getEntityId()), (Monster)event.getEntity());
+			this.parent.monsters.add((Monster)event.getEntity());
 		}
 	}
 
