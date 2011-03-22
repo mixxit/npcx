@@ -284,7 +284,7 @@ public class npcx extends JavaPlugin {
 			                
 			                hnpc.parent = npc;
 			                
-							this.npclist.put(npc.id, hnpc);
+							this.npclist.put(spawngroup.id + "" + npc.id, hnpc);
 							this.npcs.put(npc.id,npc);
 							spawngroup.active = true;
 						}

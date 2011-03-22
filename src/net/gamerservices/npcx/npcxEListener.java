@@ -83,7 +83,7 @@ public class npcxEListener extends EntityListener
 		            {
 		            	npc.follow = null;
 						npc.aggro = null;
-						System.out.println("npcx : forgot about target");
+						//System.out.println("npcx : forgot about target");
 		            	// do not modify mobs health
 		            }
 		            
@@ -130,14 +130,32 @@ public class npcxEListener extends EntityListener
         if (event instanceof NpcEntityTargetEvent) {
             NpcEntityTargetEvent nevent = (NpcEntityTargetEvent)event;
 
-            BasicHumanNpc npc = parent.npclist.getBasicHumanNpc(event.getEntity());
+/*            for (myNPC n : parent.npcs.values())
+            {
+            }*/
             
+            BasicHumanNpc npc = parent.npclist.getBasicHumanNpc(event.getEntity());
     		//System.out.println("npcx : this is an instance of npcentitytargetevent");
             
             
             // Targets player
-            
-            if (npc != null && event.getTarget() instanceof Player) {
+    		if (npc == null)
+    		{
+    			
+    			System.out.println("npcx : npc is null");
+    			/*for (myNPC n : parent.npcs.values())
+                {
+    				if (nevent.getTarget() == n.npc)
+    				{
+    					//System.out.println("npcx : npc found!");
+    					npc = n.npc;
+    				}
+                }*/
+    			event.setCancelled(true);
+    		}
+    		
+            if (npc != null && event.getTarget() instanceof Player) 
+            {
         		//System.out.println("npcx : npc is not null and target is a player");
 
             	if (nevent.getNpcReason() == NpcTargetReason.CLOSEST_PLAYER) {
@@ -197,7 +215,7 @@ public class npcxEListener extends EntityListener
                     //p.sendMessage("<" + npc.getName() + "> Stop bouncing on me!");
                     event.setCancelled(true);
                 }
-            }
+            } 
         }
 
     }
