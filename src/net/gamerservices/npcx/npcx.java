@@ -677,7 +677,7 @@ public class npcx extends JavaPlugin {
             			
             			
             			
-            			PreparedStatement stmt = conn.prepareStatement("INSERT INTO spawngroup (name,x,y,z,pitch,yaw) VALUES (?,?,?,?,?,?);");
+            			PreparedStatement stmt = conn.prepareStatement("INSERT INTO spawngroup (name,x,y,z,pitch,yaw) VALUES (?,?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
             			stmt.setString(1,args[2]);
             			stmt.setString(2, Double.toString(x));
             		    stmt.setString(3, Double.toString(y));
@@ -724,7 +724,7 @@ public class npcx extends JavaPlugin {
             			// add to database
             		
             			
-            			PreparedStatement s2 = conn.prepareStatement("INSERT INTO spawngroup_entries (spawngroupid,npcid) VALUES (?,?);");
+            			PreparedStatement s2 = conn.prepareStatement("INSERT INTO spawngroup_entries (spawngroupid,npcid) VALUES (?,?);",Statement.RETURN_GENERATED_KEYS);
             			s2.setString(1,args[2]);
             			s2.setString(2,args[3]);
             		    
@@ -809,7 +809,7 @@ public class npcx extends JavaPlugin {
             		} else {
             			
             			
-            			PreparedStatement statementPCreate = conn.prepareStatement("INSERT INTO pathgroup (name) VALUES (?)");
+            			PreparedStatement statementPCreate = conn.prepareStatement("INSERT INTO pathgroup (name) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
             			statementPCreate.setString(1, args[2]);
             			statementPCreate.executeUpdate();
         	            statementPCreate.close();
@@ -878,7 +878,7 @@ public class npcx extends JavaPlugin {
             			}
             			
             			
-            			PreparedStatement statementTword = conn.prepareStatement("INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES (?,?,?)");
+            			PreparedStatement statementTword = conn.prepareStatement("INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES (?,?,?)",Statement.RETURN_GENERATED_KEYS);
             			statementTword.setString(1,args[3]);
             			statementTword.setString(2,args[4]);
             			statementTword.setString(3,reply);
@@ -923,9 +923,9 @@ public class npcx extends JavaPlugin {
                     	
             			Statement s2 = conn.createStatement ();
             			
-            			String addspawngroup = "INSERT INTO npc (name) VALUES ('" + args[2] + "');";
-        	            Statement stmt = conn.createStatement();
-            			stmt.execute(addspawngroup, Statement.RETURN_GENERATED_KEYS);
+        	            PreparedStatement stmt = conn.prepareStatement("INSERT INTO npc (name) VALUES (?);",Statement.RETURN_GENERATED_KEYS);
+        	            stmt.setString(1, args[2]);
+        	            stmt.executeUpdate();
             			ResultSet keyset = stmt.getGeneratedKeys();
             			int key = 0;
             			if ( keyset.next() ) {
