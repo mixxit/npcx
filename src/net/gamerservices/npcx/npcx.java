@@ -16,9 +16,12 @@ import org.bukkit.event.*;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.CreatureType;
+
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Timer;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import org.bukkit.event.Event.Type;
 import java.util.logging.Logger;
@@ -191,6 +194,8 @@ public class npcx extends JavaPlugin {
 		fixDead();
 		
 		// check npc logic
+		
+		
 		for (BasicHumanNpc npc : npclist.values())
 		{
 			npc.think();
@@ -203,6 +208,11 @@ public class npcx extends JavaPlugin {
 			{
 				try
 				{
+					
+					List< Monster > list = new CopyOnWriteArrayList< Monster >();
+			        
+					list = (List<Monster>) this.monsters.values();
+					
 					for (LivingEntity e : this.monsters.values())
 					{
 						if (e.getHealth() > 0)
