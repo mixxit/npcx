@@ -90,7 +90,7 @@ public class myNPC {
 		String newresponse = response;
 		if (response.contains("bankbalance"))
 		{
-			System.out.println("Replacing bankbalance variable");
+			//System.out.println("Replacing bankbalance variable");
 			Account account = iConomy.getBank().getAccount(player.getName());
 			newresponse = response.replaceAll("bankbalance", Double.toString(account.getBalance()));
 			
