@@ -8,6 +8,7 @@ public class myNPC {
 	public String id = "0";
 	String category = "container";
 	public BasicHumanNpc npc;
+	public myFaction faction;
 	public mySpawngroup spawngroup;
 
 	public HashMap<String, myTriggerword> triggerwords = new HashMap<String, myTriggerword>();

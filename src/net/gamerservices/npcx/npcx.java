@@ -198,13 +198,58 @@ public class npcx extends JavaPlugin {
 		// check npc logic
 		
 		
-		for (BasicHumanNpc npc : npclist.values())
+		for (myNPC npc : npcs.values())
 		{
-			npc.think();
+			npc.npc.think();
 			
 			
 			//System.out.println("npcx : " + event.getEntity().getClass().toString());
-			//System.out.printlnf("npcx : " + event.getTarget().getClass().toString());
+			//System.out.println("npcx : " + event.getTarget().getClass().toString());
+			
+			if (this.players.size() > 0)
+			{
+				try
+				{
+					for (myPlayer player : this.players.values())
+					{
+						if (player.player != null)
+						{
+							if (player.player.getHealth() > 0)
+					    	{
+								double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), player.player.getLocation().getX());
+							    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), player.player.getLocation().getY());
+							    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), player.player.getLocation().getZ());
+							    
+							    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+							    {
+							    		if (npc.parent != null)
+							    		{
+							    			if (npc.npc.parent.faction != null)
+							    			{
+							    				if (npc.npc.parent.faction.base < 1000)
+							    				{
+							    					npc.npc.aggro = player.player;
+							    					npc.npc.follow = player.player;
+							    				}
+							    			} else {
+							    				//System.out.println("npcx : i have no faction so ill be be neutral");
+							    			}
+							    		}
+							    	
+								}
+							    
+								
+					    	}
+						}
+					}
+				}
+					catch (Exception e)
+				{
+					// Concurrent modification occured
+					e.printStackTrace();
+				}
+				
+			}
 			
 			if (this.monsters.size() > 0)
 			{
@@ -215,9 +260,9 @@ public class npcx extends JavaPlugin {
 					{
 						if (e.getHealth() > 0)
 				    	{
-							double distancex = getDistance(npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
-						    double distancey = getDistance(npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
-						    double distancez = getDistance(npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
+							double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
+						    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
+						    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
 					
 						    if (e instanceof Monster)
 						    {
@@ -225,19 +270,20 @@ public class npcx extends JavaPlugin {
 							    {
 								    //System.out.println("npcx : inmysights !");
 							    	
-							    		npc.aggro =  e;
-							    		npc.follow =   e;
+							    		npc.npc.aggro =  e;
+							    		npc.npc.follow =   e;
 							    	
 								}
 						    }
 				    	}
 					}
-				} catch (Exception e)
+				} 
+					catch (Exception e)
 				{
 					// Concurrent modification occured
 					e.printStackTrace();
 				}
-			  }
+			}
 		}
 			
 			
@@ -332,7 +378,7 @@ public class npcx extends JavaPlugin {
 				dbname = config.getProperty("db-name");
 				dbport = config.getProperty("db-port");
 				world = config.getProperty("world");
-				this.world = world;
+				
 				update = config.getProperty("update");
 				
 				dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
@@ -386,6 +432,52 @@ public class npcx extends JavaPlugin {
 		}
         return "dummy";
 	}
+	
+	public myFaction getFactionByID(int id)
+	{
+		for (myFaction f : factions)
+		{
+			if (f.id == id)
+			{
+				return f;
+			}
+		}
+		
+		return null;
+		
+	}
+	
+	public myFaction dbGetNPCfaction(String string)
+	{
+		try
+		{
+			Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+	        conn = DriverManager.getConnection (dsn, dbuser, dbpass);
+	        PreparedStatement s11 = conn.prepareStatement("SELECT faction_id FROM npc WHERE id = ?",Statement.RETURN_GENERATED_KEYS);
+	        s11.setInt(1, Integer.parseInt(string));
+	        s11.executeQuery();
+	        ResultSet rs11 = s11.getResultSet ();
+	        
+	        while (rs11.next ())
+	        {
+	        	int factionid = rs11.getInt ("faction_id");
+	        	for (myFaction f : factions)
+	        	{
+	        		if (f.id == factionid)
+	        		{
+	        			return f;
+	        		}
+	        	}
+	        	
+	        }
+		} catch (Exception e)
+		{
+	        return null;
+	
+		}
+        return null;
+	}
+	
 	
 	public void fixDead()
 	{
@@ -481,9 +573,6 @@ public class npcx extends JavaPlugin {
 	            	
 		            /*
 		             * One time Database creation / TODO: Auto Upgrades
-		             * 
-		             * 
-		             * 
 		             * 
 		             * */
 	            	
@@ -585,7 +674,7 @@ public class npcx extends JavaPlugin {
 	            
 	            try 
 	            {
-		            // Load Spawngroups
+		            // Load faction_list
 		            Statement s1 = conn.createStatement ();
 		            s1.executeQuery ("SELECT * FROM faction_list");
 		            ResultSet rs1 = s1.getResultSet ();
@@ -646,18 +735,29 @@ public class npcx extends JavaPlugin {
 		                
 		                // Load npcs into spawngroups
 		                Statement s11 = conn.createStatement ();
-			            s11.executeQuery ("SELECT spawngroupid,npcid FROM spawngroup_entries WHERE spawngroupid ="+idVal);
+			            s11.executeQuery ("SELECT spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
 			            ResultSet rs11 = s11.getResultSet ();
 			            
 			            while (rs11.next ())
 			            {
+			            	// Load NPCs
+			            	
 			            	myNPC npc = new myNPC(this,fetchTriggerWords(rs11.getInt ("npcid")));
 			            	npc.spawngroup = spawngroup;
 			            	npc.id = rs11.getString ("npcid");
-			            	npc.name = dbGetNPCname(npc.id);
-			            	//System.out.println("npcx : + npc.name + " + rs11.getString ("npcid"));
+			            	npc.name = rs11.getString ("name");
 			            	
+			            	for (myFaction faction : factions)
+			            	{
+			            		if (rs11.getInt("faction_id") == faction.id)
+			            			npc.faction = faction;
+			            	}
+			            	
+			            	//System.out.println("npcx : + npc.name + " + rs11.getString ("npcid"));
 			            	spawngroup.npcs.put(rs11.getString ("npcid"), npc);
+			            	
+			            	
+			            	
 			            	
 			            }
 		                
@@ -716,14 +816,21 @@ public class npcx extends JavaPlugin {
                 return false;
             }
 
+            Player player = (Player) sender;
+            
             if (args.length < 1) {
-                return false;
+            	player.sendMessage("Insufficient arguments /npcx spawngroup");
+            	player.sendMessage("Insufficient arguments /npcx faction");
+            	player.sendMessage("Insufficient arguments /npcx npc");
+            	player.sendMessage("Insufficient arguments /npcx pathgroup");
+            	
+            	return false;
             }
 
             String subCommand = args[0].toLowerCase();
         	//debug: logger.log(Level.WARNING, "npcx : " + command.getName().toLowerCase() + "(" + subCommand + ")");
 
-            Player player = (Player) sender;
+            
             Location l = player.getLocation();
             
             if (subCommand.equals("spawngroup"))
@@ -837,6 +944,7 @@ public class npcx extends JavaPlugin {
         	            		
         	            		myNPC npc = new myNPC(this,fetchTriggerWords(Integer.parseInt(args[3])));
         	            		npc.name = dbGetNPCname(args[3]);
+        	            		npc.faction = dbGetNPCfaction(args[3]);
         	            		npc.spawngroup = sg;
         	            		npc.id = args[3];
         	            		System.out.println("npcx : + cached new spawngroup entry("+ args[3] + ")");
@@ -893,7 +1001,7 @@ public class npcx extends JavaPlugin {
             
             	
             	if (args.length < 2) {
-            		player.sendMessage("Insufficient arguments /npcx faction create|delete baseamount factionname");
+            		player.sendMessage("Insufficient arguments /npcx faction create baseamount factionname");
                 	player.sendMessage("Insufficient arguments /npcx faction list");
                 	return false;
             		
@@ -907,30 +1015,34 @@ public class npcx extends JavaPlugin {
                     	
             		} else {
            			
-            			
-            			PreparedStatement stmt = conn.prepareStatement("INSERT INTO faction_list (name,base) VALUES (?,?);",Statement.RETURN_GENERATED_KEYS);
-            			stmt.setString(1,args[3]);
-            			stmt.setInt(2,Integer.parseInt(args[2]));
-            			
-            			stmt.executeUpdate();
-            			ResultSet keyset = stmt.getGeneratedKeys();
-            			int key = 0;
-            			if ( keyset.next() ) {
-            			    // Retrieve the auto generated key(s).
-            			    key = keyset.getInt(1);
-            			    
+            			try
+            			{
+	            			PreparedStatement stmt = conn.prepareStatement("INSERT INTO faction_list (name,base) VALUES (?,?);",Statement.RETURN_GENERATED_KEYS);
+	            			stmt.setString(1,args[3]);
+	            			stmt.setInt(2,Integer.parseInt(args[2]));
+	            			
+	            			stmt.executeUpdate();
+	            			ResultSet keyset = stmt.getGeneratedKeys();
+	            			int key = 0;
+	            			if ( keyset.next() ) {
+	            			    // Retrieve the auto generated key(s).
+	            			    key = keyset.getInt(1);
+	            			    
+	            			}
+	            			stmt.close();
+	            			
+	        	            player.sendMessage("Faction ["+ key + "] now active");
+	            			myFaction fa = new myFaction();
+	            			fa.id = key;
+	            			fa.name = args[3];
+	            			fa.base = Integer.parseInt(args[2]);
+	            			
+	            			this.factions.add(fa);
+	            			System.out.println("npcx : + cached new faction("+ args[3] + ")");
+            			} catch (IndexOutOfBoundsException e)
+            			{
+            				player.sendMessage("Insufficient arguments");
             			}
-            			stmt.close();
-            			
-        	            player.sendMessage("Faction ["+ key + "] now active");
-            			myFaction fa = new myFaction();
-            			fa.id = key;
-            			fa.name = args[3];
-            			fa.base = Integer.parseInt(args[2]);
-            			
-            			this.factions.add(fa);
-            			System.out.println("npcx : + cached new faction("+ args[3] + ")");
-        	            
         	            
             		}
         			
@@ -972,7 +1084,7 @@ public class npcx extends JavaPlugin {
             	if (args.length < 2) {
             		// todo: need to implement npc types here ie: 0 = default 1 = banker 2 = merchant
             		// todo: need to implement '/npcx npc edit' here
-                	player.sendMessage("Insufficient arguments /npcx pathgroup create|delete name");
+                	player.sendMessage("Insufficient arguments /npcx pathgroup create name");
 
                 	// todo needs to force the player to provide a search term to not spam them with lots of results in the event of a huge npc list
                 	player.sendMessage("Insufficient arguments /npcx pathgroup list");
@@ -1028,7 +1140,7 @@ public class npcx extends JavaPlugin {
             	if (args.length < 2) {
             		// todo: need to implement npc types here ie: 0 = default 1 = banker 2 = merchant
             		// todo: need to implement '/npcx npc edit' here
-                	player.sendMessage("Insufficient arguments /npcx npc create|delete name");
+                	player.sendMessage("Insufficient arguments /npcx npc create name");
 
                 	// todo needs to force the player to provide a search term to not spam them with lots of results in the event of a huge npc list
                 	player.sendMessage("Insufficient arguments /npcx npc list");
@@ -1037,7 +1149,7 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx npc spawn name");
                 	
                 	player.sendMessage("Insufficient arguments /npcx npc triggerword add npcid triggerword response");
-                	
+                	player.sendMessage("Insufficient arguments /npcx npc faction npcid factionid");
                     return false;
                 }
             	
@@ -1092,6 +1204,41 @@ public class npcx extends JavaPlugin {
             			
             		}
             		
+            	}
+            	
+            	if (args[1].equals("faction")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx npc faction npcid factionid");
+            			
+            			
+            			
+            		} else {
+
+            			Statement s2 = conn.createStatement ();
+            			
+        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET faction_id = ? WHERE id = ?;");
+        	            stmt.setString(1, args[3]);
+        	            stmt.setString(2, args[2]);
+        	            
+        	            stmt.executeUpdate();
+        	            
+        	            for(myNPC n : npcs.values())
+        	            {
+        	            	if (n.id.matches(args[2]))
+        	            	{
+        	            		
+        	            		n.faction = getFactionByID(Integer.parseInt(args[3]));
+        	            		player.sendMessage("npcx : Updated living npc to cached faction ("+args[3]+"): "+n.faction.name);
+        	            		// when faction changes reset aggro and follow status
+        	            		n.npc.aggro = null;
+        	            		n.npc.follow = null;
+        	            	}
+        	            }
+            			
+            			player.sendMessage("Updated npc faction ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
+        	            
+        	            s2.close();
+            		}
             	}
             	
             	if (args[1].equals("create")) {
