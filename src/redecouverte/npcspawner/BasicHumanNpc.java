@@ -36,7 +36,7 @@ public class BasicHumanNpc extends BasicNpc {
 	public double seekpitch;
 	
 	
-    private CHumanNpc mcEntity;
+    public CHumanNpc mcEntity;
     private static final Logger logger = Logger.getLogger("Minecraft");
     public myNPC parent;
     public BasicHumanNpc(CHumanNpc entity, String uniqueId, String name, double spawnx, double spawny, double spawnz,double spawnyaw, double spawnpitch) {

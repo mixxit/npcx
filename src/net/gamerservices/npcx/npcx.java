@@ -148,6 +148,7 @@ public class npcx extends JavaPlugin {
 			   count++;
 			   myTriggerword tw = new myTriggerword();
 			   tw.response = rs.getString ("reply");
+			   
 			   tw.word = rs.getString ("triggerword");
 		       tw.id = rs.getInt ("id");
 		       triggerwords.put(Integer.toString(tw.id), tw);
@@ -360,7 +361,8 @@ public class npcx extends JavaPlugin {
 							Double  pitch = new Double(spawngroup.pitch);
 							Double yaw = new Double(spawngroup.yaw);
 							BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
-			                npc.npc = hnpc;
+			                
+							npc.npc = hnpc;
 			                
 			                hnpc.parent = npc;
 			                
@@ -838,7 +840,7 @@ public class npcx extends JavaPlugin {
 		                
 		                // Load npcs into spawngroups
 		                Statement s11 = conn.createStatement ();
-			            s11.executeQuery ("SELECT spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.loottable_id As loottable_id, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
+			            s11.executeQuery ("SELECT spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.category As category, npc.loottable_id As loottable_id, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
 			            ResultSet rs11 = s11.getResultSet ();
 			            
 			            while (rs11.next ())
@@ -849,6 +851,7 @@ public class npcx extends JavaPlugin {
 			            	npc.spawngroup = spawngroup;
 			            	npc.id = rs11.getString ("npcid");
 			            	npc.name = rs11.getString ("name");
+			            	npc.category = rs11.getString("category");
 			            	
 			            	for (myFaction faction : factions)
 			            	{
@@ -943,6 +946,12 @@ public class npcx extends JavaPlugin {
 
             
             Location l = player.getLocation();
+            
+            if (subCommand.equals("debug"))
+            {
+            	
+            
+            }
             
             if (subCommand.equals("spawngroup"))
             {
@@ -1417,6 +1426,7 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx npc triggerword add npcid triggerword response");
                 	player.sendMessage("Insufficient arguments /npcx npc faction npcid factionid");
                 	player.sendMessage("Insufficient arguments /npcx npc loottable npcid loottableid");
+                	player.sendMessage("Insufficient arguments /npcx npc category npcid category");
                 	
                     return false;
                 }
@@ -1426,7 +1436,6 @@ public class npcx extends JavaPlugin {
             			player.sendMessage("Insufficient arguments /npcx npc triggerword add npcid triggerword response");
             		
             		} else {
-            			Statement s2 = conn.createStatement ();
             			
             			String reply = "";
             			int current = 6;
@@ -1482,8 +1491,7 @@ public class npcx extends JavaPlugin {
             			
             		} else {
 
-            			Statement s2 = conn.createStatement ();
-            			
+           			
         	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET faction_id = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
@@ -1505,7 +1513,43 @@ public class npcx extends JavaPlugin {
             			
             			player.sendMessage("Updated npc faction ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
         	            
-        	            s2.close();
+            			stmt.close();
+            		}
+            	}
+            	
+            	
+            	
+            	
+            	if (args[1].equals("category")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx npc category npcid category");
+            			
+            			
+            			
+            		} else {
+
+            			
+        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET category = ? WHERE id = ?;");
+        	            stmt.setString(1, args[3]);
+        	            stmt.setString(2, args[2]);
+        	            
+        	            stmt.executeUpdate();
+        	            
+        	            for(myNPC n : npcs.values())
+        	            {
+        	            	if (n.id.matches(args[2]))
+        	            	{
+        	            		
+        	            		n.category = args[3];
+        	            		player.sendMessage("npcx : Updated living npc to cached category ("+args[3]+"): "+n.category);
+        	            		// when faction changes reset aggro and follow status
+        	            		
+        	            	}
+        	            }
+            			
+            			player.sendMessage("Updated npc category :" + args[3] + " on NPC ID:[" + args[2]  + "]");
+        	            
+            			stmt.close();
             		}
             	}
             	
@@ -1546,8 +1590,6 @@ public class npcx extends JavaPlugin {
             			
             		} else {
 
-            			Statement s2 = conn.createStatement ();
-            			
         	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET loottable_id = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
@@ -1568,7 +1610,7 @@ public class npcx extends JavaPlugin {
             			
             			player.sendMessage("Updated npc loottable ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
         	            
-        	            s2.close();
+            			stmt.close();
             		}
             	}
             	

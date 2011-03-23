@@ -37,6 +37,11 @@ public class CHumanNpc extends EntityPlayer {
         
     }
 
+    public void forceSetName(String n)
+    {
+    	this.displayName = n;
+    }
+    
     @Override
     public boolean a(EntityHuman entity) {
 

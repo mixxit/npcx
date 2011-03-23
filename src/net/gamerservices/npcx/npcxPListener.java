@@ -46,7 +46,23 @@ public class npcxPListener extends PlayerListener {
 					if (player.target.parent != null)
 					{
 						// this is not a temporary spawn
-						player.target.parent.parseChat(player, event.getMessage());
+						
+						// does it have a category set?
+						if (player.target.parent.category != null)
+						{
+							if (player.target.parent.category.matches("shop"))
+							{
+								// shop
+								player.target.parent.parseShop(player, event.getMessage());
+								
+							} else {
+								// normal chat event / unknown category
+								player.target.parent.parseChat(player, event.getMessage());
+							}
+						} else {
+							// normal chat event
+							player.target.parent.parseChat(player, event.getMessage());
+						}
 					} else {
 						player.player.sendMessage("You cannot talk to temporary spawns");
 					}

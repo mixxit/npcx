@@ -1,5 +1,9 @@
 package net.gamerservices.npcx;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.bukkit.inventory.ItemStack;
 
 import redecouverte.npcspawner.BasicHumanNpc;
 public class myNPC {
@@ -11,7 +15,8 @@ public class myNPC {
 	public myFaction faction;
 	public mySpawngroup spawngroup;
 	public myLoottable loottable;
-
+	public List< myShopItem > shop = new CopyOnWriteArrayList< myShopItem >();
+	
 	public HashMap<String, myTriggerword> triggerwords = new HashMap<String, myTriggerword>();
 	
 	myNPC(npcx parent, HashMap<String, myTriggerword> triggerwords)
@@ -70,5 +75,69 @@ public class myNPC {
 				}
 				
 		}
+	}
+
+
+
+	public void parseShop(myPlayer player, String message) {
+		// TODO Auto-generated method stub
+		//myplayer.player.sendMessage("Parsing:" + message + ":" + Integer.toString(this.triggerwords.size()));
+		String message2=message+" ";
+		String[] aMsg = message.split(" ");
+		
+		if (aMsg[0].toLowerCase().matches("help"))
+		{
+						
+			player.player.sendMessage(npc.getName() + " says to you, 'What do you need? [sell] or [buy]'");
+			return;
+		}
+		if (aMsg[0].toLowerCase().matches("sell"))
+		{
+			if (aMsg.length < 3)
+			{		
+				player.player.sendMessage(npc.getName() + " says to you, 'sell [itemid] [amount]'");
+				return;
+			} else {
+				player.player.sendMessage(npc.getName() + " says to you, 'Thanks!'");
+				
+				myShopItem shopitem = new myShopItem();
+				ItemStack item = new ItemStack(0);
+				shopitem.item = item;
+				// todo price
+				item.setTypeId(Integer.parseInt(aMsg[1]));
+				item.setAmount(Integer.parseInt(aMsg[2]));
+				
+				player.player.getInventory().remove(item);
+				shop.add(shopitem);
+			}
+		}
+		if (aMsg[0].toLowerCase().matches("buy"))
+		{
+			if (aMsg.length < 3)
+			{
+				player.player.sendMessage(npc.getName() + " says to you, 'buy [itemid] [amount]'");
+				return;
+			} else {
+				if (shop.size() > 0)
+				{
+					for (myShopItem item : shop)
+					{
+						if (item.item.getTypeId() == Integer.parseInt(aMsg[1]))
+						{
+						player.player.sendMessage(npc.getName() + " says to you, 'Hmm: " + item.item.getTypeId() + " is worth "+ (item.price+item.price*0.10) +" coin each'");
+						
+						
+						player.player.getInventory().addItem(item.item);
+						shop.remove(item);
+						}
+					}
+				} else {
+					player.player.sendMessage(npc.getName() + " says to you, 'Sorry, totally out of stock!'");
+				}
+				
+			}
+			
+		}
+
 	}
 }
