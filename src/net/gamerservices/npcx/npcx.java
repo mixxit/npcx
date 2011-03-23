@@ -490,35 +490,35 @@ public class npcx extends JavaPlugin {
 	            	
 	            	Statement factionlist = conn.createStatement ();
 		            String dropfactionlist = "DROP TABLE IF EXISTS faction_list; ";
-		            String fationlistsql = "CREATE TABLE faction_list ( id int(11) NOT NULL, name varchar(45) DEFAULT NULL, base int(11) DEFAULT NULL, PRIMARY KEY (id))";
+		            String fationlistsql = "CREATE TABLE faction_list ( id int(11) NOT NULL AUTO_INCREMENT, name varchar(45) DEFAULT NULL, base int(11) DEFAULT NULL, PRIMARY KEY (id))";
 		            factionlist.executeUpdate(dropfactionlist);
 		            factionlist.executeUpdate(fationlistsql);
 		            factionlist.close();
 		            
 		            Statement player_faction = conn.createStatement ();
 		            String dropplayer_faction = "DROP TABLE IF EXISTS player_faction; ";
-		            String player_factionsql = "CREATE TABLE player_faction (  id int(11) NOT NULL,  player_name varchar(45) DEFAULT NULL,  faction_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
+		            String player_factionsql = "CREATE TABLE player_faction (  id int(11) NOT NULL AUTO_INCREMENT,  player_name varchar(45) DEFAULT NULL,  faction_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
 		            player_faction.executeUpdate(dropplayer_faction);
 		            player_faction.executeUpdate(player_factionsql);
 		            player_faction.close();
 		            
 		            Statement loottable_entries = conn.createStatement ();
 		            String droploottable_entries = "DROP TABLE IF EXISTS loottable_entries; ";
-		            String loottable_entriessql = "CREATE TABLE loottable_entries (id int(11) NOT NULL,  loottable_id int(11) DEFAULT NULL,  item_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
+		            String loottable_entriessql = "CREATE TABLE loottable_entries (id int(11) NOT NULL AUTO_INCREMENT,  loottable_id int(11) DEFAULT NULL,  item_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
 		            loottable_entries.executeUpdate(droploottable_entries);
 		            loottable_entries.executeUpdate(loottable_entriessql);
 		            loottable_entries.close();
 		            
 		            Statement loottable = conn.createStatement ();
 		            String droploottable = "DROP TABLE IF EXISTS loottables; ";
-		            String loottablesql = "CREATE TABLE loottables (id int(11) NOT NULL,  loottable_id int(11) DEFAULT NULL,  item_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
+		            String loottablesql = "CREATE TABLE loottables (id int(11) NOT NULL AUTO_INCREMENT,  loottable_id int(11) DEFAULT NULL,  item_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
 		            loottable.executeUpdate(droploottable);
 		            loottable.executeUpdate(loottablesql);
 		            loottable.close();
 	            	
 		            Statement npc_faction = conn.createStatement ();
 		            String dropnpc_faction = "DROP TABLE IF EXISTS npc_faction; ";
-		            String npc_factionsql = "CREATE TABLE npc_faction (id int(11) NOT NULL, npc_id int(11) DEFAULT NULL, faction_id int(11) DEFAULT NULL, amount int(11) DEFAULT NULL,PRIMARY KEY (id))";
+		            String npc_factionsql = "CREATE TABLE npc_faction (id int(11) NOT NULL AUTO_INCREMENT, npc_id int(11) DEFAULT NULL, faction_id int(11) DEFAULT NULL, amount int(11) DEFAULT NULL,PRIMARY KEY (id))";
 		            npc_faction.executeUpdate(dropnpc_faction);
 		            npc_faction.executeUpdate(npc_factionsql);
 		            npc_faction.close();
