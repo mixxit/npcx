@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.CreatureType;
 
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -392,6 +393,8 @@ public class npcx extends JavaPlugin {
 		{
 			if (player.dead == true)
 			{
+				try
+				{
 				for (Player p : getServer().getWorld(this.world).getPlayers())
 				{
 					if (player.name == p.getName())
@@ -400,6 +403,10 @@ public class npcx extends JavaPlugin {
 						player.dead = false;
 						count++;
 					}
+				}
+				} catch (ConcurrentModificationException e)
+				{
+					System.out.println("npcx : FAILED establishing dead player");
 				}
 			}
 		}
