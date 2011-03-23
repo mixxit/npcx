@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.nijiko.coelho.iConomy.iConomy;
@@ -45,8 +46,8 @@ public class myNPC {
 					//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
 					if (word.toLowerCase().contains(tw.word.toLowerCase()))
 					{
-						
-							myplayer.player.sendMessage(npc.getName() + " says to you, '"+ tw.response +"'");
+							String send = variablise(tw.response,myplayer.player);
+							myplayer.player.sendMessage(npc.getName() + " says to you, '"+ send +"'");
 							count++;
 							return;
 	
@@ -65,7 +66,9 @@ public class myNPC {
 					//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
 					if (tw.word.toLowerCase().contains("default") && size > 0 && count == 0)
 					{
-						myplayer.player.sendMessage(npc.getName() + " says to you, '" + tw.response + "'");
+						String send = variablise(tw.response,myplayer.player);
+						
+						myplayer.player.sendMessage(npc.getName() + " says to you, '" + send + "'");
 						count2++;
 						return;
 					}
@@ -78,6 +81,21 @@ public class myNPC {
 				}
 				
 		}
+	}
+
+
+
+	private String variablise(String response, Player player) {
+		// TODO Auto-generated method stub
+		String newresponse = response;
+		if (response.contains("bankbalance"))
+		{
+			System.out.println("Replacing bankbalance variable");
+			Account account = iConomy.getBank().getAccount(player.getName());
+			newresponse = response.replaceAll("bankbalance", Double.toString(account.getBalance()));
+			
+		}
+		return newresponse;
 	}
 
 

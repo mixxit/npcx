@@ -1478,7 +1478,7 @@ public class npcx extends JavaPlugin {
             				current++;
             			}
             			
-            			reply = reply.substring(0,args.length-1);
+            			reply = reply.substring(0,reply.length()-1);
             			
             			
             			PreparedStatement statementTword = conn.prepareStatement("INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES (?,?,?)",Statement.RETURN_GENERATED_KEYS);
