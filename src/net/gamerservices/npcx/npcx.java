@@ -60,6 +60,7 @@ public class npcx extends JavaPlugin {
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
 	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
 	public List< Monster > monsters = new CopyOnWriteArrayList< Monster >();
+	public List< myFaction > factions = new CopyOnWriteArrayList< myFaction >();
 	private Properties prop;
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
 	private String dsn;
@@ -482,12 +483,54 @@ public class npcx extends JavaPlugin {
 		             * One time Database creation / TODO: Auto Upgrades
 		             * 
 		             * 
+		             * 
+		             * 
 		             * */
+	            	
+	            	
+	            	Statement factionlist = conn.createStatement ();
+		            String dropfactionlist = "DROP TABLE IF EXISTS faction_list; ";
+		            String fationlistsql = "CREATE TABLE faction_list ( id int(11) NOT NULL, name varchar(45) DEFAULT NULL, base int(11) DEFAULT NULL, PRIMARY KEY (id))";
+		            factionlist.executeUpdate(dropfactionlist);
+		            factionlist.executeUpdate(fationlistsql);
+		            factionlist.close();
+		            
+		            Statement player_faction = conn.createStatement ();
+		            String dropplayer_faction = "DROP TABLE IF EXISTS player_faction; ";
+		            String player_factionsql = "CREATE TABLE player_faction (  id int(11) NOT NULL,  player_name varchar(45) DEFAULT NULL,  faction_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
+		            player_faction.executeUpdate(dropplayer_faction);
+		            player_faction.executeUpdate(player_factionsql);
+		            player_faction.close();
+		            
+		            Statement loottable_entries = conn.createStatement ();
+		            String droploottable_entries = "DROP TABLE IF EXISTS loottable_entries; ";
+		            String loottable_entriessql = "CREATE TABLE loottable_entries (id int(11) NOT NULL,  loottable_id int(11) DEFAULT NULL,  item_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
+		            loottable_entries.executeUpdate(droploottable_entries);
+		            loottable_entries.executeUpdate(loottable_entriessql);
+		            loottable_entries.close();
+		            
+		            Statement loottable = conn.createStatement ();
+		            String droploottable = "DROP TABLE IF EXISTS loottables; ";
+		            String loottablesql = "CREATE TABLE loottables (id int(11) NOT NULL,  loottable_id int(11) DEFAULT NULL,  item_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
+		            loottable.executeUpdate(droploottable);
+		            loottable.executeUpdate(loottablesql);
+		            loottable.close();
+	            	
+		            Statement npc_faction = conn.createStatement ();
+		            String dropnpc_faction = "DROP TABLE IF EXISTS npc_faction; ";
+		            String npc_factionsql = "CREATE TABLE npc_faction (id int(11) NOT NULL, npc_id int(11) DEFAULT NULL, faction_id int(11) DEFAULT NULL, amount int(11) DEFAULT NULL,PRIMARY KEY (id))";
+		            npc_faction.executeUpdate(dropnpc_faction);
+		            npc_faction.executeUpdate(npc_factionsql);
+		            npc_faction.close();
+		            
+		            
 		            Statement s2 = conn.createStatement ();
 		            String droptable = "DROP TABLE IF EXISTS npc; ";
-		            String npctable = "CREATE TABLE npc ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),name CHAR(40),category CHAR(40))";
+		            String npctable = "CREATE TABLE npc (  id int(10) unsigned NOT NULL AUTO_INCREMENT, name char(40) DEFAULT NULL,  category char(40) DEFAULT NULL,  faction_id int(11) DEFAULT NULL,  loottable_id int(11) DEFAULT NULL,  PRIMARY KEY (id))";
+
 		            s2.executeUpdate(droptable);
 		            s2.executeUpdate(npctable);
+		            
 		            
 		            String droptable0 = "DROP TABLE IF EXISTS pathgroup; ";
 		            String npctable0 = "CREATE TABLE pathgroup ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),name CHAR(40),category CHAR(40))";
@@ -495,7 +538,7 @@ public class npcx extends JavaPlugin {
 		            s2.executeUpdate(npctable0);
 		            
 		            String droptable1 = "DROP TABLE IF EXISTS pathgroup_entries; ";
-		            String npctable1 = "CREATE TABLE pathgroup_entries ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),s int,pathgroup int, name CHAR(40),x CHAR(40),y CHAR(40),z CHAR(40))";
+		            String npctable1 = "CREATE TABLE pathgroup_entries (  id int(10) unsigned NOT NULL AUTO_INCREMENT,  s int(11) DEFAULT NULL,  pathgroup int(11) DEFAULT NULL,  name char(40) DEFAULT NULL,  x char(40) DEFAULT NULL,  y char(40) DEFAULT NULL,  z char(40) DEFAULT NULL,  yaw char(40) DEFAULT NULL,  pitch char(40) DEFAULT NULL,  PRIMARY KEY (id))";
 		            s2.executeUpdate(droptable1);
 		            s2.executeUpdate(npctable1);
 		            
@@ -505,16 +548,11 @@ public class npcx extends JavaPlugin {
 		            
 		            s2.executeUpdate(spawngrouptable);
 		            
-		            
-		            
-		            
-		            
 		            String droptable3 = "DROP TABLE IF EXISTS spawngroup_entries; ";
 		            String sgetable = "CREATE TABLE spawngroup_entries ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),spawngroupid int,npcid int)";
 		            s2.executeUpdate(droptable3);
 		            
 		            s2.executeUpdate(sgetable);
-		            
 		            
 		            String droptable4 = "DROP TABLE IF EXISTS npc_triggerwords; ";
 		            String spawngrouptable4 = "CREATE TABLE npc_triggerwords ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),npcid int,triggerword CHAR(40),reply VARCHAR(256),category CHAR(40))";
@@ -543,6 +581,33 @@ public class npcx extends JavaPlugin {
 		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
 					config.store(stream1, "Default generated settings, please ensure mysqld matches");
 					
+	            }
+	            
+	            try 
+	            {
+		            // Load Spawngroups
+		            Statement s1 = conn.createStatement ();
+		            s1.executeQuery ("SELECT * FROM faction_list");
+		            ResultSet rs1 = s1.getResultSet ();
+		            int countfaction = 0;
+		            System.out.println("npcx : loading factions");
+		            while (rs1.next ())
+		            {
+		            	myFaction faction = new myFaction();
+		            	faction.id = rs1.getInt ("id");
+		            	faction.name = rs1.getString ("name");
+		            	faction.base = rs1.getInt ("base");
+		            	countfaction++;
+		            	factions.add(faction);
+		            	
+		            	
+		            }
+		            rs1.close();
+		            s1.close();
+		            System.out.println("npcx : Loaded " + countfaction + " factions.");
+		            
+	            } catch (NullPointerException e) { 
+			 		System.out.println("npcx : ERROR - faction loading cancelled!");
 	            }
 	            
 	            
@@ -818,6 +883,89 @@ public class npcx extends JavaPlugin {
         		}
         		
             }
+            
+            //
+            // START FACTION
+            //
+            
+            if (subCommand.equals("faction"))
+            {
+            
+            	
+            	if (args.length < 2) {
+            		player.sendMessage("Insufficient arguments /npcx faction create|delete baseamount factionname");
+                	player.sendMessage("Insufficient arguments /npcx faction list");
+                	return false;
+            		
+            		
+            		
+                }
+            	
+            	if (args[1].equals("create")) {
+            		if (args.length < 3) {
+            			player.sendMessage("Insufficient arguments /npcx faction create baseamount factionname");
+                    	
+            		} else {
+           			
+            			
+            			PreparedStatement stmt = conn.prepareStatement("INSERT INTO faction_list (name,base) VALUES (?,?);",Statement.RETURN_GENERATED_KEYS);
+            			stmt.setString(1,args[3]);
+            			stmt.setInt(2,Integer.parseInt(args[2]));
+            			
+            			stmt.executeUpdate();
+            			ResultSet keyset = stmt.getGeneratedKeys();
+            			int key = 0;
+            			if ( keyset.next() ) {
+            			    // Retrieve the auto generated key(s).
+            			    key = keyset.getInt(1);
+            			    
+            			}
+            			stmt.close();
+            			
+        	            player.sendMessage("Faction ["+ key + "] now active");
+            			myFaction fa = new myFaction();
+            			fa.id = key;
+            			fa.name = args[3];
+            			fa.base = Integer.parseInt(args[2]);
+            			
+            			this.factions.add(fa);
+            			System.out.println("npcx : + cached new faction("+ args[3] + ")");
+        	            
+        	            
+            		}
+        			
+        		}
+            	
+            	if (args[1].equals("list")) {
+            		player.sendMessage("Factions:");
+            		
+            		Statement s = conn.createStatement ();
+            		   s.executeQuery ("SELECT id, name, base FROM faction_list");
+            		   ResultSet rs = s.getResultSet ();
+            		   int count = 0;
+            		   while (rs.next ())
+            		   {
+            		       int idVal = rs.getInt ("id");
+            		       String nameVal = rs.getString ("name");
+            		       String baseVal = rs.getString ("base");
+            		       player.sendMessage(
+            		               "id = " + idVal
+            		               + ", name = " + nameVal
+            		               + ", base = " + baseVal);
+            		       ++count;
+            		   }
+            		   rs.close ();
+            		   s.close ();
+            		   player.sendMessage (count + " rows were retrieved");
+            		
+            	
+        			
+        		}
+        		
+            }
+            
+            // END FACTION
+            
             
             if (subCommand.equals("pathgroup"))
             {
