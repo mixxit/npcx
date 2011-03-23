@@ -1,4 +1,6 @@
 package net.gamerservices.npcx;
+import com.nijiko.coelho.iConomy.iConomy;
+
 import org.bukkit.plugin.PluginManager;
 import java.util.HashMap;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -62,6 +64,12 @@ public class npcx extends JavaPlugin {
 	public List< Monster > monsters = new CopyOnWriteArrayList< Monster >();
 	public List< myFaction > factions = new CopyOnWriteArrayList< myFaction >();
 	public List< myLoottable > loottables = new CopyOnWriteArrayList< myLoottable >();
+	
+	// iconomy
+	private static PluginListener PluginListener = null;
+    private static iConomy iConomy = null;
+    private static Server Server = null;
+    // end iconomy
 	
 	private Properties prop;
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
@@ -569,9 +577,34 @@ public class npcx extends JavaPlugin {
 		
 	}
 	
+	 public static Server getBukkitServer() {
+	        return Server;
+	 }
+
+	 public static iConomy getiConomy() {
+	        return iConomy;
+	 }
+	    
+	 public static boolean setiConomy(iConomy plugin) {
+	        if (iConomy == null) {
+	            iConomy = plugin;
+	        } else {
+	            return false;
+	        }
+	        return true;
+	 }
+
+	
 	@Override
 	public void onEnable() {
 		// TODO Auto-generated method stub
+		
+		this.Server = getServer();
+        this.PluginListener = new PluginListener(this);
+
+        // Event Registration
+        getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
+
 		 try {	
 	            try 
 	            {
@@ -1441,9 +1474,11 @@ public class npcx extends JavaPlugin {
             			int current = 6;
             			while (current <=  args.length)
             			{
-            				reply = reply + " "+args[current-1];
+            				reply = reply + args[current-1]+" ";
             				current++;
             			}
+            			
+            			reply = reply.substring(0,args.length-1);
             			
             			
             			PreparedStatement statementTword = conn.prepareStatement("INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES (?,?,?)",Statement.RETURN_GENERATED_KEYS);

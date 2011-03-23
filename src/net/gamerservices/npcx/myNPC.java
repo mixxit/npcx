@@ -5,6 +5,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.inventory.ItemStack;
 
+import com.nijiko.coelho.iConomy.iConomy;
+import com.nijiko.coelho.iConomy.system.Account;
+
 import redecouverte.npcspawner.BasicHumanNpc;
 public class myNPC {
 	public npcx parent;
@@ -16,7 +19,7 @@ public class myNPC {
 	public mySpawngroup spawngroup;
 	public myLoottable loottable;
 	public List< myShopItem > shop = new CopyOnWriteArrayList< myShopItem >();
-	
+	public double coin = 100;
 	public HashMap<String, myTriggerword> triggerwords = new HashMap<String, myTriggerword>();
 	
 	myNPC(npcx parent, HashMap<String, myTriggerword> triggerwords)
@@ -98,19 +101,57 @@ public class myNPC {
 				player.player.sendMessage(npc.getName() + " says to you, 'sell [itemid] [amount]'");
 				return;
 			} else {
-				player.player.sendMessage(npc.getName() + " says to you, 'Thanks!'");
 				
 				myShopItem shopitem = new myShopItem();
 				ItemStack item = new ItemStack(0);
 				shopitem.item = item;
 				// todo price
+				if (shopitem.price == 0)
+				{
+					shopitem.price = 1;
+				}
+				
 				item.setTypeId(Integer.parseInt(aMsg[1]));
 				item.setAmount(Integer.parseInt(aMsg[2]));
+				int count = 0;
+				for (ItemStack curitem : player.player.getInventory().getContents())
+				{
+					if (curitem.getTypeId() == item.getTypeId())
+					{
+						count = count + curitem.getAmount();
+						//player.player.sendMessage(npc.getName() + " says to you, '"+ curitem.getTypeId() +"/"+curitem.getAmount() +"'");
+					}
+					
+					
+				}
 				
-				player.player.getInventory().remove(item);
-				shop.add(shopitem);
+				if (count >= item.getAmount())
+				{
+					
+					player.player.sendMessage(npc.getName() + " says to you, 'Ok thats "+ item.getAmount() +" out of your "+count +".'");
+					double totalcoins = 0;
+					totalcoins = item.getAmount() * shopitem.price;
+					
+					if (this.coin >= totalcoins)
+					{
+						player.player.getInventory().removeItem(item);
+						shop.add(shopitem);
+						player.player.sendMessage(npc.getName() + " says to you, 'Thanks! Heres your " + totalcoins + "coins.'");
+						Account account = iConomy.getBank().getAccount(player.name);
+						this.coin = this.coin - totalcoins;
+						account.add(totalcoins);
+					} else {
+						player.player.sendMessage(npc.getName() + " says to you, 'Sorry, I only have: "+this.coin+" and thats worth "+totalcoins+"!'");
+					}
+				} else {
+					
+					player.player.sendMessage(npc.getName() + " says to you, 'Sorry, you only have: "+count+" !'");
+				}
 			}
+			return;
 		}
+		
+		
 		if (aMsg[0].toLowerCase().matches("buy"))
 		{
 			if (aMsg.length < 3)
@@ -118,26 +159,66 @@ public class myNPC {
 				player.player.sendMessage(npc.getName() + " says to you, 'buy [itemid] [amount]'");
 				return;
 			} else {
-				if (shop.size() > 0)
+				if (Integer.parseInt(aMsg[2]) > 0)
 				{
-					for (myShopItem item : shop)
+					int amount = Integer.parseInt(aMsg[2]);
+					int found = 0;
+					double totalcost = 0;
+					if (shop.size() > 0)
 					{
-						if (item.item.getTypeId() == Integer.parseInt(aMsg[1]))
+						
+						for (myShopItem item : shop)
 						{
-						player.player.sendMessage(npc.getName() + " says to you, 'Hmm: " + item.item.getTypeId() + " is worth "+ (item.price+item.price*0.10) +" coin each'");
-						
-						
-						player.player.getInventory().addItem(item.item);
-						shop.remove(item);
+							if (item.item.getTypeId() == Integer.parseInt(aMsg[1]))
+							{
+								
+								//player.player.sendMessage(npc.getName() + " says to you, 'Hmm: " + item.item.getTypeId() + " is worth "+ (item.price+item.price*0.10) +" coin each'");
+								
+									found++;
+									double cost = ((item.price * 1.10) * item.item.getAmount());
+									this.coin = this.coin + cost;
+									totalcost = totalcost + cost;
+									amount = amount - item.item.getAmount();
+									player.player.getInventory().addItem(item.item);
+									shop.remove(item);
+									player.player.sendMessage(npc.getName() + " says to you, '" + cost + " coins for this stack.'");
+									
+									
+								
+							} else {
+								// ignore this type
+								
+							}
 						}
+						if (found < 1)
+						{
+							player.player.sendMessage(npc.getName() + " says to you, 'Sorry, out of stock in that item.");
+						}
+						
+						if (totalcost > 0)
+						{
+							player.player.sendMessage(npc.getName() + " says to you, 'Thanks, " + totalcost + " coins.'");
+							Account account = iConomy.getBank().getAccount(player.name);
+							account.subtract(totalcost);
+							
+						}
+						
+						
+						
+					} else {
+						player.player.sendMessage(npc.getName() + " says to you, 'Sorry, totally out of stock!'");
 					}
-				} else {
-					player.player.sendMessage(npc.getName() + " says to you, 'Sorry, totally out of stock!'");
-				}
 				
+				}
 			}
 			
+			return;
+			
 		}
+		
+		// Unknown command
+		player.player.sendMessage(npc.getName() + " says to you, 'Sorry, can i [help] you?'");
+
 
 	}
 }
