@@ -567,7 +567,7 @@ public class npcx extends JavaPlugin {
 		                // Create a new spawngroup
 		                mySpawngroup spawngroup = new mySpawngroup();
 		                spawngroup.name = nameVal;
-		                System.out.println("npcx : + " + nameVal);
+		                //System.out.println("npcx : + " + nameVal);
 		                spawngroup.id = idVal;
 		                spawngroup.x = Double.parseDouble(rs1.getString ("x"));
 		                spawngroup.y = Double.parseDouble(rs1.getString ("y"));
@@ -590,7 +590,7 @@ public class npcx extends JavaPlugin {
 			            	npc.spawngroup = spawngroup;
 			            	npc.id = rs11.getString ("npcid");
 			            	npc.name = dbGetNPCname(npc.id);
-			            	System.out.println("npcx : + npc.name + " + rs11.getString ("npcid"));
+			            	//System.out.println("npcx : + npc.name + " + rs11.getString ("npcid"));
 			            	
 			            	spawngroup.npcs.put(rs11.getString ("npcid"), npc);
 			            	
