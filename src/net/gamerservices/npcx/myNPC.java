@@ -10,6 +10,7 @@ public class myNPC {
 	public BasicHumanNpc npc;
 	public myFaction faction;
 	public mySpawngroup spawngroup;
+	public myLoottable loottable;
 
 	public HashMap<String, myTriggerword> triggerwords = new HashMap<String, myTriggerword>();
 	

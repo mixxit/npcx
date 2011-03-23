@@ -61,6 +61,8 @@ public class npcx extends JavaPlugin {
 	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
 	public List< Monster > monsters = new CopyOnWriteArrayList< Monster >();
 	public List< myFaction > factions = new CopyOnWriteArrayList< myFaction >();
+	public List< myLoottable > loottables = new CopyOnWriteArrayList< myLoottable >();
+	
 	private Properties prop;
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
 	private String dsn;
@@ -165,6 +167,29 @@ public class npcx extends JavaPlugin {
 					player.target = null;
 					
 				}
+		}
+		
+		
+		for (myLoottable lt : loottables)
+		{
+			if (npc.parent != null)
+			{
+				if (npc.parent.loottable == lt)
+				{
+					for (myLoottable_entry lte : lt.loottable_entries)
+					{
+						npc.getBukkitEntity().getWorld().dropItem(
+								new Location (
+										npc.getBukkitEntity().getWorld(),
+										npc.getBukkitEntity().getLocation().getX(),
+										npc.getBukkitEntity().getLocation().getY(),
+										npc.getBukkitEntity().getLocation().getZ()
+										),
+								new ItemStack(lte.itemid));
+						
+					}
+				}
+			}
 		}
 		
 		npclist.remove(npc);
@@ -479,6 +504,38 @@ public class npcx extends JavaPlugin {
 	}
 	
 	
+	public myLoottable dbGetNPCloottable(String string)
+	{
+		try
+		{
+			Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+	        conn = DriverManager.getConnection (dsn, dbuser, dbpass);
+	        PreparedStatement s11 = conn.prepareStatement("SELECT loottable_id FROM npc WHERE id = ?",Statement.RETURN_GENERATED_KEYS);
+	        s11.setInt(1, Integer.parseInt(string));
+	        s11.executeQuery();
+	        ResultSet rs11 = s11.getResultSet ();
+	        
+	        while (rs11.next ())
+	        {
+	        	int lootttableid = rs11.getInt ("loottable_id");
+	        	for (myLoottable f : loottables)
+	        	{
+	        		if (f.id == lootttableid)
+	        		{
+	        			return f;
+	        		}
+	        	}
+	        	
+	        }
+		} catch (Exception e)
+		{
+	        return null;
+	
+		}
+        return null;
+	}
+	
+	
 	public void fixDead()
 	{
 		int count = 0;
@@ -600,7 +657,7 @@ public class npcx extends JavaPlugin {
 		            
 		            Statement loottable = conn.createStatement ();
 		            String droploottable = "DROP TABLE IF EXISTS loottables; ";
-		            String loottablesql = "CREATE TABLE loottables (id int(11) NOT NULL AUTO_INCREMENT,  loottable_id int(11) DEFAULT NULL,  item_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
+		            String loottablesql = "CREATE TABLE loottables (  id int(11) NOT NULL AUTO_INCREMENT,  name varchar(50) DEFAULT NULL,  PRIMARY KEY (id))";
 		            loottable.executeUpdate(droploottable);
 		            loottable.executeUpdate(loottablesql);
 		            loottable.close();
@@ -699,6 +756,52 @@ public class npcx extends JavaPlugin {
 			 		System.out.println("npcx : ERROR - faction loading cancelled!");
 	            }
 	            
+	            try 
+	            {
+		            // Load loot tables
+		            Statement s1 = conn.createStatement ();
+		            s1.executeQuery ("SELECT * FROM loottables");
+		            ResultSet rs1 = s1.getResultSet ();
+		            int countloottables = 0;
+		            System.out.println("npcx : loading loottables");
+		            while (rs1.next ())
+		            {
+		            	myLoottable loottable = new myLoottable(rs1.getInt ("id"),rs1.getString ("name"));
+		            	loottable.id = rs1.getInt ("id");
+		            	loottable.name = rs1.getString ("name");
+		            	
+		            	Statement sFindEntries = conn.createStatement();
+		            	sFindEntries.executeQuery("SELECT * FROM loottable_entries WHERE loottable_id = " + loottable.id);
+		            	ResultSet rsEntries = sFindEntries.getResultSet ();
+		            	int countentries = 0;
+		            	while (rsEntries.next ())
+			            {
+		            		
+		            		myLoottable_entry entry = new myLoottable_entry();
+		            		entry.id = rsEntries.getInt("id");
+		            		entry.itemid = rsEntries.getInt("item_id");
+		            		entry.loottable_id = rsEntries.getInt("loottable_id");
+		            		entry.amount = rsEntries.getInt("amount");
+		            		
+		            		entry.parent = loottable;
+		            		
+		            		countentries++;
+		            		loottable.loottable_entries.add(entry);
+			            }
+		            	
+		            	countloottables++;
+		            	loottables.add(loottable);
+		            	
+		            	
+		            }
+		            rs1.close();
+		            s1.close();
+		            System.out.println("npcx : Loaded " + countloottables + " loottables.");
+		            
+	            } catch (NullPointerException e) { 
+			 		System.out.println("npcx : ERROR - loottable loading cancelled!");
+	            }
+	            
 	            
 	            try 
 	            {
@@ -735,7 +838,7 @@ public class npcx extends JavaPlugin {
 		                
 		                // Load npcs into spawngroups
 		                Statement s11 = conn.createStatement ();
-			            s11.executeQuery ("SELECT spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
+			            s11.executeQuery ("SELECT spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.loottable_id As loottable_id, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
 			            ResultSet rs11 = s11.getResultSet ();
 			            
 			            while (rs11.next ())
@@ -752,6 +855,13 @@ public class npcx extends JavaPlugin {
 			            		if (rs11.getInt("faction_id") == faction.id)
 			            			npc.faction = faction;
 			            	}
+			            	
+			            	for (myLoottable loottable : loottables)
+			            	{
+			            		if (rs11.getInt("loottable_id") == loottable.id)
+			            			npc.loottable = loottable;
+			            	}
+			            	
 			            	
 			            	//System.out.println("npcx : + npc.name + " + rs11.getString ("npcid"));
 			            	spawngroup.npcs.put(rs11.getString ("npcid"), npc);
@@ -821,6 +931,7 @@ public class npcx extends JavaPlugin {
             if (args.length < 1) {
             	player.sendMessage("Insufficient arguments /npcx spawngroup");
             	player.sendMessage("Insufficient arguments /npcx faction");
+            	player.sendMessage("Insufficient arguments /npcx loottable");
             	player.sendMessage("Insufficient arguments /npcx npc");
             	player.sendMessage("Insufficient arguments /npcx pathgroup");
             	
@@ -992,6 +1103,161 @@ public class npcx extends JavaPlugin {
         		
             }
             
+
+            //
+            // START LOOTTABLE
+            //
+            
+            if (subCommand.equals("loottable"))
+            {
+            
+            	
+            	if (args.length < 2) {
+            		player.sendMessage("Insufficient arguments /npcx loottable create loottablename");
+                	player.sendMessage("Insufficient arguments /npcx loottable list");
+                	player.sendMessage("Insufficient arguments /npcx loottable add loottableid itemid amount");
+                	return false;
+            		
+            		
+            		
+                }
+            	
+            	if (args[1].equals("add")) {
+            		if (args.length < 5) {
+            			player.sendMessage("Insufficient arguments /npcx loottable add loottableid itemid amount");
+            			return false;
+                    	
+            		} else {
+            			player.sendMessage("Added to loottable " + args[2] + "<"+ args[3]+ "x"+args[4]+".");
+            			
+            			// add to database
+            		
+            			
+            			PreparedStatement s2 = conn.prepareStatement("INSERT INTO loottable_entries (loottable_id,item_id,amount) VALUES (?,?,?);",Statement.RETURN_GENERATED_KEYS);
+            			s2.setString(1,args[2]);
+            			s2.setString(2,args[3]);
+            			s2.setString(3,args[4]);
+            			
+            			s2.executeUpdate();
+        	            player.sendMessage("NPC ["+ args[3] + "x"+args[4]+"] added to group ["+ args[2] + "]");
+            			
+        	            // add to cached loottable
+        	            for (myLoottable lt : this.loottables)
+        	            {
+        	            	if (lt.id == Integer.parseInt(args[2]))
+        	            	{
+        	            		
+        	            		
+        	            		
+        	            		myLoottable_entry entry = new myLoottable_entry();
+        	            		entry.id = Integer.parseInt(args[2]);
+        	            		entry.itemid = Integer.parseInt(args[3]);
+        	            		entry.amount = Integer.parseInt(args[4]);
+        	            		
+        	            		System.out.println("npcx : + cached new loottable entry("+ args[3] + ")");
+        	            		lt.loottable_entries.add(entry);
+        	            		
+        	            	}
+        	            }
+        	            
+        	            
+        	            mySpawngroup sg = new mySpawngroup();
+            			
+            			// close db
+        	            s2.close();
+        	            
+            		}
+        			
+        		}
+            	
+            	
+            	if (args[1].equals("create")) {
+            		if (args.length < 2) {
+            			player.sendMessage("Insufficient arguments /npcx loottable create loottablename");
+                    	return false;
+            		} else {
+           			
+            			try
+            			{
+	            			PreparedStatement stmt = conn.prepareStatement("INSERT INTO loottables (name) VALUES (?);",Statement.RETURN_GENERATED_KEYS);
+	            			stmt.setString(1,args[2]);
+	            			
+	            			stmt.executeUpdate();
+	            			ResultSet keyset = stmt.getGeneratedKeys();
+	            			int key = 0;
+	            			if ( keyset.next() ) {
+	            			    // Retrieve the auto generated key(s).
+	            			    key = keyset.getInt(1);
+	            			    
+	            			}
+	            			stmt.close();
+	            			
+	        	            player.sendMessage("Loottable ["+ key + "] now active");
+	        	            myLoottable fa = new myLoottable(key,args[2]);
+	            			fa.id = key;
+	            			fa.name = args[2];
+	            			
+	            			this.loottables.add(fa);
+	            			System.out.println("npcx : + cached new loottable ("+ args[2] + ")");
+	            			
+            			} catch (IndexOutOfBoundsException e)
+            			{
+            				player.sendMessage("Insufficient arguments");
+            			}
+        	            
+            		}
+        			
+        		}
+            	
+            	if (args[1].equals("list")) {
+            		player.sendMessage("Loottables:");
+            		
+            		Statement s = conn.createStatement ();
+            		   s.executeQuery ("SELECT id, name FROM loottables");
+            		   ResultSet rs = s.getResultSet ();
+            		   int count = 0;
+            		   while (rs.next ())
+            		   {
+            		       int idVal = rs.getInt ("id");
+            		       String nameVal = rs.getString ("name");
+            		       player.sendMessage(
+            		               "id = " + idVal
+            		               + ", name = " + nameVal);
+            		       
+            		        Statement sFindEntries = conn.createStatement();
+	   		            	sFindEntries.executeQuery("SELECT * FROM loottable_entries WHERE loottable_id = " + idVal);
+	   		            	ResultSet rsEntries = sFindEntries.getResultSet ();
+	   		            	int countentries = 0;
+	   		            	while (rsEntries.next ())
+	   			            {
+	   		            		
+	   		            		int id = rsEntries.getInt("id");
+	   		            		int itemid =  rsEntries.getInt("item_id");
+	   		            		int loottableid = rsEntries.getInt("loottable_id");
+	   		            		int amount = rsEntries.getInt("amount");
+	   		            		
+	   		            		player.sendMessage(
+	             		               " + id = " + id + ", loottableid = " + loottableid + ", itemid = " + itemid + ", amount = " + amount);
+	   		            		
+	   		            		countentries++;
+	   		            		
+	   			            }
+	   		            	player.sendMessage (countentries + " entries in this set");            		       
+            		       ++count;
+            		   }
+            		   rs.close ();
+            		   s.close ();
+            		   player.sendMessage (count + " loottables were retrieved");
+            		
+            	
+        			
+        		}
+        		
+            }
+            
+            // END LOOTTABLE            
+            
+            
             //
             // START FACTION
             //
@@ -1150,6 +1416,8 @@ public class npcx extends JavaPlugin {
                 	
                 	player.sendMessage("Insufficient arguments /npcx npc triggerword add npcid triggerword response");
                 	player.sendMessage("Insufficient arguments /npcx npc faction npcid factionid");
+                	player.sendMessage("Insufficient arguments /npcx npc loottable npcid loottableid");
+                	
                     return false;
                 }
             	
@@ -1241,6 +1509,69 @@ public class npcx extends JavaPlugin {
             		}
             	}
             	
+            	
+            	
+            	if (args[1].equals("list")) {
+            		player.sendMessage("Npcs:");
+            		
+            		Statement s = conn.createStatement ();
+            		   s.executeQuery ("SELECT id, name, category FROM npc");
+            		   ResultSet rs = s.getResultSet ();
+            		   int count = 0;
+            		   while (rs.next ())
+            		   {
+            		       int idVal = rs.getInt ("id");
+            		       String nameVal = rs.getString ("name");
+            		       String catVal = rs.getString ("category");
+            		       player.sendMessage(
+            		               "id = " + idVal
+            		               + ", name = " + nameVal
+            		               + ", category = " + catVal);
+            		       ++count;
+            		   }
+            		   rs.close ();
+            		   s.close ();
+            		   player.sendMessage (count + " rows were retrieved");
+            		
+            	
+        			
+        		}
+            	
+            	
+            	if (args[1].equals("loottable")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx npc loottable npcid loottableid");
+            			
+            			
+            			
+            		} else {
+
+            			Statement s2 = conn.createStatement ();
+            			
+        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET loottable_id = ? WHERE id = ?;");
+        	            stmt.setString(1, args[3]);
+        	            stmt.setString(2, args[2]);
+        	            
+        	            stmt.executeUpdate();
+        	            
+        	            for(myNPC n : npcs.values())
+        	            {
+        	            	if (n.id.matches(args[2]))
+        	            	{
+        	            		
+        	            		
+        	            		n.loottable = getLoottableByID(Integer.parseInt(args[3]));
+        	            		player.sendMessage("npcx : Updated living npc to cached loottable ("+args[3]+"): "+n.loottable.name);
+        	            		
+        	            	}
+        	            }
+            			
+            			player.sendMessage("Updated npc loottable ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
+        	            
+        	            s2.close();
+            		}
+            	}
+            	
             	if (args[1].equals("create")) {
             		if (args.length < 3) {
             			player.sendMessage("Insufficient arguments /npcx npc create npcname");
@@ -1292,6 +1623,8 @@ public class npcx extends JavaPlugin {
             	
         			
         		}
+            	
+            	
             	
             	if (args[1].equals("spawn")) {
 	            		player.sendMessage("Spawning new (temporary) NPC: " + args[2]);
@@ -1439,4 +1772,15 @@ public class npcx extends JavaPlugin {
         return true;
     }
 
+	private myLoottable getLoottableByID(int parseInt) {
+		
+			for (myLoottable f : loottables)
+			{
+				if (f.id == parseInt)
+				{
+					return f;
+				}
+			}
+			return null;
+	}
 }
