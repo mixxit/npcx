@@ -59,6 +59,15 @@ public class myNPC {
 							return;
 	
 					}
+					if (word.toLowerCase().contains("NPCATTACK".toLowerCase()))
+					{
+							myplayer.player.sendMessage(npc.getName() + " says to you, 'You will regret that!'");
+							npc.aggro = myplayer.player;
+							npc.follow = myplayer.player;
+							return;
+	
+					}
+					
 					size++;
 				}
 			}
@@ -323,7 +332,7 @@ public class myNPC {
 		
 		// Unknown command
 		player.player.sendMessage(npc.getName() + " says to you, 'Sorry, can i [help] you?'");
-
+		parseChat(player,message);
 		return;
 			
 	}
