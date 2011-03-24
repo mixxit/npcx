@@ -46,6 +46,7 @@ public class myNPC {
 		String message2=message+" ";
 		for (String word : message2.split(" "))
 		{
+						
 			if(count == 0)
 			{
 				for (myTriggerword tw : triggerwords.values())
@@ -53,20 +54,26 @@ public class myNPC {
 					//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
 					if (word.toLowerCase().contains(tw.word.toLowerCase()))
 					{
+						String npcattack = "NPCATTACK";
+						
+						if (tw.response.toLowerCase().contains(npcattack.toLowerCase()))
+						{
+								myplayer.player.sendMessage(npc.getName() + " says to you, 'You will regret that!'");
+								npc.aggro = myplayer.player;
+								npc.follow = myplayer.player;
+								return;
+
+						}
+
+						
+						
 							String send = variablise(tw.response,myplayer.player);
 							myplayer.player.sendMessage(npc.getName() + " says to you, '"+ send +"'");
 							count++;
 							return;
 	
 					}
-					if (word.toLowerCase().contains("NPCATTACK".toLowerCase()))
-					{
-							myplayer.player.sendMessage(npc.getName() + " says to you, 'You will regret that!'");
-							npc.aggro = myplayer.player;
-							npc.follow = myplayer.player;
-							return;
-	
-					}
+					
 					
 					size++;
 				}
