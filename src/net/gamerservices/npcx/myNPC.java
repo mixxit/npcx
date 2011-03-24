@@ -28,7 +28,8 @@ public class myNPC {
 	public int helmet = 0;
 	public int weapon = 0;
 	public int boots = 0;
-	
+	public List< myHint > hints = new CopyOnWriteArrayList< myHint >();
+			
 	myNPC(npcx parent, HashMap<String, myTriggerword> triggerwords)
 	{
 		this.parent = parent;
@@ -111,6 +112,20 @@ public class myNPC {
 		
 		return newresponse;
 	}
+	
+	public double checkHints(int id)
+	{
+		for (myHint hint : hints)
+		{
+			if (hint.id == id)
+			{
+				return hint.price;
+			}
+		}
+		// return basic price
+		return 1;
+		
+	}
 
 
 
@@ -138,12 +153,9 @@ public class myNPC {
 				ItemStack item = new ItemStack(0);
 				shopitem.item = item;
 				// todo price
-				if (shopitem.price == 0)
-				{
-					shopitem.price = 1;
-				}
 				
-				item.setTypeId(Integer.parseInt(aMsg[1]));
+				
+				item.setTypeId(Material.matchMaterial(aMsg[1]).getId());
 				item.setAmount(Integer.parseInt(aMsg[2]));
 				int count = 0;
 				for (ItemStack curitem : player.player.getInventory().getContents())
@@ -162,7 +174,7 @@ public class myNPC {
 					
 					player.player.sendMessage(npc.getName() + " says to you, 'Ok thats "+ item.getAmount() +" out of your "+count +".'");
 					double totalcoins = 0;
-					totalcoins = item.getAmount() * shopitem.price;
+					totalcoins = (item.getAmount() * checkHints(shopitem.item.getTypeId()) * 0.80);
 					
 					if (this.coin >= totalcoins)
 					{
@@ -194,6 +206,7 @@ public class myNPC {
 				if (Integer.parseInt(aMsg[2]) > 0)
 				{
 					int amount = Integer.parseInt(aMsg[2]);
+					int originalamount = Integer.parseInt(aMsg[2]);
 					int found = 0;
 					double totalcost = 0;
 					if (shop.size() > 0)
@@ -201,13 +214,14 @@ public class myNPC {
 						
 						for (myShopItem item : shop)
 						{
-							if (item.item.getTypeId() == Integer.parseInt(aMsg[1]))
+							if (item.item.getTypeId() == Material.matchMaterial(aMsg[1]).getId())
 							{
 								
 								//player.player.sendMessage(npc.getName() + " says to you, 'Hmm: " + item.item.getTypeId() + " is worth "+ (item.price+item.price*0.10) +" coin each'");
 								
 									found++;
-									double cost = ((item.price * 1.10) * item.item.getAmount());
+									
+									double cost = ((checkHints(item.item.getTypeId()) * 1.10) * item.item.getAmount());
 									this.coin = this.coin + cost;
 									totalcost = totalcost + cost;
 									amount = amount - item.item.getAmount();
@@ -225,6 +239,7 @@ public class myNPC {
 						if (found < 1)
 						{
 							player.player.sendMessage(npc.getName() + " says to you, 'Sorry, out of stock in that item.");
+							return;
 						}
 						
 						if (totalcost > 0)
@@ -232,6 +247,11 @@ public class myNPC {
 							player.player.sendMessage(npc.getName() + " says to you, 'Thanks, " + totalcost + " coins.'");
 							Account account = iConomy.getBank().getAccount(player.name);
 							account.subtract(totalcost);
+							double each = totalcost / originalamount;
+														
+							// update hints
+							updateHints(Material.matchMaterial(aMsg[1]).getId(),each);
+							return;
 							
 						}
 						
@@ -239,6 +259,7 @@ public class myNPC {
 						
 					} else {
 						player.player.sendMessage(npc.getName() + " says to you, 'Sorry, totally out of stock!'");
+						return;
 					}
 				
 				}
@@ -252,5 +273,23 @@ public class myNPC {
 		player.player.sendMessage(npc.getName() + " says to you, 'Sorry, can i [help] you?'");
 
 
+	}
+
+
+
+	private void updateHints(int parseInt, double each) {
+		// TODO Auto-generated method stub
+		for (myHint hint : this.hints)
+		{
+			if (hint.id == parseInt)
+			{
+				hints.remove(hint);
+			}
+		}
+		
+		myHint h = new myHint();
+		h.id = parseInt;
+		h.price = each;
+		this.hints.add(h);
 	}
 }

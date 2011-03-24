@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 public class myShopItem {
 	public ItemStack item = new ItemStack(0);
 	
-	public int price = 0;
+	public double price = 0;
 	
 	
 	myShopItem()
