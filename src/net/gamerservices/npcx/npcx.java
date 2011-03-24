@@ -1055,7 +1055,7 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx spawngroup place spawngroupname");
                 	player.sendMessage("Insufficient arguments /npcx spawngroup pathgroup pathgroupname");
                 	
-                	player.sendMessage("Insufficient arguments /npcx spawngroup list");
+                	player.sendMessage("Insufficient arguments /npcx spawngroup list [name]");
                 	return false;
             		
             		
@@ -1189,11 +1189,20 @@ public class npcx extends JavaPlugin {
             	
             	
             	if (args[1].equals("list")) {
-            		player.sendMessage("Spawngroups:");
-            		
-            		Statement s = conn.createStatement ();
-            		   s.executeQuery ("SELECT id, name, category FROM spawngroup");
-            		   ResultSet rs = s.getResultSet ();
+            		   player.sendMessage("Spawngroups:");
+            		   PreparedStatement sglist;
+         		       
+            		   
+            		   if (args.length < 3)
+            		   {
+            			   sglist = conn.prepareStatement("SELECT id, name, category FROM spawngroup ORDER BY ID DESC LIMIT 10");
+            		   } else {
+
+                		   sglist = conn.prepareStatement("SELECT id, name, category FROM spawngroup WHERE name LIKE '%"+args[2]+"%'");
+            		   }
+            		   sglist.executeQuery ();
+            		   ResultSet rs = sglist.getResultSet ();
+            		   
             		   int count = 0;
             		   while (rs.next ())
             		   {
@@ -1207,7 +1216,7 @@ public class npcx extends JavaPlugin {
             		       ++count;
             		   }
             		   rs.close ();
-            		   s.close ();
+            		   sglist.close ();
             		   player.sendMessage (count + " rows were retrieved");
             		
             	
@@ -1522,7 +1531,7 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx npc create name");
 
                 	// todo needs to force the player to provide a search term to not spam them with lots of results in the event of a huge npc list
-                	player.sendMessage("Insufficient arguments /npcx npc list");
+                	player.sendMessage("Insufficient arguments /npcx npc list [name]");
                 	
                 	// spawns the npc temporarily at your current spot for testing
                 	player.sendMessage("Insufficient arguments /npcx npc spawn name");
@@ -1857,30 +1866,41 @@ public class npcx extends JavaPlugin {
             	
             	
             	if (args[1].equals("list")) {
-            		player.sendMessage("Npcs:");
-            		
-            		Statement s = conn.createStatement ();
-            		   s.executeQuery ("SELECT id, name, category FROM npc");
-            		   ResultSet rs = s.getResultSet ();
-            		   int count = 0;
-            		   while (rs.next ())
-            		   {
-            		       int idVal = rs.getInt ("id");
-            		       String nameVal = rs.getString ("name");
-            		       String catVal = rs.getString ("category");
-            		       player.sendMessage(
-            		               "id = " + idVal
-            		               + ", name = " + nameVal
-            		               + ", category = " + catVal);
-            		       ++count;
-            		   }
-            		   rs.close ();
-            		   s.close ();
-            		   player.sendMessage (count + " rows were retrieved");
-            		
+         		   player.sendMessage("Npcs:");
+         		   PreparedStatement sglist;
+      		       
+         		   
+         		   if (args.length < 3)
+         		   {
+         			   sglist = conn.prepareStatement("SELECT id, name, category FROM npc ORDER BY ID DESC LIMIT 10");
+         		   } else {
+
+             		   sglist = conn.prepareStatement("SELECT id, name, category FROM npc WHERE name LIKE '%"+args[2]+"%'");
+         		   }
+         		   sglist.executeQuery ();
+         		   ResultSet rs = sglist.getResultSet ();
+         		   
+         		   int count = 0;
+         		   while (rs.next ())
+         		   {
+         			  int idVal = rs.getInt ("id");
+	       		       String nameVal = rs.getString ("name");
+	       		       String catVal = rs.getString ("category");
+	       		       player.sendMessage(
+	       		               "id = " + idVal
+	       		               + ", name = " + nameVal
+	       		               + ", category = " + catVal);
+	       		       ++count;
+         		   }
+         		   rs.close ();
+         		   sglist.close ();
+         		   player.sendMessage (count + " rows were retrieved");
+         		
+         	
+     			
+            	}
             	
-        			
-        		}
+            	
             	
             	
             	if (args[1].equals("loottable")) {
@@ -1941,31 +1961,7 @@ public class npcx extends JavaPlugin {
         			
         		}
             	
-            	if (args[1].equals("list")) {
-            		player.sendMessage("Npcs:");
-            		
-            		Statement s = conn.createStatement ();
-            		   s.executeQuery ("SELECT id, name, category FROM npc");
-            		   ResultSet rs = s.getResultSet ();
-            		   int count = 0;
-            		   while (rs.next ())
-            		   {
-            		       int idVal = rs.getInt ("id");
-            		       String nameVal = rs.getString ("name");
-            		       String catVal = rs.getString ("category");
-            		       player.sendMessage(
-            		               "id = " + idVal
-            		               + ", name = " + nameVal
-            		               + ", category = " + catVal);
-            		       ++count;
-            		   }
-            		   rs.close ();
-            		   s.close ();
-            		   player.sendMessage (count + " rows were retrieved");
-            		
             	
-        			
-        		}
             	
             	
             	
