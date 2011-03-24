@@ -148,7 +148,7 @@ public class myNPC {
 		{
 			for (myShopItem item : shop)
 			{
-				player.player.sendMessage(npc.getName() + item.item.getType().name() + " x " + item.item.getAmount() + " " + checkHints(item.item.getTypeId()) + " at coins each");
+				player.player.sendMessage(npc.getName() + item.item.getType().name() + " x " + item.item.getAmount() + " " + (float)checkHints(item.item.getTypeId()) + " at coins each");
 			}
 			return;
 
@@ -194,7 +194,7 @@ public class myNPC {
 					
 					player.player.sendMessage(npc.getName() + " says to you, 'Ok thats "+ item.getAmount() +" out of your "+count +".'");
 					double totalcoins = 0;
-					totalcoins = (item.getAmount() * checkHints(shopitem.item.getTypeId()) * 0.80);
+					totalcoins = (float)(item.getAmount() * checkHints(shopitem.item.getTypeId()) * 0.80);
 					
 					if (this.coin >= totalcoins)
 					{
@@ -202,10 +202,10 @@ public class myNPC {
 						shop.add(shopitem);
 						player.player.sendMessage(npc.getName() + " says to you, 'Thanks! Heres your " + totalcoins + "coins.'");
 						Account account = iConomy.getBank().getAccount(player.name);
-						this.coin = this.coin - totalcoins;
+						this.coin = (float)this.coin - (float)totalcoins;
 						account.add(totalcoins);
 					} else {
-						player.player.sendMessage(npc.getName() + " says to you, 'Sorry, I only have: "+this.coin+" and thats worth "+totalcoins+"!'");
+						player.player.sendMessage(npc.getName() + " says to you, 'Sorry, I only have: "+(float)this.coin+" and thats worth "+(float)totalcoins+"!'");
 					}
 				} else {
 					
@@ -247,12 +247,12 @@ public class myNPC {
 										found++;
 										
 										double cost = ((checkHints(item.item.getTypeId()) * 1.10) * item.item.getAmount());
-										this.coin = this.coin + cost;
-										totalcost = totalcost + cost;
+										this.coin = (float)this.coin + (float)cost;
+										totalcost = (float)totalcost + (float)cost;
 										amount = amount - item.item.getAmount();
 										player.player.getInventory().addItem(item.item);
 										shop.remove(item);
-										player.player.sendMessage(npc.getName() + " says to you, '" + cost + " coins for this stack.'");
+										player.player.sendMessage(npc.getName() + " says to you, '" + (float)cost + " coins for this stack.'");
 										
 										
 									
@@ -275,9 +275,9 @@ public class myNPC {
 						
 						if (totalcost > 0)
 						{
-							player.player.sendMessage(npc.getName() + " says to you, 'Thanks, " + totalcost + " coins.'");
+							player.player.sendMessage(npc.getName() + " says to you, 'Thanks, " + (float)totalcost + " coins.'");
 							Account account = iConomy.getBank().getAccount(player.name);
-							account.subtract(totalcost);
+							account.subtract((float)totalcost);
 							double each = totalcost / originalamount;
 														
 							// update hints
