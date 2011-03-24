@@ -41,13 +41,13 @@ http://forums.bukkit.org/threads/econ-iconomy-4-5-5-elektra-493-556.40/
 Step2 - Install MySQL and the MySQL Connector
 =============================================
 
-Install MySQL Server on Windows or via your repo manager on linux
+- > Install MySQL Server on Windows or via your repo manager on linux
 http://dev.mysql.com/downloads/mysql/
 
-(Windows) Install MySQL WorkBench to create databases and new accounts on windows
+- > (Windows) Install MySQL WorkBench to create databases and new accounts on windows
 http://dev.mysql.com/downloads/workbench/
 
-(Linux Hosted) Install PHPMyAdmin to create databases and new accounts on linux
+- > (Linux Hosted) Install PHPMyAdmin to create databases and new accounts on linux
 http://www.phpmyadmin.net/
 
 ------------------------------------
@@ -66,6 +66,11 @@ CREATE DATABASE npcx;
 CREATE USER 'npcx'@'localhost' IDENTIFIED BY 'p4ssw0rd!';
 GRANT ALL PRIVILEGES ON npcx.* TO 'npcx'@'localhost' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
+
+-------------------------------------------
+- Installing the mysql connector for npcx -
+-------------------------------------------
+
 Create a bukkit/lib folder if you dont have it
 Extract the mysql connect jar file from the following zip file): http://mysql.eukhost.com/Downloads/Connector-J/mysql-connector-java-5.1.6.tar.gz
 Copy the JAR file (mysql-connector-java-5.1.6-bin.jar) from inside the zip into your bukkit/lib folder.
