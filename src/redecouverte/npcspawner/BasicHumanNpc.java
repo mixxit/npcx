@@ -95,6 +95,82 @@ public class BasicHumanNpc extends BasicNpc {
     			
     	if (this.parent != null)
     	{
+    		// PATH GROUP MOVEMENT
+    		if (this.parent.pathgroup != null)
+    		{
+    			//System.out.println("Countdown : "+ this.parent.movecountdown);
+    			if (this.parent.movecountdown == 0)
+    			{
+    				if (this.parent.currentpathspot == 0)
+					{
+    					// Not on a path yet spot
+    					this.parent.currentpathspot = 1;
+    					return;
+					}
+    				
+    				//System.out.println("Countdown reached. Pathspot: " + this.parent.currentpathspot + "("+this.parent.pathgroup.pathgroupentries.size()+")");
+    				// skip this
+    				if (this.parent.currentpathspot < (this.parent.pathgroup.pathgroupentries.size()+1))
+    				{
+		    			for (myPathgroup_entry entry : this.parent.pathgroup.pathgroupentries)
+		    			{
+		    				//System.out.println("Checking: " + entry.s + "("+this.parent.currentpathspot+")");
+		    				if (entry.s == this.parent.currentpathspot)
+		    				{
+		    					// Moved to correct entry
+		    					
+		    					this.moveTo(entry.x,entry.y,entry.z,entry.pitch,entry.yaw);
+		    					// Set next spot
+		    					this.parent.currentpathspot++;
+		    					// Set cooldown on move
+		    					this.parent.movecountdown = 5;
+		    					return;
+		    				}
+		    			}
+		    		} else {
+		    			
+		    			// End of path, move back home
+		    			for (myPathgroup_entry entry : this.parent.pathgroup.pathgroupentries)
+		    			{
+		    				if (entry.s == 1)
+		    				{
+		    					this.moveTo(entry.x,entry.y,entry.z,entry.pitch,entry.yaw);
+		    					this.parent.currentpathspot = 1;
+		    					this.parent.movecountdown = 5;
+		    					return;
+		    				}
+		    			}
+		    		}
+    				
+    				
+    				
+    			} else {
+	    				
+    				
+    					if (this.parent.currentpathspot > 0)
+    					{
+    						this.parent.movecountdown--;
+    						
+    					}
+	    		}
+    			
+    		} else {
+    			//this.parent.pathgroup is null
+    			//lets see if we can get it from the parent spawngroup
+    			if (this.parent.spawngroup != null)
+    			{
+	    			if (this.parent.spawngroup.pathgroup != null)
+	    			{
+	    				this.parent.pathgroup = this.parent.spawngroup.pathgroup;
+	    			}
+    			}
+    			
+    		}
+    		
+    		// END PATH GROUP MOVEMENT
+    		
+    		// PLAYER TARGET DISTANCE
+    		
 	    	for (myPlayer p : this.parent.parent.players.values())
 	    	{
 	    		if (p.target == this)
@@ -123,29 +199,42 @@ public class BasicHumanNpc extends BasicNpc {
 	    		}
 	    		
 	    	}
+	    	
+	    	// END PLAYER TARGET DISTANCE
     	}
     	
     	
-    	if (follow == null && aggro == null)
-    	{
-    		//System.out.println("npcx : moving  ["+ spawnx + "] ["+ spawny + "] ["+ spawnz + "]");
+    	// NPC RETURN TO SPAWN IDLE
+    	if (this.parent.pathgroup != null)
+		{
+    		// let them carry on for guard sequences
     		
-    		// not aggrod or following, time to go home :)
-    		double x2 = this.getBukkitEntity().getLocation().getX();
-    		double y2 = this.getBukkitEntity().getLocation().getY();
-    		double z2 = this.getBukkitEntity().getLocation().getZ();
+    		//return;
+		} else {
     		
-    		if (!(x2 == spawnx && y2 == spawny && z2 == spawnz))
-    		{
-    			
-    		//	System.out.println("Going home");
-    			
-    			Double yaw2 = new Double(spawnyaw);
-                Double pitch2 = new Double(spawnpitch);
-                
-	    		moveTo(spawnx,spawny,spawnz,yaw2.floatValue(),pitch2.floatValue());
-    		}
-    	}
+	    	if (follow == null && aggro == null)
+	    	{
+	    		//System.out.println("npcx : moving  ["+ spawnx + "] ["+ spawny + "] ["+ spawnz + "]");
+	    		
+	    		// not aggrod or following, time to go home :)
+	    		double x2 = this.getBukkitEntity().getLocation().getX();
+	    		double y2 = this.getBukkitEntity().getLocation().getY();
+	    		double z2 = this.getBukkitEntity().getLocation().getZ();
+	    		
+	    		if (!(x2 == spawnx && y2 == spawny && z2 == spawnz))
+	    		{
+	    			
+	    		//	System.out.println("Going home");
+	    			
+	    			Double yaw2 = new Double(spawnyaw);
+	                Double pitch2 = new Double(spawnpitch);
+	                
+		    		moveTo(spawnx,spawny,spawnz,yaw2.floatValue(),pitch2.floatValue());
+	    		}
+	    	}
+		}
+    	// NPC FOLLOW
+
     	
 		if (follow instanceof LivingEntity)
 		{
@@ -162,6 +251,8 @@ public class BasicHumanNpc extends BasicNpc {
 				}
 			}
 		}
+		
+		// NPC ATTACK
 		
 		if (aggro instanceof LivingEntity)
 		{

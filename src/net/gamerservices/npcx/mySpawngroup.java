@@ -17,5 +17,6 @@ public class mySpawngroup {
 	int activecountdown = 0;
 	public double pitch;
 	public double yaw;
+	public myPathgroup pathgroup;
 	
 }

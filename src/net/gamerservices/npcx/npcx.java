@@ -64,6 +64,7 @@ public class npcx extends JavaPlugin {
 	public List< Monster > monsters = new CopyOnWriteArrayList< Monster >();
 	public List< myFaction > factions = new CopyOnWriteArrayList< myFaction >();
 	public List< myLoottable > loottables = new CopyOnWriteArrayList< myLoottable >();
+	public List< myPathgroup > pathgroups = new CopyOnWriteArrayList< myPathgroup >();
 	
 	// iconomy
 	private static PluginListener PluginListener = null;
@@ -225,7 +226,7 @@ public class npcx extends JavaPlugin {
 	
 	public void think()
 	{
-		tick.schedule(new Tick(this), 1 * 400);
+		tick.schedule(new Tick(this), 1 * 500);
 		
 		fixDead();
 		
@@ -736,7 +737,7 @@ public class npcx extends JavaPlugin {
 		            s2.executeUpdate(npctable1);
 		            
 		            String droptable2 = "DROP TABLE IF EXISTS spawngroup; ";
-		            String spawngrouptable = "CREATE TABLE spawngroup ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),name CHAR(40),world CHAR(40),category CHAR(40),x CHAR(40), y CHAR(40), z CHAR(40),yaw CHAR(40), pitch CHAR(40))";
+		            String spawngrouptable = "CREATE TABLE spawngroup (  id int(10) unsigned NOT NULL AUTO_INCREMENT,  name char(40) DEFAULT NULL,  world char(40) DEFAULT NULL,  category char(40) DEFAULT NULL,  x char(40) DEFAULT NULL,  y char(40) DEFAULT NULL,  z char(40) DEFAULT NULL,  yaw char(40) DEFAULT NULL,  pitch char(40) DEFAULT NULL,  pathgroupid int(10) DEFAULT NULL,  PRIMARY KEY (id))";
 		            s2.executeUpdate(droptable2);
 		            
 		            s2.executeUpdate(spawngrouptable);
@@ -805,6 +806,62 @@ public class npcx extends JavaPlugin {
 	            
 	            try 
 	            {
+		            // Load faction_list
+		            Statement spg = conn.createStatement ();
+		            spg.executeQuery ("SELECT * FROM pathgroup");
+		            ResultSet rspg = spg.getResultSet ();
+		            int countpg = 0;
+		            System.out.println("npcx : loading pathgroups");
+		            while (rspg.next ())
+		            {
+		            	myPathgroup pathgroup = new myPathgroup();
+		            	pathgroup.id = rspg.getInt ("id");
+		            	pathgroup.name = rspg.getString ("name");
+		            	pathgroup.category = rspg.getInt ("category");
+
+		            	Statement sFindEntries = conn.createStatement();
+		            	sFindEntries.executeQuery("SELECT * FROM pathgroup_entries WHERE pathgroup = " + pathgroup.id);
+		            	ResultSet rsEntries = sFindEntries.getResultSet ();
+		            	int countentries = 0;
+		            	while (rsEntries.next ())
+			            {
+		            		
+		            		myPathgroup_entry entry = new myPathgroup_entry();
+		            		entry.id = rsEntries.getInt("id");
+		            		entry.s = rsEntries.getInt("s");
+		            		entry.name = rsEntries.getString("name");
+		            		
+		            		entry.pathgroupid = rsEntries.getInt("pathgroup");
+		            		entry.x = rsEntries.getInt("x");
+		            		entry.y = rsEntries.getInt("y");
+		            		entry.z = rsEntries.getInt("z");
+		            		entry.yaw = rsEntries.getFloat("yaw");
+		            		entry.pitch = rsEntries.getFloat("pitch");
+		            		
+		            		
+		            		entry.parent = pathgroup;
+		            		
+		            		countentries++;
+		            		pathgroup.pathgroupentries.add(entry);
+			            }
+		            	rsEntries.close();
+		            	sFindEntries.close();
+		            	
+		            	countpg++;
+		            	pathgroups.add(pathgroup);
+		            	
+		            	
+		            }
+		            rspg.close();
+		            spg.close();
+		            System.out.println("npcx : Loaded " + countpg + " pathgroup.");
+		            
+	            } catch (NullPointerException e) { 
+			 		System.out.println("npcx : ERROR - faction loading cancelled!");
+	            }
+	            
+	            try 
+	            {
 		            // Load loot tables
 		            Statement s1 = conn.createStatement ();
 		            s1.executeQuery ("SELECT * FROM loottables");
@@ -835,7 +892,8 @@ public class npcx extends JavaPlugin {
 		            		countentries++;
 		            		loottable.loottable_entries.add(entry);
 			            }
-		            	
+		            	rsEntries.close();
+		            	sFindEntries.close();
 		            	countloottables++;
 		            	loottables.add(loottable);
 		            	
@@ -854,7 +912,7 @@ public class npcx extends JavaPlugin {
 	            {
 		            // Load Spawngroups
 		            Statement s1 = conn.createStatement ();
-		            s1.executeQuery ("SELECT id, name, category,x,y,z,world,yaw,pitch FROM spawngroup");
+		            s1.executeQuery ("SELECT id, name, category,x,y,z,world,yaw,pitch,pathgroupid FROM spawngroup");
 		            ResultSet rs1 = s1.getResultSet ();
 		            int count1 = 0;
 		            System.out.println("npcx : loading spawngroups");
@@ -879,13 +937,15 @@ public class npcx extends JavaPlugin {
 		                spawngroup.yaw = Double.parseDouble(rs1.getString ("yaw"));
 		                spawngroup.pitch = Double.parseDouble(rs1.getString ("pitch"));
 		                
+		                spawngroup.pathgroup = dbGetSpawngrouppg(spawngroup.id);
+		                
 		                
 		                // Add to our spawngroup hashmap
 		                this.spawngroups.put(Integer.toString(idVal), spawngroup);
 		                
 		                // Load npcs into spawngroups
 		                Statement s11 = conn.createStatement ();
-			            s11.executeQuery ("SELECT npc.weapon As weapon,npc.helmet As helmet,npc.chest As chest,npc.legs As legs,npc.boots As boots,spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.category As category, npc.loottable_id As loottable_id, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
+			            s11.executeQuery ("SELECT npc.weapon As weapon, npc.helmet As helmet,npc.chest As chest,npc.legs As legs,npc.boots As boots,spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.category As category, npc.loottable_id As loottable_id, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
 			            ResultSet rs11 = s11.getResultSet ();
 			            
 			            while (rs11.next ())
@@ -935,6 +995,8 @@ public class npcx extends JavaPlugin {
 			            		if (rs11.getInt("faction_id") == faction.id)
 			            			npc.faction = faction;
 			            	}
+			            	
+			            	npc.pathgroup = spawngroup.pathgroup;
 			            	
 			            	for (myLoottable loottable : loottables)
 			            	{
@@ -1114,6 +1176,45 @@ public class npcx extends JavaPlugin {
         		}
             	
             	
+            	if (args[1].equals("pathgroup")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx spawngroup pathgroup spawngroupid pathgroupid");
+            			
+            			
+            			
+            		} else {
+
+        	            PreparedStatement stmt = conn.prepareStatement("UPDATE spawngroup SET pathgroupid = ? WHERE id = ?;");
+        	            stmt.setString(1, args[3]);
+        	            stmt.setString(2, args[2]);
+        	            
+        	            stmt.executeUpdate();
+        	            
+        	            for(mySpawngroup sg : spawngroups.values())
+        	            {
+        	            	if (sg.id == Integer.parseInt(args[2]))
+        	            	{
+        	            		if (Integer.parseInt(args[3]) != 0)
+        	            		{
+        	            			sg.pathgroup = getPathgroupByID(Integer.parseInt(args[3]));
+        	            			player.sendMessage("npcx : Updated spawngroups cached pathgroup ("+args[3]+"): "+sg.pathgroup.name);
+        	            		} else {
+        	            			sg.pathgroup = null;
+        	            			player.sendMessage("npcx : Updated spawngroups cached pathgroup (0)");
+
+        	            		}
+        	            		
+        	            	}
+        	            }
+            			
+            			player.sendMessage("Updated pathgroup ID:" + args[3] + " on spawngroup ID:[" + args[2]  + "]");
+        	            
+            			stmt.close();
+            		}
+            	}
+            	
+            	
+            	
             	if (args[1].equals("add")) {
             		if (args.length < 4) {
             			player.sendMessage("Insufficient arguments /npcx spawngroup add spawngroup npcid");
@@ -1155,6 +1256,7 @@ public class npcx extends JavaPlugin {
                      		       npc.faction = dbGetNPCfaction(args[3]);
                      		       npc.loottable = dbGetNPCloottable(args[3]);
                      		       npc.helmet = rsNPC.getInt ("helmet");
+                     		       npc.pathgroup = sg.pathgroup;
                      		       npc.chest = rsNPC.getInt ("chest");
                      		       npc.legs = rsNPC.getInt ("legs");
                      		       npc.boots = rsNPC.getInt ("boots");
@@ -1477,9 +1579,69 @@ public class npcx extends JavaPlugin {
                 	// todo needs to force the player to provide a search term to not spam them with lots of results in the event of a huge npc list
                 	player.sendMessage("Insufficient arguments /npcx pathgroup list");
                 	
+
+        			player.sendMessage("Insufficient arguments /npcx pathgroup add pathgroupid order");
+                	
                	
                     return false;
                 }
+            	
+            	
+            	if (args[1].equals("add")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx pathgroup add pathgroupid order");
+                    	
+            		} else {
+            			player.sendMessage("Added to pathgroup " + args[2] + "<"+ args[3]+ ".");
+            			
+            			// add to database
+            		
+            			
+            			PreparedStatement s2 = conn.prepareStatement("INSERT INTO pathgroup_entries (pathgroup,s,x,y,z,pitch,yaw) VALUES (?,?,?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
+            			s2.setString(1,args[2]);
+            			s2.setString(2,args[3]);
+            			s2.setDouble(3,player.getLocation().getX());
+            			s2.setDouble(4,player.getLocation().getY());
+            			s2.setDouble(5,player.getLocation().getZ());
+            			s2.setFloat(6,player.getLocation().getPitch());
+            			s2.setFloat(7,player.getLocation().getYaw());
+            			
+            		    
+            			s2.executeUpdate();
+        	            player.sendMessage("Pathing Position ["+ args[3] + "] added to pathggroup ["+ args[2] + "]");
+            			
+        	            // add to cached spawngroup
+        	            for (myPathgroup pg : this.pathgroups)
+        	            {
+        	            	if (pg.id == Integer.parseInt(args[2]))
+        	            	{
+        	            		
+        	            		myPathgroup_entry pge = new myPathgroup_entry();
+        	            		pge.parent = pg;
+        	            		pge.pathgroupid = Integer.parseInt(args[2]);
+        	            		pge.x = player.getLocation().getX();
+        	            		pge.y = player.getLocation().getY();
+        	            		pge.z = player.getLocation().getZ();
+        	            		pge.pitch = player.getLocation().getPitch();
+        	            		pge.yaw = player.getLocation().getYaw();
+        	            		
+        	            		
+        	            		pge.s = Integer.parseInt(args[3]);
+        	            		System.out.println("npcx : + cached new pathgroup entry("+ args[3] + ")");
+        	            		pg.pathgroupentries.add(pge);
+        	            		
+        	            	}
+        	            }
+        	            
+        	            
+        	            
+            			
+            			// close db
+        	            s2.close();
+        	            
+            		}
+        			
+        		}
             	
             	if (args[1].equals("create")) {
             		if (args.length < 3) {
@@ -1491,17 +1653,63 @@ public class npcx extends JavaPlugin {
             			PreparedStatement statementPCreate = conn.prepareStatement("INSERT INTO pathgroup (name) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
             			statementPCreate.setString(1, args[2]);
             			statementPCreate.executeUpdate();
-        	            statementPCreate.close();
+        	            
         	            ResultSet keyset = statementPCreate.getGeneratedKeys();
+        	            
             			int key = 0;
             			if ( keyset.next() ) {
             			    // Retrieve the auto generated key(s).
 	            			key = keyset.getInt(1);
 	            			
             			}
+            			
+            			myPathgroup pathgroup = new myPathgroup();
+            			pathgroup.id = key;
+            			pathgroup.name = args[2];
+
+            			this.pathgroups.add(pathgroup);
+            			
+            			
+            			statementPCreate.close();
         	            player.sendMessage("Created pathgroup ["+key+"]: " + args[2]);
         	            
             		}
+        			
+        		}
+            	
+            	if (args[1].equals("list")) {
+            		
+            		player.sendMessage("Pathgroups:");
+          		   PreparedStatement sglist;
+       		       
+          		   
+          		   if (args.length < 3)
+          		   {
+          			   sglist = conn.prepareStatement("SELECT id, name, category FROM pathgroup ORDER BY ID DESC LIMIT 10");
+          		   } else {
+
+              		   sglist = conn.prepareStatement("SELECT id, name, category FROM pathgroup WHERE name LIKE '%"+args[2]+"%'");
+          		   }
+          		   sglist.executeQuery ();
+          		   ResultSet rs = sglist.getResultSet ();
+          		   
+          		   int count = 0;
+          		   while (rs.next ())
+          		   {
+          			  int idVal = rs.getInt ("id");
+ 	       		       String nameVal = rs.getString ("name");
+ 	       		       String catVal = rs.getString ("category");
+ 	       		       player.sendMessage(
+ 	       		               "id = " + idVal
+ 	       		               + ", name = " + nameVal
+ 	       		               + ", category = " + catVal);
+ 	       		       ++count;
+          		   }
+          		   rs.close ();
+          		   sglist.close ();
+          		   player.sendMessage (count + " rows were retrieved");
+          		
+            		
         			
         		}
             }
@@ -1549,6 +1757,7 @@ public class npcx extends JavaPlugin {
         			
                     return false;
                 }
+            	
             	
             	if (args[1].equals("triggerword")) {
             		if (args.length < 6) {
@@ -2021,25 +2230,7 @@ public class npcx extends JavaPlugin {
 
             }
             
-            if (subCommand.equals("pathgroup"))
-            {
-            	// Overview:
-            	// Path groups are containers of path locations assigned to SpawnGroups. They are used to determine the route of an npc after it spawns
-            	// When a path group is created, it is given several orderIDs beginning with 1, the npc will move from 
-            	// point to point in the order of the orderID
-            	
-            	// In the future this will allow different types of pathgroups which will effect the way the npc traverses the order
-            	// ie random, byID and circular
-            	
-            	// todo: functionality
-            	// creates a new path group
-            	// assigns a location to a path group
-            	if (args.length < 3) {
-                	player.sendMessage("Insufficient arguments /npcx pathgroup create|delete name");
-                	player.sendMessage("Insufficient arguments /npcx pathgroup add pathgroupname orderinteger");
-                    return false;
-                }
-            }
+            
 
             
             /*
@@ -2110,6 +2301,49 @@ public class npcx extends JavaPlugin {
 
         return true;
     }
+
+	private myPathgroup dbGetSpawngrouppg(int id) 
+	{
+			try
+			{
+				Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+		        conn = DriverManager.getConnection (dsn, dbuser, dbpass);
+		        PreparedStatement s11 = conn.prepareStatement("SELECT pathgroupid FROM spawngroup WHERE id = ?",Statement.RETURN_GENERATED_KEYS);
+		        s11.setInt(1, id);
+		        s11.executeQuery();
+		        ResultSet rs11 = s11.getResultSet ();
+		        
+		        while (rs11.next ())
+		        {
+		        	int pathgroupid = rs11.getInt ("pathgroupid");
+		        	for (myPathgroup f : pathgroups)
+		        	{
+		        		if (f.id == pathgroupid)
+		        		{
+		        			return f;
+		        		}
+		        	}
+		        	
+		        }
+			} catch (Exception e)
+			{
+		        return null;
+		
+			}
+	        return null;
+	}
+
+	private myPathgroup getPathgroupByID(int parseInt) {
+		// TODO Auto-generated method stub
+		for (myPathgroup g : pathgroups)
+		{
+			if (g.id == parseInt)
+			{
+				return g;
+			}
+		}
+		return null;
+	}
 
 	private myLoottable getLoottableByID(int parseInt) {
 		

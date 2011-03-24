@@ -29,6 +29,9 @@ public class myNPC {
 	public int weapon = 0;
 	public int boots = 0;
 	public List< myHint > hints = new CopyOnWriteArrayList< myHint >();
+	public myPathgroup pathgroup;
+	public int currentpathspot = 0;
+	public int movecountdown = 0;
 			
 	myNPC(npcx parent, HashMap<String, myTriggerword> triggerwords)
 	{
