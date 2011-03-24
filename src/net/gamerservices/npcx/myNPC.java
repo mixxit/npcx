@@ -140,8 +140,18 @@ public class myNPC {
 		if (aMsg[0].toLowerCase().matches("help"))
 		{
 						
-			player.player.sendMessage(npc.getName() + " says to you, 'What do you need? [sell] or [buy]'");
+			player.player.sendMessage(npc.getName() + " says to you, 'What do you need? [list], [sell] or [buy]'");
 			return;
+		}
+		
+		if (aMsg[0].toLowerCase().matches("list"))
+		{
+			for (myShopItem item : shop)
+			{
+				player.player.sendMessage(npc.getName() + item.item.getType().name() + " x " + item.item.getAmount() + " " + checkHints(item.item.getTypeId()) + " at coins each");
+				
+			}
+			
 		}
 		if (aMsg[0].toLowerCase().matches("sell"))
 		{
