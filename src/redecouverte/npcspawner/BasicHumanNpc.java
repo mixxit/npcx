@@ -136,7 +136,7 @@ public class BasicHumanNpc extends BasicNpc {
 		    				{
 		    					this.moveTo(entry.x,entry.y,entry.z,entry.pitch,entry.yaw);
 		    					this.parent.currentpathspot = 1;
-		    					this.parent.movecountdown = 5;
+		    					this.parent.movecountdown = 25;
 		    					return;
 		    				}
 		    			}

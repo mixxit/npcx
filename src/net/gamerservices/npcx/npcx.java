@@ -1872,7 +1872,7 @@ public class npcx extends JavaPlugin {
         	            	if (n.id.matches(args[2]))
         	            	{
         	            		
-        	            		n.chest = Integer.parseInt(args[3]);
+        	            		n.helmet = Integer.parseInt(args[3]);
         	            		ItemStack i = new ItemStack(n.helmet);
         	            		i.setTypeId(Integer.parseInt(args[3]));
         	            		n.npc.getBukkitEntity().getInventory().setHelmet(i);
@@ -1888,16 +1888,16 @@ public class npcx extends JavaPlugin {
             		}
             	}
             	
-            	if (args[1].equals("primary")) {
+            	if (args[1].equals("weapon")) {
             		if (args.length < 4) {
-            			player.sendMessage("Insufficient arguments /npcx npc primary npcid itemid");
+            			player.sendMessage("Insufficient arguments /npcx npc weapon npcid itemid");
             			
             			
             			
             		} else {
 
            			
-        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET primary = ? WHERE id = ?;");
+        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET weapon = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
         	            
@@ -1909,12 +1909,12 @@ public class npcx extends JavaPlugin {
         	            	if (n.id.matches(args[2]))
         	            	{
         	            		
-        	            		n.chest = Integer.parseInt(args[3]);
-        	            		ItemStack i = new ItemStack(n.legs);
+        	            		n.weapon = Integer.parseInt(args[3]);
+        	            		ItemStack i = new ItemStack(n.weapon);
         	            		i.setTypeId(Integer.parseInt(args[3]));
 
         	            		n.npc.getBukkitEntity().getInventory().setItemInHand(i);
-        	            		player.sendMessage("npcx : Updated living npc to cached primary ("+args[3]+"): "+n.boots);
+        	            		player.sendMessage("npcx : Updated living npc to cached weapon ("+args[3]+"): "+n.weapon);
         	            		// when faction changes reset aggro and follow status
         	            		
         	            	}
@@ -1947,8 +1947,8 @@ public class npcx extends JavaPlugin {
         	            	if (n.id.matches(args[2]))
         	            	{
         	            		
-        	            		n.chest = Integer.parseInt(args[3]);
-        	            		ItemStack i = new ItemStack(n.legs);
+        	            		n.boots = Integer.parseInt(args[3]);
+        	            		ItemStack i = new ItemStack(n.boots);
         	            		i.setTypeId(Integer.parseInt(args[3]));
 
         	            		n.npc.getBukkitEntity().getInventory().setBoots(i);
@@ -1985,7 +1985,7 @@ public class npcx extends JavaPlugin {
         	            	if (n.id.matches(args[2]))
         	            	{
         	            		
-        	            		n.chest = Integer.parseInt(args[3]);
+        	            		n.legs = Integer.parseInt(args[3]);
         	            		ItemStack i = new ItemStack(n.legs);
         	            		i.setTypeId(Integer.parseInt(args[3]));
 
