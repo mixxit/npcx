@@ -26,7 +26,7 @@ public class myNPC {
 	public int chest = 0;
 	public int legs = 0;
 	public int helmet = 0;
-	public int primary = 0;
+	public int weapon = 0;
 	public int boots = 0;
 	
 	myNPC(npcx parent, HashMap<String, myTriggerword> triggerwords)
