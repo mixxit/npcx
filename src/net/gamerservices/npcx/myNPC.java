@@ -119,7 +119,9 @@ public class myNPC {
 		{
 			if (hint.id == id)
 			{
-				return hint.price;
+				hint.age++;
+				return (float)hint.price;
+				
 			}
 		}
 		// return basic price
@@ -155,7 +157,14 @@ public class myNPC {
 				// todo price
 				
 				
+				try 
+				{
 				item.setTypeId(Material.matchMaterial(aMsg[1]).getId());
+				} catch (NullPointerException e)
+				{
+					player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
+					return;
+				}
 				item.setAmount(Integer.parseInt(aMsg[2]));
 				int count = 0;
 				for (ItemStack curitem : player.player.getInventory().getContents())
@@ -214,26 +223,37 @@ public class myNPC {
 						
 						for (myShopItem item : shop)
 						{
-							if (item.item.getTypeId() == Material.matchMaterial(aMsg[1]).getId())
+							try 
 							{
 								
-								//player.player.sendMessage(npc.getName() + " says to you, 'Hmm: " + item.item.getTypeId() + " is worth "+ (item.price+item.price*0.10) +" coin each'");
-								
-									found++;
+							
+							
+								if (item.item.getTypeId() == Material.matchMaterial(aMsg[1]).getId())
+								{
 									
-									double cost = ((checkHints(item.item.getTypeId()) * 1.10) * item.item.getAmount());
-									this.coin = this.coin + cost;
-									totalcost = totalcost + cost;
-									amount = amount - item.item.getAmount();
-									player.player.getInventory().addItem(item.item);
-									shop.remove(item);
-									player.player.sendMessage(npc.getName() + " says to you, '" + cost + " coins for this stack.'");
+									//player.player.sendMessage(npc.getName() + " says to you, 'Hmm: " + item.item.getTypeId() + " is worth "+ (item.price+item.price*0.10) +" coin each'");
 									
+										found++;
+										
+										double cost = ((checkHints(item.item.getTypeId()) * 1.10) * item.item.getAmount());
+										this.coin = this.coin + cost;
+										totalcost = totalcost + cost;
+										amount = amount - item.item.getAmount();
+										player.player.getInventory().addItem(item.item);
+										shop.remove(item);
+										player.player.sendMessage(npc.getName() + " says to you, '" + cost + " coins for this stack.'");
+										
+										
 									
-								
-							} else {
-								// ignore this type
-								
+								} else {
+									// ignore this type
+									
+								}
+							
+							} catch (NullPointerException e)
+							{
+								player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
+								return;
 							}
 						}
 						if (found < 1)
@@ -279,17 +299,23 @@ public class myNPC {
 
 	private void updateHints(int parseInt, double each) {
 		// TODO Auto-generated method stub
+		
+		// is it old?
+		int age = 0;
+		
 		for (myHint hint : this.hints)
 		{
 			if (hint.id == parseInt)
 			{
+				age = hint.age;
 				hints.remove(hint);
 			}
 		}
 		
-		myHint h = new myHint();
-		h.id = parseInt;
-		h.price = each;
-		this.hints.add(h);
+			myHint h = new myHint();
+			h.id = parseInt;
+			h.price = (float)each;
+			h.age = 0;
+			this.hints.add(h);
 	}
 }
