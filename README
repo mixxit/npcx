@@ -47,25 +47,36 @@ http://dev.mysql.com/downloads/mysql/
 - > (Windows) Install MySQL WorkBench to create databases and new accounts on windows
 http://dev.mysql.com/downloads/workbench/
 
-- > (Linux Hosted) Install PHPMyAdmin to create databases and new accounts on linux
-http://www.phpmyadmin.net/
+- > (Linux Hosted) Commandline option
 
-------------------------------------
-- Using MySQL Workbench on Windows - 
-------------------------------------
+----------------------------------------------
+- Using MySQL Workbench on Windows to create - 
+----------------------------------------------
 Login to MySQL Workbench as the root user you created when installing MySQL Server
 create a new database called 'npcx'
 create a new user called npcx with the password 'p4ssw0rd!' - assign this user ALL privileges to the npcx database
 
---------------------------------------
-- Using mysql command line to create -
---------------------------------------
-from mysql -u root -p in linux shell
+Steps:
+
+Create a new database in MySQL Workbench
+In work bench create a new connection on the left under SQL Development using your user/pass (probably root) then on the top left click Add Schema, just name 'npcx' then press Apply
+
+Create a new user in MySQL Workbench
+Now come out of SQL Development and go to the right of workbench and into Server Administration, connect again using the details above and click Users and Privileges on the left - now click Add Account in the bottom left and fill in the details : npcx for the username, p4ssw0rd! for the password and then press Apply
+
+Now goto the schema privileges tab above select npcx on the user list on the left and click Add Entry click Schemas matching pattern or name and select npcx, press OK
+
+--------------------------------------------
+- Linux using mysql command line to create -
+--------------------------------------------
+from linux shell:
+mysql -u root -p
 Code:
 CREATE DATABASE npcx;
 CREATE USER 'npcx'@'localhost' IDENTIFIED BY 'p4ssw0rd!';
 GRANT ALL PRIVILEGES ON npcx.* TO 'npcx'@'localhost' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
+
 
 -------------------------------------------
 - Installing the mysql connector for npcx -
