@@ -269,14 +269,38 @@ public class myNPC {
 										double cost = ((checkHints(item.item.getTypeId()) * 1.10) * item.item.getAmount());
 										if (cost > 0)
 										{
-											this.coin = (float)this.coin + (float)cost;
-											totalcost = (float)totalcost + (float)cost;
-											amount = amount - item.item.getAmount();
+											if (amount != 0)
+											{
 											
-											shop.remove(item);
-											basket.add(item);
-											
-											player.player.sendMessage(npc.getName() + " says to you, '" + (float)cost + " coins for this stack.'");
+												if (item.item.getAmount() <= amount)
+												{
+													this.coin = (float)this.coin + (float)cost;
+													totalcost = (float)totalcost + (float)cost;
+													amount = amount - item.item.getAmount();
+													
+													shop.remove(item);
+													basket.add(item);
+													
+													player.player.sendMessage(npc.getName() + " says to you, '" + (float)cost + " coins for this stack.'");
+												} else {
+													this.coin = (float)this.coin + (float)cost;
+													totalcost = (float)totalcost + (((float)cost/item.item.getAmount())*amount);
+													item.item.setAmount(item.item.getAmount()-amount);
+													myShopItem i = new myShopItem();
+													i.price = (((float)cost/item.item.getAmount())*amount);
+													ItemStack is = new ItemStack(item.item.getType());
+													i.item = is;
+													is.setAmount(amount);
+													is.setTypeId(item.item.getTypeId());
+													
+													amount = 0;
+													basket.add(i);
+													
+													player.player.sendMessage(npc.getName() + " says to you, '" + (float)cost + " coins for this stack.'");
+													
+													
+												}
+											}
 										}
 										
 									
