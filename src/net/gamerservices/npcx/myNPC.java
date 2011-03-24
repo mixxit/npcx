@@ -307,6 +307,7 @@ public class myNPC {
 									basket.remove(i);
 								}
 								player.player.sendMessage(npc.getName() + " says to you, 'Sorry, you don't have enough (" + (float)totalcost + " coins).'");
+								return;
 
 							}
 						}
