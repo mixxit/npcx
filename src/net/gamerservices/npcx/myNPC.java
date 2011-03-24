@@ -200,7 +200,7 @@ public class myNPC {
 					{
 						player.player.getInventory().removeItem(item);
 						shop.add(shopitem);
-						player.player.sendMessage(npc.getName() + " says to you, 'Thanks! Heres your " + totalcoins + "coins.'");
+						player.player.sendMessage(npc.getName() + " says to you, 'Thanks! Heres your " + totalcoins + "(float)coins.'");
 						Account account = iConomy.getBank().getAccount(player.name);
 						this.coin = (float)this.coin - (float)totalcoins;
 						account.add(totalcoins);
