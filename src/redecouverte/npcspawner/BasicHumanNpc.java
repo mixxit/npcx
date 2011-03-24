@@ -95,81 +95,12 @@ public class BasicHumanNpc extends BasicNpc {
     			
     	if (this.parent != null)
     	{
-    		// PATH GROUP MOVEMENT
-    		if (this.parent.pathgroup != null)
-    		{
-    			//System.out.println("Countdown : "+ this.parent.movecountdown);
-    			if (this.parent.movecountdown == 0)
-    			{
-    				if (this.parent.currentpathspot == 0)
-					{
-    					// Not on a path yet spot
-    					this.parent.currentpathspot = 1;
-    					return;
-					}
-    				
-    				//System.out.println("Countdown reached. Pathspot: " + this.parent.currentpathspot + "("+this.parent.pathgroup.pathgroupentries.size()+")");
-    				// skip this
-    				if (this.parent.currentpathspot < (this.parent.pathgroup.pathgroupentries.size()+1))
-    				{
-		    			for (myPathgroup_entry entry : this.parent.pathgroup.pathgroupentries)
-		    			{
-		    				//System.out.println("Checking: " + entry.s + "("+this.parent.currentpathspot+")");
-		    				if (entry.s == this.parent.currentpathspot)
-		    				{
-		    					// Moved to correct entry
-		    					
-		    					this.moveTo(entry.x,entry.y,entry.z,entry.pitch,entry.yaw);
-		    					// Set next spot
-		    					this.parent.currentpathspot++;
-		    					// Set cooldown on move
-		    					this.parent.movecountdown = 25;
-		    					return;
-		    				}
-		    			}
-		    		} else {
-		    			
-		    			// End of path, move back home
-		    			for (myPathgroup_entry entry : this.parent.pathgroup.pathgroupentries)
-		    			{
-		    				if (entry.s == 1)
-		    				{
-		    					this.moveTo(entry.x,entry.y,entry.z,entry.pitch,entry.yaw);
-		    					this.parent.currentpathspot = 1;
-		    					this.parent.movecountdown = 25;
-		    					return;
-		    				}
-		    			}
-		    		}
-    				
-    				
-    				
-    			} else {
-	    				
-    				
-    					if (this.parent.currentpathspot > 0)
-    					{
-    						this.parent.movecountdown--;
-    						
-    					}
-	    		}
-    			
-    		} else {
-    			//this.parent.pathgroup is null
-    			//lets see if we can get it from the parent spawngroup
-    			if (this.parent.spawngroup != null)
-    			{
-	    			if (this.parent.spawngroup.pathgroup != null)
-	    			{
-	    				this.parent.pathgroup = this.parent.spawngroup.pathgroup;
-	    			}
-    			}
-    			
-    		}
     		
-    		// END PATH GROUP MOVEMENT
+
     		
+    		//
     		// PLAYER TARGET DISTANCE
+    		//
     		
 	    	for (myPlayer p : this.parent.parent.players.values())
 	    	{
@@ -276,11 +207,178 @@ public class BasicHumanNpc extends BasicNpc {
 		}
 		
 		
+		
+		//
+		// PATH GROUP MOVEMENT
+		//
+		
+		if (this.parent.pathgroup != null)
+		{
+			//System.out.println("Countdown : "+ this.parent.movecountdown);
+			if (this.parent.movecountdown == 0)
+			{
+				if (this.parent.currentpathspot == 0)
+				{
+					// Not on a path spot yet
+					this.parent.currentpathspot = 1;
+					return;
+				}
+				
+				//System.out.println("Pathspot : "+ this.parent.currentpathspot);
+				// Move toward current pathspot
+				for (myPathgroup_entry entry : this.parent.pathgroup.pathgroupentries)
+				{
+					if (entry.s == this.parent.currentpathspot)
+    				{
+						double x = this.getBukkitEntity().getLocation().getX();
+						double y = this.getBukkitEntity().getLocation().getY();
+						double z = this.getBukkitEntity().getLocation().getZ();
+						//System.out.println("("+x + " "+y + " "+z+")Found entry : "+ entry.x + " " + entry.x + " "+ entry.x);
+
+						float yaw = this.getBukkitEntity().getLocation().getYaw();
+						float pitch = this.getBukkitEntity().getLocation().getPitch();
+						
+						if (entry.x == x && entry.y == y && entry.z == z && entry.yaw == yaw && entry.pitch == pitch)
+						{
+							// We reached our spot
+							
+							if (this.parent.currentpathspot < this.parent.pathgroup.pathgroupentries.size() )
+							{
+								//System.out.println("Found entry : I reached a spot");
+    							this.parent.movecountdown = 5;
+    							this.parent.currentpathspot++;
+    							return;
+    							
+							} else {
+								//System.out.println("Found entry : I've reached the end");
+								this.parent.movecountdown = 5;
+    							this.parent.currentpathspot = 1;
+    							return;
+							}
+						} else {
+							
+							// We didn't reach our spot
+							
+							//System.out.println("Found entry : I need to move there");
+
+							this.movecloserLocation(entry.x,entry.y,entry.z,entry.pitch,entry.yaw);
+							return;
+							
+						}
+						
+    				}
+				}
+				
+			} else {
+    				
+				
+					if (this.parent.currentpathspot > 0)
+					{
+						//System.out.println("Need to wait");
+						this.parent.movecountdown--;
+						
+					}
+    		}
+			
+		} else {
+			//this.parent.pathgroup is null
+			//lets see if we can get it from the parent spawngroup
+			if (this.parent.spawngroup != null)
+			{
+    			if (this.parent.spawngroup.pathgroup != null)
+    			{
+    				this.parent.pathgroup = this.parent.spawngroup.pathgroup;
+    			}
+			}
+			
+		}
+		
+		//
+		// END PATH GROUP MOVEMENT
+		//
+		
+		
 				
 		
     }
     
-    public void movecloser(LivingEntity e)
+    private void movecloserLocation(double x, double y, double z, float pitch,	float yaw) 
+    {
+		try
+    	{
+	    	
+		    	double mx = this.getBukkitEntity().getLocation().getX();
+		    	double my = this.getBukkitEntity().getLocation().getY();
+		    	double mz = this.getBukkitEntity().getLocation().getZ();
+		    	double newx = mx;
+		    	double newy = my;
+		    	double newz = mz;
+		    	
+		    	
+		    	double diffx = mx - x;
+        		double diffy = my - y;
+        		double diffz = mz - z;
+        		
+        		
+        		if (diffx < 1 && diffx > -1 && diffy < 1 && diffy > -1 && diffz < 1 && diffz > -1)
+        		{
+        			//System.out.println("Close enough!");
+        			this.moveTo(x, y, z,yaw,pitch);
+        			return;
+        		} else {
+        			
+			    	if (mx != x)
+			    	{
+				    	
+			    		if ((mx - x) > 0)
+			    		{
+			    			newx = mx-0.5;		    		
+			    		}
+			    		if ((mx - x) < 0)
+			    		{
+			    			newx = mx+0.5;
+			    		}
+			    	}
+			    	
+			    	if (my != y)
+			    	{
+				    	
+			    		if ((my - y) > 0)
+			    		{
+			    			newy = my-0.5;
+			    		}
+			    		if ((my - y) < 0)
+			    		{
+			    			newy = my+0.5;
+			    		}
+			    	}
+		    		
+		    		if (mz != z)
+			    	{
+				    	
+			    		if ((mz - z) > 0)
+			    		{
+			    			newz = mz-0.5;
+			    		}
+			    		if ((mz - z) < 0)
+			    		{
+			    			newz = mz+0.5;
+			    			
+			    		}
+			    	}    
+		    		//System.out.println("Shuffling!");
+		    		this.moveTo(newx, newy, newz,yaw,pitch);
+		    		return;
+        		}
+                
+	    
+    	} catch (Exception x1)
+    	{
+    		 x1.printStackTrace();
+    	}
+	}
+
+	public void movecloser(LivingEntity e)
     {
     	try
     	{
@@ -305,11 +403,11 @@ public class BasicHumanNpc extends BasicNpc {
 			    	
 		    		if ((mx - x) > 0.5)
 		    		{
-		    			newx = mx-2;		    		
+		    			newx = mx-0.5;		    		
 		    		}
 		    		if ((mx - x) < -0.5)
 		    		{
-		    			newx = mx+2;
+		    			newx = mx+0.5;
 		    		}
 		    	}
 		    	
@@ -317,11 +415,11 @@ public class BasicHumanNpc extends BasicNpc {
 		    	{
 		    		//System.out.println("npcx : moving y ["+ my+ "] -> ["+ y + "]("+ (my - y) + ")");
 			    	
-		    		if ((my - y) > 2)
+		    		if ((my - y) > 0.5)
 		    		{
 		    			newy = my-0.5;
 		    		}
-		    		if ((my - y) < -2)
+		    		if ((my - y) < -0.5)
 		    		{
 		    			newy = my+0.5;
 		    		}
@@ -331,11 +429,11 @@ public class BasicHumanNpc extends BasicNpc {
 		    	{
 	    			//System.out.println("npcz : moving z ["+ mz+ "] -> ["+ z + "]("+ (mz - z) + ")");
 			    	
-		    		if ((mz - z) > 2)
+		    		if ((mz - z) > 0.5)
 		    		{
 		    			newz = mz-0.5;
 		    		}
-		    		if ((mz - z) < -2)
+		    		if ((mz - z) < -0.5)
 		    		{
 		    			newz = mz+0.5;
 		    			
@@ -344,9 +442,9 @@ public class BasicHumanNpc extends BasicNpc {
 	    		this.moveTo(newx, newy, newz,e.getLocation().getYaw()+180,e.getLocation().getPitch());
                 
 	    
-    	} catch (Exception x)
+    	} catch (Exception x3)
     	{
-    		 x.printStackTrace();
+    		 x3.printStackTrace();
     	}
     	
     }
@@ -374,18 +472,52 @@ public class BasicHumanNpc extends BasicNpc {
             	if (ent instanceof Monster)
             	{
             		
-	            	//System.out.println("Gahh! ");
-	            	this.mcEntity.animateArmSwing();
-	            	ent.setHealth(ent.getHealth()-dmg);
-		            //ent.damage(dmg);
+            		double myx = this.getBukkitEntity().getLocation().getX();
+            		double myy = this.getBukkitEntity().getLocation().getY();
+            		double myz = this.getBukkitEntity().getLocation().getZ();
+            		
+            		double tx = ent.getLocation().getX();
+            		double ty = ent.getLocation().getY();
+            		double tz = ent.getLocation().getZ();
+
+            		double diffx = myx - tx;
+            		double diffy = myy - ty;
+            		double diffz = myz - tz;
+            		
+            		
+            		if (diffx < 2 && diffx > -2 && diffy < 2 && diffy > -2 && diffz < 2 && diffz > -2)
+            		{
+            		
+		            	//System.out.println("Gahh! ");
+		            	this.mcEntity.animateArmSwing();
+		            	ent.damage(0);
+		            	ent.setHealth(ent.getHealth()-dmg);
+			            //ent.damage(dmg);
 		            
+            		}
 	            	
 	            	
 	            } else {
 	            	if (ent instanceof Player)
 	            	{
-		            	this.mcEntity.animateArmSwing();
-		            	ent.damage(dmg);
+
+	            		double myx = this.getBukkitEntity().getLocation().getX();
+	            		double myy = this.getBukkitEntity().getLocation().getY();
+	            		double myz = this.getBukkitEntity().getLocation().getZ();
+	            		
+	            		double tx = ent.getLocation().getX();
+	            		double ty = ent.getLocation().getY();
+	            		double tz = ent.getLocation().getZ();
+
+	            		double diffx = myx - tx;
+	            		double diffy = myy - ty;
+	            		double diffz = myz - tz;
+	            		
+	            		if (diffx < 2 && diffx > -2 && diffy < 2 && diffy > -2 && diffz < 2 && diffz > -2)
+	            		{
+			            	this.mcEntity.animateArmSwing();
+			            	ent.damage(dmg);
+	            		}
 		            }
 	            }
             }
