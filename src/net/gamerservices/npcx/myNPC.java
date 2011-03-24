@@ -248,15 +248,17 @@ public class myNPC {
 										
 										
 										double cost = ((checkHints(item.item.getTypeId()) * 1.10) * item.item.getAmount());
-										this.coin = (float)this.coin + (float)cost;
-										totalcost = (float)totalcost + (float)cost;
-										amount = amount - item.item.getAmount();
-										
-										shop.remove(item);
-										basket.add(item);
-										
-										player.player.sendMessage(npc.getName() + " says to you, '" + (float)cost + " coins for this stack.'");
-										
+										if (cost > 0)
+										{
+											this.coin = (float)this.coin + (float)cost;
+											totalcost = (float)totalcost + (float)cost;
+											amount = amount - item.item.getAmount();
+											
+											shop.remove(item);
+											basket.add(item);
+											
+											player.player.sendMessage(npc.getName() + " says to you, '" + (float)cost + " coins for this stack.'");
+										}
 										
 									
 								} else {
@@ -282,7 +284,8 @@ public class myNPC {
 						{
 							Account account = iConomy.getBank().getAccount(player.name);
 							
-							if (account.getBalance() >= (float)totalcost)
+							if (account.hasEnough((float)totalcost))
+							{
 								for (myShopItem i : basket)
 								{
 									player.player.getInventory().addItem(i.item);
@@ -314,7 +317,7 @@ public class myNPC {
 					}
 				
 				}
-			
+			}
 		}
 		
 		// Unknown command
