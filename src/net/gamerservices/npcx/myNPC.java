@@ -131,7 +131,8 @@ public class myNPC {
 
 
 
-	public void parseShop(myPlayer player, String message) {
+	public void parseShop(myPlayer player, String message) 
+	{
 		// TODO Auto-generated method stub
 		//myplayer.player.sendMessage("Parsing:" + message + ":" + Integer.toString(this.triggerwords.size()));
 		String message2=message+" ";
@@ -200,7 +201,7 @@ public class myNPC {
 					{
 						player.player.getInventory().removeItem(item);
 						shop.add(shopitem);
-						player.player.sendMessage(npc.getName() + " says to you, 'Thanks! Heres your " + (float)totalcoins + "coins.'");
+						player.player.sendMessage(npc.getName() + " says to you, 'Thanks! Heres your " + (float)totalcoins + " coins.'");
 						Account account = iConomy.getBank().getAccount(player.name);
 						this.coin = (float)this.coin - (float)totalcoins;
 						account.add(totalcoins);
@@ -229,6 +230,7 @@ public class myNPC {
 					int originalamount = Integer.parseInt(aMsg[2]);
 					int found = 0;
 					double totalcost = 0;
+					List< myShopItem > basket = new CopyOnWriteArrayList< myShopItem >();
 					if (shop.size() > 0)
 					{
 						
@@ -236,8 +238,6 @@ public class myNPC {
 						{
 							try 
 							{
-								
-							
 							
 								if (item.item.getTypeId() == Material.matchMaterial(aMsg[1]).getId())
 								{
@@ -246,12 +246,15 @@ public class myNPC {
 									
 										found++;
 										
+										
 										double cost = ((checkHints(item.item.getTypeId()) * 1.10) * item.item.getAmount());
 										this.coin = (float)this.coin + (float)cost;
 										totalcost = (float)totalcost + (float)cost;
 										amount = amount - item.item.getAmount();
-										player.player.getInventory().addItem(item.item);
+										
 										shop.remove(item);
+										basket.add(item);
+										
 										player.player.sendMessage(npc.getName() + " says to you, '" + (float)cost + " coins for this stack.'");
 										
 										
@@ -267,26 +270,43 @@ public class myNPC {
 								return;
 							}
 						}
+						
 						if (found < 1)
 						{
+							// nothing was ever placed in a basketm, can return
 							player.player.sendMessage(npc.getName() + " says to you, 'Sorry, out of stock in that item.");
 							return;
 						}
 						
 						if (totalcost > 0)
 						{
-							player.player.sendMessage(npc.getName() + " says to you, 'Thanks, " + (float)totalcost + " coins.'");
 							Account account = iConomy.getBank().getAccount(player.name);
-							account.subtract((float)totalcost);
-							double each = totalcost / originalamount;
-														
-							// update hints
-							updateHints(Material.matchMaterial(aMsg[1]).getId(),each);
-							return;
 							
+							if (account.getBalance() >= (float)totalcost)
+								for (myShopItem i : basket)
+								{
+									player.player.getInventory().addItem(i.item);
+									basket.remove(i);
+								}
+								
+								player.player.sendMessage(npc.getName() + " says to you, 'Thanks, " + (float)totalcost + " coins.'");
+								
+								account.subtract((float)totalcost);
+								double each = totalcost / originalamount;
+															
+								// update hints
+								updateHints(Material.matchMaterial(aMsg[1]).getId(),each);
+								return;
+							} else {
+								for (myShopItem i : basket)
+								{
+									shop.add(i);
+									basket.remove(i);
+								}
+								player.player.sendMessage(npc.getName() + " says to you, 'Sorry, you don't have enough (" + (float)totalcost + " coins).'");
+
+							}
 						}
-						
-						
 						
 					} else {
 						player.player.sendMessage(npc.getName() + " says to you, 'Sorry, totally out of stock!'");
@@ -294,16 +314,14 @@ public class myNPC {
 					}
 				
 				}
-			}
-			
-			return;
 			
 		}
 		
 		// Unknown command
 		player.player.sendMessage(npc.getName() + " says to you, 'Sorry, can i [help] you?'");
 
-
+		return;
+			
 	}
 
 
