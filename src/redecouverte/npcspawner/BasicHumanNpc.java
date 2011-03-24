@@ -123,7 +123,7 @@ public class BasicHumanNpc extends BasicNpc {
 		    					// Set next spot
 		    					this.parent.currentpathspot++;
 		    					// Set cooldown on move
-		    					this.parent.movecountdown = 5;
+		    					this.parent.movecountdown = 25;
 		    					return;
 		    				}
 		    			}
