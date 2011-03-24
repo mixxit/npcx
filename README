@@ -16,39 +16,50 @@ Test Server: 89.145.87.92
 
 _____________
 
-Commands
+#
+# Commands
+# 
+
 Code:
-/npcx spawngroup create spawngroupname - Adds a new blank spawngroup 
-container at your position facing your direction
-/npcx spawngroup add spawngroupid npcid - Adds an npcID to the 
-spawngroup container
-/npcx spawngroup list - lists all spawngroups and their spawngroup IDs
-/npcx npc spawn name - Temporarily spawns an npc at your spot
-/npcx npc create name - Creates a new npc (that needs to be added to a 
-spawngroup)
-/npcx npc list Lists all npcs and their NPC IDs
-/npcx npc triggerword add NPCID TRIGGERWORD NPCS RESPONSE
+/npcx spawngroup
+/npcx npc 
+/npcx pathgroup
+/npcx loottable
+
 Special Trigger Words:
 'default' - sets default response to unknown word
 EG: /npcx npc triggerword add 1 default My default response!
 
-Installation Steps
+#
+# Installation Steps
+#
+
 Step 1 - Install iConomy
+========================
 http://forums.bukkit.org/threads/econ-iconomy-4-5-5-elektra-493-556.40/
 
 Step2 - Install MySQL and the MySQL Connector
+=============================================
 
 Install MySQL Server on Windows or via your repo manager on linux
-Install MySQL WorkBench to create databases and new accounts on windows
-Install PHPMyAdmin to create databases and new accounts on linux
+http://dev.mysql.com/downloads/mysql/
 
+(Windows) Install MySQL WorkBench to create databases and new accounts on windows
+http://dev.mysql.com/downloads/workbench/
 
-Using MySQL Workbench on Windows to create 
+(Linux Hosted) Install PHPMyAdmin to create databases and new accounts on linux
+http://www.phpmyadmin.net/
+
+------------------------------------
+- Using MySQL Workbench on Windows - 
+------------------------------------
 Login to MySQL Workbench as the root user you created when installing MySQL Server
 create a new database called 'npcx'
 create a new user called npcx with the password 'p4ssw0rd!' - assign this user ALL privileges to the npcx database
 
-Using mysql command line to create
+--------------------------------------
+- Using mysql command line to create -
+--------------------------------------
 from mysql -u root -p in linux shell
 Code:
 CREATE DATABASE npcx;
@@ -60,18 +71,22 @@ Extract the mysql connect jar file from the following zip file): http://mysql.eu
 Copy the JAR file (mysql-connector-java-5.1.6-bin.jar) from inside the zip into your bukkit/lib folder.
 
 Step3
+=====
 
 Add npcx.jar to your bukkit/plugins folder
 
 Step4
+=====
 
 If your world name is different to 'world' you will need to now close bukkit, edit your npcx.properties file and change world to the correct worldname
 
 Step5
+=====
 
 Launch bukkit and login as an OP
 
 Step 6
+======
 Begin creating your first spawn group at your location with
 
 Code:
@@ -83,14 +98,16 @@ Now add guard's id to your spawn group number
 Code:
 /npcx spawngroup add 1 1
 
-
 Guard should now spawn permanently at the spawngroups location.
 
 Right clicking will begin (T) chat with him. Moving out of range or right clicking him again will end chat.
 
 To have him respond to words or change his default response, see the sections below.
 
+
 Using NPCX
+===========
+
 
 Creating Spawngroups
 
