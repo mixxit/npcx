@@ -149,8 +149,9 @@ public class myNPC {
 			for (myShopItem item : shop)
 			{
 				player.player.sendMessage(npc.getName() + item.item.getType().name() + " x " + item.item.getAmount() + " " + checkHints(item.item.getTypeId()) + " at coins each");
-				
 			}
+			return;
+
 			
 		}
 		if (aMsg[0].toLowerCase().matches("sell"))
