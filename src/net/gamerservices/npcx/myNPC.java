@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,6 +23,11 @@ public class myNPC {
 	public List< myShopItem > shop = new CopyOnWriteArrayList< myShopItem >();
 	public double coin = 100;
 	public HashMap<String, myTriggerword> triggerwords = new HashMap<String, myTriggerword>();
+	public int chest = 0;
+	public int legs = 0;
+	public int helmet = 0;
+	public int primary = 0;
+	public int boots = 0;
 	
 	myNPC(npcx parent, HashMap<String, myTriggerword> triggerwords)
 	{
@@ -93,8 +99,16 @@ public class myNPC {
 			//System.out.println("Replacing bankbalance variable");
 			Account account = iConomy.getBank().getAccount(player.getName());
 			newresponse = response.replaceAll("bankbalance", Double.toString(account.getBalance()));
-			
 		}
+		
+		if (response.contains("playername"))
+		{
+			//System.out.println("Replacing bankbalance variable");
+			Account account = iConomy.getBank().getAccount(player.getName());
+			newresponse = response.replaceAll("playername", player.getName());
+		}
+
+		
 		return newresponse;
 	}
 

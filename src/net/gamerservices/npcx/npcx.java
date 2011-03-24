@@ -370,8 +370,20 @@ public class npcx extends JavaPlugin {
 							Double yaw = new Double(spawngroup.yaw);
 							BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
 			                
+							
 							npc.npc = hnpc;
-			                
+							
+							ItemStack iprimary = new ItemStack(npc.primary);
+							ItemStack ihelmet = new ItemStack(npc.helmet);
+							ItemStack ichest = new ItemStack(npc.chest);
+							ItemStack ilegs = new ItemStack(npc.legs);
+							ItemStack iboots = new ItemStack(npc.boots);
+							
+			                npc.npc.getBukkitEntity().getInventory().setItemInHand(iprimary);
+			                npc.npc.getBukkitEntity().getInventory().setHelmet(ihelmet);
+			                npc.npc.getBukkitEntity().getInventory().setChestplate(ichest);
+			                npc.npc.getBukkitEntity().getInventory().setLeggings(ilegs);
+							npc.npc.getBukkitEntity().getInventory().setBoots(iboots);
 			                hnpc.parent = npc;
 			                
 							this.npclist.put(spawngroup.id + "" + npc.id, hnpc);
@@ -707,7 +719,7 @@ public class npcx extends JavaPlugin {
 		            
 		            Statement s2 = conn.createStatement ();
 		            String droptable = "DROP TABLE IF EXISTS npc; ";
-		            String npctable = "CREATE TABLE npc (  id int(10) unsigned NOT NULL AUTO_INCREMENT, name char(40) DEFAULT NULL,  category char(40) DEFAULT NULL,  faction_id int(11) DEFAULT NULL,  loottable_id int(11) DEFAULT NULL,  PRIMARY KEY (id))";
+		            String npctable = "CREATE TABLE npc (  id int(10) unsigned NOT NULL AUTO_INCREMENT,  name char(40) DEFAULT NULL,  category char(40) DEFAULT NULL,  faction_id int(11) DEFAULT NULL,  loottable_id int(11) DEFAULT NULL,  primary int(11) DEFAULT NULL,  helmet int(11) DEFAULT NULL,  chest int(11) DEFAULT NULL,  legs int(11) DEFAULT NULL,  boots int(11) DEFAULT NULL,  PRIMARY KEY (id))";
 
 		            s2.executeUpdate(droptable);
 		            s2.executeUpdate(npctable);
@@ -873,7 +885,7 @@ public class npcx extends JavaPlugin {
 		                
 		                // Load npcs into spawngroups
 		                Statement s11 = conn.createStatement ();
-			            s11.executeQuery ("SELECT spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.category As category, npc.loottable_id As loottable_id, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
+			            s11.executeQuery ("SELECT npc.primary As prim,npc.helmet As helmet,npc.chest As chest,npc.legs As legs,npc.boots As boots,spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.category As category, npc.loottable_id As loottable_id, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
 			            ResultSet rs11 = s11.getResultSet ();
 			            
 			            while (rs11.next ())
@@ -885,6 +897,37 @@ public class npcx extends JavaPlugin {
 			            	npc.id = rs11.getString ("npcid");
 			            	npc.name = rs11.getString ("name");
 			            	npc.category = rs11.getString("category");
+			            	npc.primary = rs11.getInt("prim");
+			            	npc.helmet = rs11.getInt("helmet");
+			            	npc.chest = rs11.getInt("chest");
+			            	npc.legs = rs11.getInt("legs");
+			            	npc.boots = rs11.getInt("boots");
+			            	
+			            	if (npc.primary == 0)
+			            	{
+			            		npc.primary = 267;
+			            	}
+			            	
+			            	if (npc.helmet == 0)
+			            	{
+			            		npc.helmet = 306;
+			            	}
+			            	
+			            	if (npc.chest == 0)
+			            	{
+			            		npc.chest = 307;
+			            	}
+			            	
+			            	if (npc.legs == 0)
+			            	{
+			            		npc.legs = 308;
+			            	}
+			            	if (npc.boots == 0)
+			            	{
+			            		npc.boots = 309;
+			            	}
+			            	
+			            	
 			            	
 			            	for (myFaction faction : factions)
 			            	{
@@ -1096,8 +1139,35 @@ public class npcx extends JavaPlugin {
         	            		
         	            		
         	            		myNPC npc = new myNPC(this,fetchTriggerWords(Integer.parseInt(args[3])));
-        	            		npc.name = dbGetNPCname(args[3]);
-        	            		npc.faction = dbGetNPCfaction(args[3]);
+        	            		
+        	            		
+        	            		PreparedStatement stmtNPC = conn.prepareStatement("SELECT * FROM npc WHERE id = ?;");
+        	            		stmtNPC.setString(1,args[3]);
+        	            		stmtNPC.executeQuery();
+                    			ResultSet rsNPC = stmtNPC.getResultSet ();
+                     		    int count = 0;
+                     		    while (rsNPC.next ())
+                     		    {
+                     		       
+                     		       npc.name = rsNPC.getString ("name");
+                     		       npc.category = rsNPC.getString ("category");
+                     		       npc.faction = dbGetNPCfaction(args[3]);
+                     		       npc.loottable = dbGetNPCloottable(args[3]);
+                     		       npc.helmet = rsNPC.getInt ("helmet");
+                     		       npc.chest = rsNPC.getInt ("chest");
+                     		       npc.legs = rsNPC.getInt ("legs");
+                     		       npc.boots = rsNPC.getInt ("boots");
+                     		       npc.primary = rsNPC.getInt ("primary");
+                     		       
+                    		       
+                     		       
+                     		       ++count;
+                     		    }
+                     		    rsNPC.close();
+                     		    stmtNPC.close();
+                     		    
+                     		    
+        	            		        	            		
         	            		npc.spawngroup = sg;
         	            		npc.id = args[3];
         	            		System.out.println("npcx : + cached new spawngroup entry("+ args[3] + ")");
@@ -1460,7 +1530,13 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx npc faction npcid factionid");
                 	player.sendMessage("Insufficient arguments /npcx npc loottable npcid loottableid");
                 	player.sendMessage("Insufficient arguments /npcx npc category npcid category");
+                	player.sendMessage("Insufficient arguments /npcx npc primary npcid itemid");
+                	player.sendMessage("Insufficient arguments /npcx npc helmet npcid itemid");
+                	player.sendMessage("Insufficient arguments /npcx npc chest npcid itemid");
+                	player.sendMessage("Insufficient arguments /npcx npc legs npcid itemid");
+                	player.sendMessage("Insufficient arguments /npcx npc boots npcid itemid");
                 	
+        			
                     return false;
                 }
             	
@@ -1516,6 +1592,186 @@ public class npcx extends JavaPlugin {
             			
             		}
             		
+            	}
+            	
+            	if (args[1].equals("chest")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx npc chest npcid itemid");
+            			
+            			
+            			
+            		} else {
+
+           			
+        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET chest = ? WHERE id = ?;");
+        	            stmt.setString(1, args[3]);
+        	            stmt.setString(2, args[2]);
+        	            
+        	            //TODO not in schema yet
+        	            //stmt.executeUpdate();
+        	            
+        	            for(myNPC n : npcs.values())
+        	            {
+        	            	if (n.id.matches(args[2]))
+        	            	{
+        	            		
+        	            		n.chest = Integer.parseInt(args[3]);
+        	            		ItemStack i = new ItemStack(n.chest);
+        	            		n.npc.getBukkitEntity().getInventory().setChestplate(i);
+        	            		player.sendMessage("npcx : Updated living npc to cached chest ("+args[3]+"): "+n.chest);
+        	            		// when faction changes reset aggro and follow status
+        	            		
+        	            	}
+        	            }
+            			
+            			player.sendMessage("Updated npc chest: item ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
+        	            
+            			stmt.close();
+            		}
+            	}
+            	
+            	if (args[1].equals("helmet")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx npc helmet npcid itemid");
+            			
+            			
+            			
+            		} else {
+
+           			
+        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET helmet = ? WHERE id = ?;");
+        	            stmt.setString(1, args[3]);
+        	            stmt.setString(2, args[2]);
+        	            
+        	            //TODO not in schema yet
+        	            //stmt.executeUpdate();
+        	            
+        	            for(myNPC n : npcs.values())
+        	            {
+        	            	if (n.id.matches(args[2]))
+        	            	{
+        	            		
+        	            		n.chest = Integer.parseInt(args[3]);
+        	            		ItemStack i = new ItemStack(n.helmet);
+        	            		n.npc.getBukkitEntity().getInventory().setHelmet(i);
+        	            		player.sendMessage("npcx : Updated living npc to cached chest ("+args[3]+"): "+n.helmet);
+        	            		// when faction changes reset aggro and follow status
+        	            		
+        	            	}
+        	            }
+            			
+            			player.sendMessage("Updated npc helmet: item ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
+        	            
+            			stmt.close();
+            		}
+            	}
+            	
+            	if (args[1].equals("primary")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx npc primary npcid itemid");
+            			
+            			
+            			
+            		} else {
+
+           			
+        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET primary = ? WHERE id = ?;");
+        	            stmt.setString(1, args[3]);
+        	            stmt.setString(2, args[2]);
+        	            
+        	            //TODO not in schema yet
+        	            //stmt.executeUpdate();
+        	            
+        	            for(myNPC n : npcs.values())
+        	            {
+        	            	if (n.id.matches(args[2]))
+        	            	{
+        	            		
+        	            		n.chest = Integer.parseInt(args[3]);
+        	            		ItemStack i = new ItemStack(n.legs);
+        	            		n.npc.getBukkitEntity().getInventory().setItemInHand(i);
+        	            		player.sendMessage("npcx : Updated living npc to cached primary ("+args[3]+"): "+n.boots);
+        	            		// when faction changes reset aggro and follow status
+        	            		
+        	            	}
+        	            }
+            			
+            			player.sendMessage("Updated npc primary: item ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
+        	            
+            			stmt.close();
+            		}
+            	}
+            	
+            	if (args[1].equals("boots")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx npc boots npcid itemid");
+            			
+            			
+            			
+            		} else {
+
+           			
+        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET boots = ? WHERE id = ?;");
+        	            stmt.setString(1, args[3]);
+        	            stmt.setString(2, args[2]);
+        	            
+        	            //TODO not in schema yet
+        	            //stmt.executeUpdate();
+        	            
+        	            for(myNPC n : npcs.values())
+        	            {
+        	            	if (n.id.matches(args[2]))
+        	            	{
+        	            		
+        	            		n.chest = Integer.parseInt(args[3]);
+        	            		ItemStack i = new ItemStack(n.legs);
+        	            		n.npc.getBukkitEntity().getInventory().setBoots(i);
+        	            		player.sendMessage("npcx : Updated living npc to cached boots ("+args[3]+"): "+n.boots);
+        	            		// when faction changes reset aggro and follow status
+        	            		
+        	            	}
+        	            }
+            			
+            			player.sendMessage("Updated npc boots: item ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
+        	            
+            			stmt.close();
+            		}
+            	}
+            	
+            	if (args[1].equals("legs")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx npc legs npcid itemid");
+            			
+            			
+            			
+            		} else {
+
+           			
+        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET legs = ? WHERE id = ?;");
+        	            stmt.setString(1, args[3]);
+        	            stmt.setString(2, args[2]);
+        	            
+        	            //TODO not in schema yet
+        	            //stmt.executeUpdate();
+        	            
+        	            for(myNPC n : npcs.values())
+        	            {
+        	            	if (n.id.matches(args[2]))
+        	            	{
+        	            		
+        	            		n.chest = Integer.parseInt(args[3]);
+        	            		ItemStack i = new ItemStack(n.legs);
+        	            		n.npc.getBukkitEntity().getInventory().setLeggings(i);
+        	            		player.sendMessage("npcx : Updated living npc to cached legs ("+args[3]+"): "+n.legs);
+        	            		// when faction changes reset aggro and follow status
+        	            		
+        	            	}
+        	            }
+            			
+            			player.sendMessage("Updated npc legs: item ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
+        	            
+            			stmt.close();
+            		}
             	}
             	
             	if (args[1].equals("faction")) {
@@ -1657,7 +1913,7 @@ public class npcx extends JavaPlugin {
                     	
             			Statement s2 = conn.createStatement ();
             			
-        	            PreparedStatement stmt = conn.prepareStatement("INSERT INTO npc (name) VALUES (?);",Statement.RETURN_GENERATED_KEYS);
+        	            PreparedStatement stmt = conn.prepareStatement("INSERT INTO npc (name,primary,helmet,chest,legs,boots) VALUES (?,267,0,307,308,309);",Statement.RETURN_GENERATED_KEYS);
         	            stmt.setString(1, args[2]);
         	            stmt.executeUpdate();
             			ResultSet keyset = stmt.getGeneratedKeys();
