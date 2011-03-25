@@ -166,10 +166,14 @@ public class myNPC {
 		
 		if (aMsg[0].toLowerCase().matches("list"))
 		{
+			int count = 0;
 			for (myShopItem item : shop)
 			{
-				player.player.sendMessage(npc.getName() + item.item.getType().name() + " x " + item.item.getAmount() + " " + (float)checkHints(item.item.getTypeId()) + " at coins each");
+				count++;
+				player.player.sendMessage(npc.getName() + " says to you, "+ item.item.getType().name() + " x " + item.item.getAmount() + " " + (float)checkHints(item.item.getTypeId()) + " coins each");
 			}
+			player.player.sendMessage(npc.getName() + " says to you, " + count + "shop items");
+			
 			return;
 
 			
