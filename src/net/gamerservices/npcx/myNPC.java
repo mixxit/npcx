@@ -96,6 +96,7 @@ public class myNPC {
 						// NPCSUMMONPLAYER
 						if (tw.response.toLowerCase().contains(summonplayer.toLowerCase()))
 						{
+								myplayer.player.sendMessage(npc.getName() + " says to you, 'Come here!'");
 								double x = npc.getBukkitEntity().getLocation().getX();
 								double y = npc.getBukkitEntity().getLocation().getY();
 								double z = npc.getBukkitEntity().getLocation().getZ();

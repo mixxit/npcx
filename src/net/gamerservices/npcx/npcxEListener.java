@@ -159,7 +159,7 @@ public class npcxEListener extends EntityListener
     		if (npc == null)
     		{
     			
-    			System.out.println("npcx : npc is null");
+    			//System.out.println("npcx : npc is null");
     			/*for (myNPC n : parent.npcs.values())
                 {
     				if (nevent.getTarget() == n.npc)
