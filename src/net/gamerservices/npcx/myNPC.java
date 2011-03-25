@@ -170,9 +170,9 @@ public class myNPC {
 			for (myShopItem item : shop)
 			{
 				count++;
-				player.player.sendMessage(npc.getName() + " says to you, "+ item.item.getType().name() + " x " + item.item.getAmount() + " " + (float)checkHints(item.item.getTypeId()) + " coins each");
+				player.player.sendMessage(npc.getName() + " says to you, "+ item.item.getType().name() + " x " + item.item.getAmount() + " selling at " + (float)checkHints(item.item.getTypeId()) + " before commision");
 			}
-			player.player.sendMessage(npc.getName() + " says to you, " + count + "shop items");
+			player.player.sendMessage(npc.getName() + " says to you, '" + count + " items in the shop.'");
 			
 			return;
 
@@ -297,7 +297,7 @@ public class myNPC {
 												} else {
 													this.coin = (float)this.coin + (float)cost;
 													totalcost = (float)totalcost + (((float)cost/item.item.getAmount())*amount);
-													item.item.setAmount(item.item.getAmount()-amount);
+													
 													myShopItem i = new myShopItem();
 													i.price = (((float)cost/item.item.getAmount())*amount);
 													ItemStack is = new ItemStack(item.item.getType());
@@ -307,7 +307,7 @@ public class myNPC {
 													
 													amount = 0;
 													basket.add(i);
-													
+													item.item.setAmount(item.item.getAmount()-i.item.getAmount());
 													player.player.sendMessage(npc.getName() + " says to you, '" + (float)cost + " coins for this stack.'");
 													
 													
