@@ -175,6 +175,19 @@ public class myNPC {
 			newresponse = response.replaceAll("bankbalance", Float.toString((float)account.getBalance()));
 		}
 		
+		if (response.contains("playerbalance"))
+		{
+			//System.out.println("Replacing bankbalance variable");
+			Account account = iConomy.getBank().getAccount(player.getName());
+			newresponse = response.replaceAll("playerbalance", Float.toString((float)account.getBalance()));
+		}
+		
+		if (response.contains("playerhealth"))
+		{
+			//System.out.println("Replacing bankbalance variable");
+			newresponse = response.replaceAll("playerhealth", Integer.toString(player.getHealth()));
+		}
+		
 		if (response.contains("playername"))
 		{
 			//System.out.println("Replacing bankbalance variable");
