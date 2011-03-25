@@ -28,6 +28,9 @@ Code:
 
 Special Trigger Words:
 'default' - sets default response to unknown word
+'attack' - sets default response to being attacked
+
+
 EG: /npcx npc triggerword add 1 default My default response!
 
 #
@@ -38,7 +41,7 @@ Step 1 - Install iConomy
 ========================
 http://forums.bukkit.org/threads/econ-iconomy-4-5-5-elektra-493-556.40/
 
-Step2 - Install MySQL and the MySQL Connector
+Step2a - Install MySQL and the MySQL Connector
 =============================================
 
 - > Install MySQL Server on Windows or via your repo manager on linux
@@ -77,10 +80,9 @@ CREATE USER 'npcx'@'localhost' IDENTIFIED BY 'p4ssw0rd!';
 GRANT ALL PRIVILEGES ON npcx.* TO 'npcx'@'localhost' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 
-
--------------------------------------------
-- Installing the mysql connector for npcx -
--------------------------------------------
+Step2b
+=====
+Install the mysql connector for npcx
 
 Create a bukkit/lib folder if you dont have it
 Extract the mysql connect jar file from the following zip file): http://mysql.eukhost.com/Downloads/Connector-J/mysql-connector-java-5.1.6.tar.gz

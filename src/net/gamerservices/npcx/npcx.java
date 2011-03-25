@@ -1158,8 +1158,6 @@ public class npcx extends JavaPlugin {
             			double pitch = player.getLocation().getPitch();
             			double yaw = player.getLocation().getYaw();
             			
-            			
-            			
             			PreparedStatement stmt = conn.prepareStatement("INSERT INTO spawngroup (name,x,y,z,pitch,yaw) VALUES (?,?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
             			stmt.setString(1,args[2]);
             			stmt.setString(2, Double.toString(x));
