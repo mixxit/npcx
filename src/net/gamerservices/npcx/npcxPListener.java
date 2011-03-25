@@ -72,6 +72,7 @@ public class npcxPListener extends PlayerListener {
 		}
     }
 	
+	
 	public void onPlayerRespawn(PlayerRespawnEvent event)
 	{
 		for (myPlayer player : this.parent.players.values())
@@ -90,9 +91,11 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerQuit(PlayerEvent event)
     {
+		
 		for (myPlayer player : parent.players.values()){
 			if (player.player == event.getPlayer())
 			{
+				player.dead = true;
 				//System.out.println("npcx : removed player ("+ player.player.getName()+")");
 				parent.players.remove(player);
 			}
