@@ -198,7 +198,7 @@ public class BasicHumanNpc extends BasicNpc {
 			    		//System.out.println("Checking player: " + xdist + " "+  ydist + " "+ zdist);
 			    		 
 			    		
-			    		if (xdist > -14 && xdist < 14 && ydist > -14 && ydist < 14 && zdist > -14 && zdist < 14)
+			    		if (xdist > -30 && xdist < 30 && ydist > -30 && ydist < 30 && zdist > -30 && zdist < 30)
 			    		{
 			    			moveto(follow);
 			    		} else {
