@@ -1135,11 +1135,9 @@ public class npcx extends JavaPlugin {
             	// assigns a path to the spawngroup
             	
             	if (args.length < 2) {
-            		player.sendMessage("Insufficient arguments /npcx spawngroup create|delete spawngroupname");
-                	player.sendMessage("Insufficient arguments /npcx spawngroup add groupid npcid");
-                	player.sendMessage("Insufficient arguments /npcx spawngroup place spawngroupname");
-                	player.sendMessage("Insufficient arguments /npcx spawngroup pathgroup pathgroupname");
-                	
+            		player.sendMessage("Insufficient arguments /npcx spawngroup create spawngroupname");
+                	player.sendMessage("Insufficient arguments /npcx spawngroup add spawngroupid npcid");
+                	player.sendMessage("Insufficient arguments /npcx spawngroup pathgroup spawngroupid pathgroupid");
                 	player.sendMessage("Insufficient arguments /npcx spawngroup list [name]");
                 	return false;
             		
