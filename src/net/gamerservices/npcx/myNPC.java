@@ -156,7 +156,8 @@ public class myNPC {
 		//myplayer.player.sendMessage("Parsing:" + message + ":" + Integer.toString(this.triggerwords.size()));
 		String message2=message+" ";
 		String[] aMsg = message.split(" ");
-		
+		int size = aMsg.length;
+		//player.player.sendMessage("DEBUG: " + size);
 		if (aMsg[0].toLowerCase().matches("help"))
 		{
 						
@@ -166,11 +167,27 @@ public class myNPC {
 		
 		if (aMsg[0].toLowerCase().matches("list"))
 		{
+			boolean match = false;
+			
+			
+			if (size == 2)
+ 		    {
+				match = true;
+ 		    }
+				
 			int count = 0;
 			for (myShopItem item : shop)
 			{
 				count++;
-				player.player.sendMessage(npc.getName() + " says to you, "+ item.item.getType().name() + " x " + item.item.getAmount() + " selling at " + (float)checkHints(item.item.getTypeId()) + " before commision");
+				if (match == true)
+				{
+					if (item.item.getType().name().contains(aMsg[1]))
+					{
+						player.player.sendMessage(npc.getName() + " says to you, "+ item.item.getType().name() + " x " + item.item.getAmount() + " selling at " + (float)checkHints(item.item.getTypeId()) + " before commision");
+					}
+				} else {
+					player.player.sendMessage(npc.getName() + " says to you, "+ item.item.getType().name() + " x " + item.item.getAmount() + " selling at " + (float)checkHints(item.item.getTypeId()) + " before commision");
+				}
 			}
 			player.player.sendMessage(npc.getName() + " says to you, '" + count + " items in the shop.'");
 			
