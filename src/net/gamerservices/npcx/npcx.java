@@ -87,59 +87,7 @@ public class npcx extends JavaPlugin {
 	private Timer tick = new Timer();
 	
 	
-	
-	@Override
-	public void onLoad() {
-		// TODO Auto-generated method stub
-		propfolder = getDataFolder();
-		if (!propfolder.exists())
-		{
-			try
-			{
-				propfolder.mkdir();
-				System.out.println("npcx : config folder generation ended");
-			} catch (Exception e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
-		if (!propfile.exists())
-		{
-			try
-			{
-				propfile.createNewFile();
-				prop = new Properties();
-				prop.setProperty(PROP_DBHOST, "localhost");
-				prop.setProperty(PROP_DBUSER, "npcx");
-				prop.setProperty(PROP_DBPASS, "p4ssw0rd!");
-				prop.setProperty(PROP_DBNAME, "npcx");
-				prop.setProperty(PROP_DBPORT, "3306");
-				prop.setProperty(PROP_UPDATE, "true");
-				
-				prop.setProperty(PROP_WORLD, "world");
-				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
-				prop.store(stream, "Default generated settings, please ensure mysqld matches");
-				System.out.println("npcx : properties file generation ended");
-				
-			} catch(IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-					
-			
-			System.out.println("npcx : initial setup ended");
-		
-		}
-			
-		loadSettings();
-		think();
-		
-	}
-	
+
 	public HashMap<String, myTriggerword> fetchTriggerWords(int npcid) throws SQLException
 	{
 		//CREATE TABLE npc_triggerwords ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),npcid int,triggerword CHAR(40),reply VARCHAR(256),category CHAR(40))
@@ -394,7 +342,7 @@ public class npcx extends JavaPlugin {
 					}
 					} catch (Exception e)
 					{
-						
+						e.printStackTrace();
 					}
 				}
 				
@@ -610,6 +558,63 @@ public class npcx extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
+		
+		// TODO Auto-generated method stub
+		propfolder = getDataFolder();
+		if (!propfolder.exists())
+		{
+			try
+			{
+				propfolder.mkdir();
+				System.out.println("npcx : config folder generation ended");
+			} catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		if (!propfile.exists())
+		{
+			try
+			{
+				propfile.createNewFile();
+				prop = new Properties();
+				prop.setProperty(PROP_DBHOST, "localhost");
+				prop.setProperty(PROP_DBUSER, "npcx");
+				prop.setProperty(PROP_DBPASS, "p4ssw0rd!");
+				prop.setProperty(PROP_DBNAME, "npcx");
+				prop.setProperty(PROP_DBPORT, "3306");
+				prop.setProperty(PROP_UPDATE, "true");
+				this.dbhost = "localhost";
+				this.dbuser = "npcx";
+				this.dbname = "npcx";
+				this.dbpass = "p4ssw0rd!";
+				this.dbport = "3306";
+				this.update = "true";
+				
+				
+				
+				prop.setProperty(PROP_WORLD, "world");
+				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+				prop.store(stream, "Default generated settings, please ensure mysqld matches");
+				System.out.println("npcx : properties file generation ended");
+				
+			} catch(IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+					
+			
+			System.out.println("npcx : initial setup ended");
+		
+		}
+		
+		loadSettings();
+		
+		
 		// TODO Auto-generated method stub
 		
 		this.Server = getServer();
@@ -619,6 +624,20 @@ public class npcx extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
 
 		 try {	
+			 
+			 	if (dbhost == null)
+			 	{
+				 	this.dbhost = "localhost";
+					this.dbuser = "npcx";
+					this.dbname = "npcx";
+					this.dbpass = "p4ssw0rd!";
+					this.dbport = "3306";
+					this.update = "true";
+					dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
+			 	}
+			 	
+			 
+			 
 	            try 
 	            {
 	            
@@ -644,6 +663,7 @@ public class npcx extends JavaPlugin {
 			 		System.out.println("*****************************************");
 			 		System.out.println("npcx : ERROR - Error during MySQL login ");
 			 		System.out.println("*****************************************");
+			 		e.printStackTrace();
 			 		return;
 			 	}
 			 	
@@ -760,6 +780,7 @@ public class npcx extends JavaPlugin {
 					dbpass = config.getProperty("db-pass");
 					dbname = config.getProperty("db-name");
 					dbport = config.getProperty("db-port");
+					dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
 					world = config.getProperty("world");
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
@@ -1045,6 +1066,8 @@ public class npcx extends JavaPlugin {
 	            e.printStackTrace();
 	            return;
 	        }
+	        
+	        think();
 	}
 	
 	@Override
