@@ -21,7 +21,7 @@ public class myNPC {
 	public mySpawngroup spawngroup;
 	public myLoottable loottable;
 	public List< myShopItem > shop = new CopyOnWriteArrayList< myShopItem >();
-	public double coin = 100;
+	public double coin = 250000;
 	public HashMap<String, myTriggerword> triggerwords = new HashMap<String, myTriggerword>();
 	public int chest = 0;
 	public int legs = 0;
@@ -194,7 +194,15 @@ public class myNPC {
 				} catch (NullPointerException e)
 				{
 					player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
+					e.printStackTrace();
 					return;
+				
+				} catch (Exception e)
+				{
+					player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
+					e.printStackTrace();
+					return;
+					
 				}
 				item.setAmount(Integer.parseInt(aMsg[2]));
 				int count = 0;
