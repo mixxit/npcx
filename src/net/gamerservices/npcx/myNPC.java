@@ -365,8 +365,9 @@ public class myNPC {
 		}
 		
 		// Unknown command
-		player.player.sendMessage(npc.getName() + " says to you, 'Sorry, can i [help] you?'");
 		parseChat(player,message);
+		player.player.sendMessage(npc.getName() + " says to you, 'Sorry, can i [help] you?'");
+		
 		return;
 			
 	}
