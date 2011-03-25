@@ -1861,8 +1861,8 @@ public class npcx extends JavaPlugin {
 
         	            		n.npc.getBukkitEntity().getInventory().setChestplate(i);
         	            		player.sendMessage("npcx : Updated living npc to cached chest ("+args[3]+"): "+n.chest);
-        	            		// when faction changes reset aggro and follow status
-        	            		
+        	            		stmt.executeUpdate();
+
         	            	}
         	            }
             			
@@ -1898,8 +1898,7 @@ public class npcx extends JavaPlugin {
         	            		i.setTypeId(Integer.parseInt(args[3]));
         	            		n.npc.getBukkitEntity().getInventory().setHelmet(i);
         	            		player.sendMessage("npcx : Updated living npc to cached helmet ("+args[3]+"): "+n.helmet);
-        	            		// when faction changes reset aggro and follow status
-        	            		
+        	            		stmt.executeUpdate();
         	            	}
         	            }
             			
@@ -1936,8 +1935,8 @@ public class npcx extends JavaPlugin {
 
         	            		n.npc.getBukkitEntity().getInventory().setItemInHand(i);
         	            		player.sendMessage("npcx : Updated living npc to cached weapon ("+args[3]+"): "+n.weapon);
-        	            		// when faction changes reset aggro and follow status
-        	            		
+        	            		stmt.executeUpdate();
+
         	            	}
         	            }
             			
@@ -1974,8 +1973,9 @@ public class npcx extends JavaPlugin {
 
         	            		n.npc.getBukkitEntity().getInventory().setBoots(i);
         	            		player.sendMessage("npcx : Updated living npc to cached boots ("+args[3]+"): "+n.boots);
-        	            		// when faction changes reset aggro and follow status
-        	            		
+        	            	
+        	            		stmt.executeUpdate();
+
         	            	}
         	            }
             			
@@ -2012,8 +2012,9 @@ public class npcx extends JavaPlugin {
 
         	            		n.npc.getBukkitEntity().getInventory().setLeggings(i);
         	            		player.sendMessage("npcx : Updated living npc to cached legs ("+args[3]+"): "+n.legs);
-        	            		// when faction changes reset aggro and follow status
         	            		
+        	            		stmt.executeUpdate();
+
         	            	}
         	            }
             			
