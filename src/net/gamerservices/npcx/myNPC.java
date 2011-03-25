@@ -3,7 +3,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,7 +41,26 @@ public class myNPC {
 		this.triggerwords = triggerwords;
 	}
 	
-	
+	public void onPlayerAggroChange(myPlayer myplayer)
+	{
+		int count = 0;
+		
+		// do i already ahve aggro?
+		for (myTriggerword tw : triggerwords.values())
+			{
+				
+				if (tw.word.toLowerCase().contains("attack"))
+				{
+					String send = variablise(tw.response,myplayer.player);
+					myplayer.player.sendMessage(npc.getName() + " says to you, '" + send + "'");
+					count++;
+					return;
+				}
+				
+				
+		
+		}
+	}
 	
 	public void parseChat(myPlayer myplayer, String message)
 	{
@@ -58,7 +79,11 @@ public class myNPC {
 					if (word.toLowerCase().contains(tw.word.toLowerCase()))
 					{
 						String npcattack = "NPCATTACK";
+						String summonplayer = "NPCSUMMONPLAYER";
+						String npcsummonzombie = "NPCSUMMONZOMBIE";
 						
+						
+						// NPCATTACK variable
 						if (tw.response.toLowerCase().contains(npcattack.toLowerCase()))
 						{
 								myplayer.player.sendMessage(npc.getName() + " says to you, 'You will regret that!'");
@@ -68,12 +93,40 @@ public class myNPC {
 
 						}
 
-						
-						
-							String send = variablise(tw.response,myplayer.player);
-							myplayer.player.sendMessage(npc.getName() + " says to you, '"+ send +"'");
-							count++;
+						// NPCSUMMONPLAYER
+						if (tw.response.toLowerCase().contains(summonplayer.toLowerCase()))
+						{
+								double x = npc.getBukkitEntity().getLocation().getX();
+								double y = npc.getBukkitEntity().getLocation().getY();
+								double z = npc.getBukkitEntity().getLocation().getZ();
+								Location location = new Location(npc.getBukkitEntity().getLocation().getWorld(), x, y, z);
+								
+								myplayer.player.teleportTo(location);
+								return;
+
+						}
+
+						// NPCSUMMONMOB
+						if (tw.response.toLowerCase().contains(npcsummonzombie.toLowerCase()))
+						{
+							double x = myplayer.player.getLocation().getX();
+							double y = myplayer.player.getLocation().getY();
+							double z = myplayer.player.getLocation().getZ();
+							Location location = new Location(npc.getBukkitEntity().getLocation().getWorld(), x, y, z);
+							
+							
+							npc.getBukkitEntity().getWorld().spawnCreature(location,CreatureType.ZOMBIE);
+							
+							myplayer.player.sendMessage(npc.getName() + " says to you, 'Look out!'");
 							return;
+
+						}
+
+						
+						String send = variablise(tw.response,myplayer.player);
+						myplayer.player.sendMessage(npc.getName() + " says to you, '"+ send +"'");
+						count++;
+						return;
 	
 					}
 					

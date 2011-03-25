@@ -53,18 +53,35 @@ public class npcxEListener extends EntityListener
 		    {
 				EntityDamageByEntityEvent edee = (EntityDamageByEntityEvent) event;
 
-				if (npc != null && npc.aggro != null && edee.getDamager() == npc.aggro) 
+				/*if (npc != null && npc.aggro != null && edee.getDamager() == npc.aggro) 
 				{
 					npc.follow = null;
 					npc.aggro = null;
 					//System.out.println("npcx : forgot about target");
 						 
-   			    }
+   			    }*/
 		        if (npc != null && edee.getDamager() instanceof LivingEntity) 
 		        {
 	
 		        	Entity p = edee.getDamager();
-		        	
+		        	if (npc.parent != null)
+		        	{
+		        		for (myPlayer player : parent.players.values())
+		        		{
+		        			if (player.player == edee.getDamager())
+		        			{
+		        				if (npc.aggro == null)
+		        				{
+			        				npc.parent.onPlayerAggroChange(player);
+		        					
+		        				} else {
+		        					// else dont fire again
+		        				}
+		        				
+		        				
+		        			}
+		        		}
+		        	}
 		            npc.follow = (LivingEntity)p;
 		            npc.aggro = (LivingEntity)p;
 		            
