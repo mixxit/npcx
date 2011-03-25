@@ -200,7 +200,10 @@ Note: you cannot talk to temporary 'spawn' npcs as they have no responses config
 
 Events in responses
 Syntax: /npcx npc response
-Added 'npcattack' event to triggerword responses - If you setup a response for example:
+Added 'NPCSUMMONPLAYER' event to triggerword responses - If you setup a response for example:
+Added 'NPCSUMMONZOMBIE' event to triggerword responses - If you setup a response for example:
+
+Added 'NPCATTACK' event to triggerword responses - If you setup a response for example:
 Code:
 /npcx npc triggerword add NPCID TRIGGERWORD NPCATTACK
 - then the npc will only attack when spoken to.
@@ -214,6 +217,13 @@ Chat Variables
 
 bankbalance
 Placing the text bankbalance in a triggerword reply will have the NPC respond with the players iconomy bank balance
+
+playername
+Placing the text playername in a triggerword reply will have the NPC respond with the players name
+
+playerbalance
+Placing the text playerbalance in a triggerword reply will have the NPC respond with the players iconomy bank balance
+
 
 NPC Shops
 
