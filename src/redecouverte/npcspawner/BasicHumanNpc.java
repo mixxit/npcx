@@ -107,8 +107,8 @@ public class BasicHumanNpc extends BasicNpc {
 	    		if (p.target == this)
 	    		{
 		    		double x1 = p.player.getLocation().getX();
-		    		double y1 = p.player.getLocation().getX();
-		    		double z1 = p.player.getLocation().getX();
+		    		double y1 = p.player.getLocation().getY();
+		    		double z1 = p.player.getLocation().getZ();
 		    		
 		    		double x2 = this.getBukkitEntity().getLocation().getX();
 		    		double y2 = this.getBukkitEntity().getLocation().getY();
@@ -159,7 +159,6 @@ public class BasicHumanNpc extends BasicNpc {
 	    			
 	    			Double yaw2 = new Double(spawnyaw);
 	                Double pitch2 = new Double(spawnpitch);
-	                
 		    		moveTo(spawnx,spawny,spawnz,yaw2.floatValue(),pitch2.floatValue());
 	    		}
 	    	}
@@ -167,19 +166,47 @@ public class BasicHumanNpc extends BasicNpc {
     	// NPC FOLLOW
 
     	
+    	
+    	
+    	
 		if (follow instanceof LivingEntity)
 		{
 			if (this.follow != null)
 			{
-	    		//System.out.println("follow" + follow.toString()+":"+follow.getHealth());
-				// lets follow this entity
-				if (this.hp == 0 || this.follow.getHealth() == 0)
-				{
-					this.follow = null;
-					this.aggro = null;
-				} else {
-					moveto(follow);
-				}
+		    		//System.out.println("follow" + follow.toString()+":"+follow.getHealth());
+					// lets follow this entity
+					if (this.hp == 0 || this.follow.getHealth() == 0)
+					{
+						
+						// they're dead, stop following
+						this.follow = null;
+						this.aggro = null;
+						
+					} else {
+						
+						// they're alive lets check distance
+						double x1 = this.follow.getLocation().getX();
+			    		double y1 = this.follow.getLocation().getY();
+			    		double z1 = this.follow.getLocation().getZ();
+			    		
+			    		double x2 = this.getBukkitEntity().getLocation().getX();
+			    		double y2 = this.getBukkitEntity().getLocation().getY();
+			    		double z2 = this.getBukkitEntity().getLocation().getZ();
+			    		int xdist = (int) (x1 - x2);
+			    		int ydist = (int) (y1 - y2);
+			    		int zdist = (int) (z1 - z2);
+			    		//System.out.println("Checking player: " + xdist + " "+  ydist + " "+ zdist);
+			    		 
+			    		
+			    		if (xdist > -14 && xdist < 14 && ydist > -14 && ydist < 14 && zdist > -14 && zdist < 14)
+			    		{
+			    			moveto(follow);
+			    		} else {
+			    			// too far for me
+			    			this.follow = null;
+							this.aggro = null;
+			    		}
+					}
 			}
 		}
 		
@@ -205,6 +232,7 @@ public class BasicHumanNpc extends BasicNpc {
 			}
 			
 		}
+		
 		
 		
 		
