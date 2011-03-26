@@ -678,7 +678,7 @@ public class BasicHumanNpc extends BasicNpc {
     	if (block.getType() == Material.AIR)
     	{
     		
-    		Debug(block.getType().toString()+":"+this.parent.currentpathspot);
+    		Debug(1,block.getType().toString()+":"+this.parent.currentpathspot);
     		forceMove(loc);
     		return;
         	
