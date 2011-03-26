@@ -3,13 +3,11 @@ package redecouverte.npcspawner;
 import net.minecraft.server.*;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 
-public class NpcNetHandler extends NetServerHandler 
-{
+public class NpcNetHandler extends NetServerHandler {
 
     public NpcNetHandler(MinecraftServer minecraftserver, EntityPlayer entityplayer, NetworkManager netMgr) {
         super(minecraftserver, netMgr, entityplayer);
         netMgr.a(this);
-
     }
 
     @Override

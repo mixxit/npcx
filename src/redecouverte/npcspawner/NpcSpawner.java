@@ -15,7 +15,6 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.CreatureType;
 
-
 public class NpcSpawner {
 
     protected static WorldServer GetWorldServer(World world) {
@@ -28,11 +27,12 @@ public class NpcSpawner {
             return (WorldServer) f.get(w);
 
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
 
         return null;
     }
+
     private static MinecraftServer GetMinecraftServer(Server server) {
 
         if (server instanceof CraftServer) {
@@ -67,7 +67,7 @@ public class NpcSpawner {
             CHumanNpc eh = new CHumanNpc(ms, ws, name, new ItemInWorldManager(ws));
             Double yaw2 = new Double(yaw);
             Double pitch2 = new Double(pitch);
-            
+
             eh.c(x, y, z, yaw2.floatValue(), pitch2.floatValue());
 
             int m = MathHelper.b(eh.locX / 16.0D);
@@ -88,7 +88,7 @@ public class NpcSpawner {
             method.invoke(ws, margs);
 
 
-            return new BasicHumanNpc(eh, uniqueId, name, x,y,z, yaw2, pitch2);
+            return new BasicHumanNpc(eh, uniqueId, name, x, y, z, yaw2, pitch2);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,7 +107,6 @@ public class NpcSpawner {
 
     }
 
-
     public static LivingEntity SpawnMob(CreatureType type, World world, double x, double y, double z) {
         try {
             WorldServer ws = GetWorldServer(world);
@@ -116,13 +115,12 @@ public class NpcSpawner {
             eh.c(x, y, z, 0, 0);
             ws.a(eh);
 
-            return (LivingEntity)eh.getBukkitEntity();
+            return (LivingEntity) eh.getBukkitEntity();
 
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
 
         return null;
     }
-
 }

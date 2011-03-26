@@ -12,16 +12,11 @@ public class NpcNetworkManager extends NetworkManager {
     public NpcNetworkManager(Socket paramSocket, String paramString, NetHandler paramNetHandler) {
         super(paramSocket, paramString, paramNetHandler);
 
-        try
-        {
+        try {
             Field f = NetworkManager.class.getDeclaredField("j");
             f.setAccessible(true);
             f.set(this, false);
-        }
-        catch(Exception e)
-        {
-
-        }
+        } catch (Exception e) { }
     }
 
     @Override

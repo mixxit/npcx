@@ -14,7 +14,6 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 public class CHumanNpc extends EntityPlayer {
-
     private static final Logger logger = Logger.getLogger("Minecraft");
     private int lastTargetId;
     private long lastBounceTick;
@@ -33,18 +32,14 @@ public class CHumanNpc extends EntityPlayer {
 
     public void animateArmSwing() {
         this.b.k.a(this, new Packet18ArmAnimation(this, 1));
-        
-        
     }
 
-    public void forceSetName(String n)
-    {
-    	this.displayName = n;
+    public void forceSetName(String n) {
+        this.displayName = n;
     }
-    
+
     @Override
     public boolean a(EntityHuman entity) {
-
         EntityTargetEvent event = new NpcEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(), NpcEntityTargetEvent.NpcTargetReason.NPC_RIGHTCLICKED);
         CraftServer server = ((WorldServer) this.world).getServer();
         server.getPluginManager().callEvent(event);
@@ -59,6 +54,7 @@ public class CHumanNpc extends EntityPlayer {
             CraftServer server = ((WorldServer) this.world).getServer();
             server.getPluginManager().callEvent(event);
         }
+
         lastTargetId = entity.id;
 
         super.b(entity);
@@ -70,12 +66,10 @@ public class CHumanNpc extends EntityPlayer {
             EntityTargetEvent event = new NpcEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(), NpcEntityTargetEvent.NpcTargetReason.NPC_BOUNCED);
             CraftServer server = ((WorldServer) this.world).getServer();
             server.getPluginManager().callEvent(event);
-            
             lastBounceTick = System.currentTimeMillis();
         }
 
         lastBounceId = entity.id;
-
         super.c(entity);
     }
 }
