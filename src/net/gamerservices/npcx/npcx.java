@@ -44,6 +44,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.*;
 
+
+
 public class npcx extends JavaPlugin {
 
 	private static final Logger logger = Logger.getLogger("Minecraft");
@@ -174,7 +176,7 @@ public class npcx extends JavaPlugin {
 	
 	public void think()
 	{
-		tick.schedule(new Tick(this), 1 * 400);
+		tick.schedule(new Tick(this), 1 * 300);
 		
 		fixDead();
 		
@@ -183,7 +185,8 @@ public class npcx extends JavaPlugin {
 		
 		for (myNPC npc : npcs.values())
 		{
-			npc.npc.think();
+			npc.npc.doThinkLesser();
+			npc.npc.doThink();
 			
 			
 			//System.out.println("npcx : " + event.getEntity().getClass().toString());
@@ -847,20 +850,13 @@ public class npcx extends JavaPlugin {
 		            	while (rsEntries.next ())
 			            {
 		            		
-		            		myPathgroup_entry entry = new myPathgroup_entry();
+		            		Location pgloc = new Location(getServer().getWorld(this.world),rsEntries.getInt("x"),rsEntries.getInt("y"),rsEntries.getInt("z"),rsEntries.getFloat("yaw"),rsEntries.getFloat("pitch"));
+		            		
+		            		myPathgroup_entry entry = new myPathgroup_entry(pgloc,rsEntries.getInt("id"),pathgroup,rsEntries.getInt("s"));
+		            		
 		            		entry.id = rsEntries.getInt("id");
-		            		entry.s = rsEntries.getInt("s");
 		            		entry.name = rsEntries.getString("name");
-		            		
 		            		entry.pathgroupid = rsEntries.getInt("pathgroup");
-		            		entry.x = rsEntries.getInt("x");
-		            		entry.y = rsEntries.getInt("y");
-		            		entry.z = rsEntries.getInt("z");
-		            		entry.yaw = rsEntries.getFloat("yaw");
-		            		entry.pitch = rsEntries.getFloat("pitch");
-		            		
-		            		
-		            		entry.parent = pathgroup;
 		            		
 		            		countentries++;
 		            		pathgroup.pathgroupentries.add(entry);
@@ -1635,18 +1631,12 @@ public class npcx extends JavaPlugin {
         	            	if (pg.id == Integer.parseInt(args[2]))
         	            	{
         	            		
-        	            		myPathgroup_entry pge = new myPathgroup_entry();
-        	            		pge.parent = pg;
-        	            		pge.pathgroupid = Integer.parseInt(args[2]);
-        	            		pge.x = player.getLocation().getX();
-        	            		pge.y = player.getLocation().getY();
-        	            		pge.z = player.getLocation().getZ();
-        	            		pge.pitch = player.getLocation().getPitch();
-        	            		pge.yaw = player.getLocation().getYaw();
-        	            		
-        	            		
-        	            		pge.s = Integer.parseInt(args[3]);
+        	            		int dpathgroupid = Integer.parseInt(args[2]);
+        	            		int dspot = Integer.parseInt(args[3]);
+        	            		myPathgroup_entry pge = new myPathgroup_entry(player.getLocation(),dpathgroupid,pg,dspot);
         	            		System.out.println("npcx : + cached new pathgroup entry("+ args[3] + ")");
+        	            		
+        	            		// add new pathgroup entry object to the pathgroups entry list
         	            		pg.pathgroupentries.add(pge);
         	            		
         	            	}
@@ -2375,5 +2365,10 @@ public class npcx extends JavaPlugin {
 				}
 			}
 			return null;
+	}
+
+	public void dbg(String string) {
+		// TODO Auto-generated method stub
+		System.out.println("npcx: "+string);
 	}
 }

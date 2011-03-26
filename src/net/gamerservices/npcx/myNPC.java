@@ -34,6 +34,7 @@ public class myNPC {
 	public myPathgroup pathgroup;
 	public int currentpathspot = 0;
 	public int movecountdown = 0;
+	public boolean moveforward = true;
 			
 	myNPC(npcx parent, HashMap<String, myTriggerword> triggerwords)
 	{
