@@ -481,12 +481,18 @@ public class BasicHumanNpc extends BasicNpc {
     	}
     	
     }
+	
+	public void forceMove(double x, double y, double z, float yaw, float pitch)
+	{
+		this.mcEntity.c(x, y, z, yaw, pitch);
+		return;
+	}
     
     public void moveTo(double x, double y, double z, float yaw, float pitch) {
     	
     	Location loc = new Location(this.getBukkitEntity().getWorld(), x, y, z);
     	Block block = this.getBukkitEntity().getWorld().getBlockAt(loc);
-    	System.out.println("Block is: " + block.getType().toString());
+    	//System.out.println("Block is: " + block.getType().toString());
     	
     	// First we check if the npc is trying to walk to the ground or air
     	
@@ -499,14 +505,14 @@ public class BasicHumanNpc extends BasicNpc {
         	if (block2.getType() == Material.AIR)
         	{
         		//System.out.println("Moving :)");
-        		this.mcEntity.c(x, y, z, yaw, pitch);
+        		forceMove(x, y, z, yaw, pitch);
         		return;
         	} else {
         		// Lots of dirt
-        		
+        		// Suffocation!!
         		
         		//System.out.println("Moving :)");
-        		this.mcEntity.c(x-1, y, z, yaw, pitch);
+        		forceMove(x, y+1, z, yaw, pitch);
         		return;
         	}
     	}
@@ -521,15 +527,15 @@ public class BasicHumanNpc extends BasicNpc {
         	// sand dirt etc..
         	if (block2.getType() != Material.AIR)
         	{
-        		System.out.println("Moving :)");
-        		this.mcEntity.c(x, y, z, yaw, pitch);
+        		//System.out.println("Moving :)");
+        		forceMove(x, y, z, yaw, pitch);
         		return;
         	}
         	// more air!?! oh noes!
         	if (block2.getType() == Material.AIR)
         	{
         		//System.out.println("Moving :)");
-        		this.mcEntity.c(x, y-1, z, yaw, pitch);
+        		forceMove(x, y-1, z, yaw, pitch);
         		return;
         	}
         	
