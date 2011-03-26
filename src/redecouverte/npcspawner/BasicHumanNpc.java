@@ -711,19 +711,7 @@ public class BasicHumanNpc extends BasicNpc {
 	public void attackLivingEntity(LivingEntity ent) {
         try {
         	
-            if (ent instanceof Player)
-            {
-            	for(Player player : this.getBukkitEntity().getWorld().getPlayers())
-            	{
-            		if (player == ent)
-            		{
-            			if(player.isOp())
-            			{
-            				return;
-            			}
-            		}
-            	}
-            }
+            
             if ((ent.getHealth() - dmg) < 0)
             {
             	ent.setHealth(0);
