@@ -495,15 +495,18 @@ public class BasicHumanNpc extends BasicNpc {
     	{
     		Location loc2 = new Location(this.getBukkitEntity().getWorld(), x, y+1, z);
         	Block block2 = this.getBukkitEntity().getWorld().getBlockAt(loc2);
-        	System.out.println("Block above is: " + block2.getType().toString());
+        	//System.out.println("Block above is: " + block2.getType().toString());
         	if (block2.getType() == Material.AIR)
         	{
-        		System.out.println("Moving :)");
+        		//System.out.println("Moving :)");
         		this.mcEntity.c(x, y, z, yaw, pitch);
         		return;
         	} else {
-        		System.out.println("Moving :)");
-        		this.mcEntity.c(x, y+1, z, yaw, pitch);
+        		// Lots of dirt
+        		
+        		
+        		//System.out.println("Moving :)");
+        		this.mcEntity.c(x-1, y, z, yaw, pitch);
         		return;
         	}
     	}
@@ -513,7 +516,7 @@ public class BasicHumanNpc extends BasicNpc {
     	{
     		Location loc2 = new Location(this.getBukkitEntity().getWorld(), x, y-1, z);
         	Block block2 = this.getBukkitEntity().getWorld().getBlockAt(loc2);
-        	System.out.println("Block below is: " + block2.getType().toString());
+        	//System.out.println("Block below is: " + block2.getType().toString());
         	
         	// sand dirt etc..
         	if (block2.getType() != Material.AIR)
@@ -525,7 +528,7 @@ public class BasicHumanNpc extends BasicNpc {
         	// more air!?! oh noes!
         	if (block2.getType() == Material.AIR)
         	{
-        		System.out.println("Moving :)");
+        		//System.out.println("Moving :)");
         		this.mcEntity.c(x, y-1, z, yaw, pitch);
         		return;
         	}
@@ -545,7 +548,7 @@ public class BasicHumanNpc extends BasicNpc {
             	aggro = null;
             	if (ent instanceof Player)
             	{
-            		
+            		((Player) ent).getServer().broadcastMessage(((Player) ent).getName() + " was slaughtered by " + getName());
             		((Player) ent).sendMessage("You have been slaughtered by " + getName());
             		
             	}
