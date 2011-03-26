@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import net.minecraft.server.EntityLiving;
+
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
@@ -478,7 +483,88 @@ public class BasicHumanNpc extends BasicNpc {
     }
     
     public void moveTo(double x, double y, double z, float yaw, float pitch) {
-        this.mcEntity.c(x, y, z, yaw, pitch);
+    	
+    	Location loc = new Location(this.getBukkitEntity().getWorld(), x, y, z);
+    	Block block = this.getBukkitEntity().getWorld().getBlockAt(loc);
+    	
+    	if (block.getType().equals(Material.AIR))
+    	{
+    		// so we're at the air but is the below below the air air as well?
+    		Location locbelow = new Location(this.getBukkitEntity().getWorld(), x, y-1, z);
+    		Block blockbelow = this.getBukkitEntity().getWorld().getBlockAt(locbelow);
+    		//System.out.println("Its air! Checking below!");
+    		int groundcount = 0;
+    		while (blockbelow.getType().equals(Material.AIR))
+    		{
+    			groundcount++;
+    			// move down
+    			locbelow = new Location(this.getBukkitEntity().getWorld(), locbelow.getX(), locbelow.getY()-1, locbelow.getZ());
+    			blockbelow = this.getBukkitEntity().getWorld().getBlockAt(locbelow);
+    			
+    			
+    		}
+    		
+    		
+    		
+    		if (!blockbelow.getType().equals(Material.AIR))
+    		{
+	    		//System.out.println("Found one below thats not air!");
+
+	    		if (groundcount > 0)
+	    		{
+	    			this.mcEntity.c(locbelow.getX(), locbelow.getY()-groundcount+1, locbelow.getZ(), yaw, pitch);
+	    		} else {
+	    			//System.out.println("Moving to: " + block.getType().toString());
+	        		this.mcEntity.c(x, y, z, yaw, pitch);
+	    		}
+    		
+    		} else {
+	    		//System.out.println("Still air :/!");
+
+    		}
+    		
+    	} else {
+    		// It's not air, is the one above it air?
+    		Location locabove = new Location(this.getBukkitEntity().getWorld(), x, y+1, z);
+    		Block blockabove  = this.getBukkitEntity().getWorld().getBlockAt(locabove);
+    		if (!blockabove.getType().equals(Material.AIR))
+    		{
+    			int aircount = 0;
+        		while (!blockabove.getType().equals(Material.AIR))
+        		{
+        			aircount++;
+        			// move down
+        			locabove = new Location(this.getBukkitEntity().getWorld(), locabove.getX(), locabove.getY()-1, locabove.getZ());
+        			blockabove = this.getBukkitEntity().getWorld().getBlockAt(locabove);
+        			
+        			
+        		}
+        		
+        		if (blockabove.getType().equals(Material.AIR))
+        		{
+    	    		//System.out.println("Found one below thats not air!");
+
+    	    		if (aircount > 0)
+    	    		{
+    	    			this.mcEntity.c(locabove.getX(), locabove.getY()-aircount+1, locabove.getZ(), yaw, pitch);
+    	    		} else {
+    	    			//System.out.println("Moving to: " + block.getType().toString());
+    	        		this.mcEntity.c(x, y, z, yaw, pitch);
+    	    		}
+        		
+        		} else {
+    	    		//System.out.println("Still ground :/!");
+
+        		}
+    			
+    			
+    			// cant move into a block
+    			this.mcEntity.c(x, y, z, yaw, pitch);
+    		} else {
+	    		//System.out.println("Moving to: " + block.getType().toString());
+	    		this.mcEntity.c(x, y+1, z, yaw, pitch);
+	    	}
+    	}
     }
 
     public void attackLivingEntity(LivingEntity ent) {
