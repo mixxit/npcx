@@ -1593,10 +1593,9 @@ public class npcx extends JavaPlugin {
 
                 	// todo needs to force the player to provide a search term to not spam them with lots of results in the event of a huge npc list
                 	player.sendMessage("Insufficient arguments /npcx pathgroup list");
-                	
-
         			player.sendMessage("Insufficient arguments /npcx pathgroup add pathgroupid order");
-                	
+         			player.sendMessage("Insufficient arguments /npcx pathgroup inspect pathgroupid");
+
                	
                     return false;
                 }
@@ -1723,6 +1722,47 @@ public class npcx extends JavaPlugin {
         		}
             }
             
+            
+            if (args[1].equals("inspect")) {
+        		
+        		player.sendMessage("Pathgroup Entries:");
+   		       
+      		   
+      		   if (args.length >= 3)
+      		   {
+      			   
+      			   PreparedStatement pginspect = conn.prepareStatement("SELECT id,s,x,y,z,pathgroup,name FROM pathgroup_entries WHERE pathgroup = ? ORDER BY s ASC");
+        		   pginspect.setInt(1, Integer.parseInt(args[2]));
+      			   pginspect.executeQuery ();
+          		   ResultSet rspginspect = pginspect.getResultSet ();
+          		   
+          		   int count = 0;
+          		   while (rspginspect.next ())
+          		   {
+          			   	   int idVal = rspginspect.getInt ("id");
+          			       String nameVal = rspginspect.getString ("name");
+ 	       		       
+          			   	   int s = rspginspect.getInt ("s");
+          				   int pgid = rspginspect.getInt ("pathgroup");
+          				   String x = rspginspect.getString ("x");
+          				   String y = rspginspect.getString ("y");
+          				   String z = rspginspect.getString ("z");
+      	       		       
+    	       		       player.sendMessage("s: "+s+" pgid: "+pgid+" XYZ: "+x+","+y+","+z);
+    	       		       ++count;
+          		   }
+          		   rspginspect.close ();
+          		   pginspect.close ();
+          		   player.sendMessage (count + " rows were retrieved");
+
+      		   }  else {
+      			 player.sendMessage("Insufficient arguments /npcx pathgroup inspect pathgroupid");
+      		   }
+      		
+        		
+    			
+    		}
+        
             
             
             
