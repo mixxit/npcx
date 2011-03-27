@@ -271,7 +271,11 @@ public class npcx extends JavaPlugin {
 							    	boolean foundresult = false;
 							    	for (Block blockinsight : e.getLineOfSight(null, 8))
 							    	{
-							    		if (blockinsight == e.getLocation().getBlock())
+							    		// Entities seem to be Y + 1
+							    		Location eloc = e.getLocation();
+							    		eloc.setY(eloc.getY()+1);
+							    		
+							    		if (blockinsight == eloc.getBlock())
 							    		{
 							    			foundresult = true;
 								    		npc.npc.aggro =  e;
@@ -282,6 +286,7 @@ public class npcx extends JavaPlugin {
 							    	{
 							    		//System.out.println("I can hear one but can't see it");
 							    		npc.npc.faceLocation(e.getLocation());
+							    		
 							    	}
 
 							    	
