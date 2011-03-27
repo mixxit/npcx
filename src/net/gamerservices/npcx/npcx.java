@@ -1400,12 +1400,18 @@ public class npcx extends JavaPlugin {
         	            		
         	            		for (myNPC np : sg.npcs.values())
         	            		{
-        	            			np.npc.spawnx = sg.x;
-        	            			np.npc.spawny = sg.y;
-        	            			np.npc.spawnz = sg.z;
-        	            			np.npc.spawnyaw = sg.yaw;
-        	            			np.npc.spawnpitch = sg.pitch;
+        	            			if (np.npc != null)
+        	            			{
         	            			
+	        	            			np.npc.spawnx = sg.x;
+	        	            			np.npc.spawny = sg.y;
+	        	            			np.npc.spawnz = sg.z;
+	        	            			np.npc.spawnyaw = sg.yaw;
+	        	            			np.npc.spawnpitch = sg.pitch;
+	        	            			Location locnpc = new Location(getServer().getWorld(this.world),loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
+	        	            			np.npc.forceMove(locnpc);
+	        	            			
+        	            			}
         	            				
         	            		}
         	            		

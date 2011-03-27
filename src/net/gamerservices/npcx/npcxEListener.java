@@ -190,7 +190,28 @@ public class npcxEListener extends EntityListener
             					
             				} else {
             					player.target = npc;
-                                p.sendMessage("* Active chat target set as: " + npc.getName() + "NPCID("+npc.parent.id+"):GP("+npc.parent.spawngroup.id+"):F("+npc.parent.faction.id+"):PG("+npc.parent.pathgroup.id+"):L("+npc.parent.loottable.id+")");
+            					
+            					int tNPCID = 0;
+            					int tGPID = 0;
+            					int tFID = 0;
+            					int tPGID = 0;
+            					int tLTID = 0;
+            					
+            					if (npc.parent != null)
+            					{
+            						tNPCID = Integer.parseInt(npc.parent.id);
+            						
+                					if (npc.parent.spawngroup != null)
+                						tGPID = npc.parent.spawngroup.id;
+                					if (npc.parent.faction != null)
+                						tFID = npc.parent.faction.id;
+                					if (npc.parent.pathgroup != null)
+                						tPGID = npc.parent.pathgroup.id;
+                					if (npc.parent.loottable != null)
+                						tLTID = npc.parent.loottable.id;
+            					}
+            					
+                                p.sendMessage("* Active chat target set as: " + npc.getName() + "NPCID("+tNPCID+"):GP("+tGPID+"):F("+tFID+"):PG("+tPGID+"):L("+tLTID+")");
                                 p.sendMessage("* Anything you now type will be redirected to: " + npc.getName());
                                 
                                 
