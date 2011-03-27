@@ -5,7 +5,9 @@ import org.bukkit.plugin.PluginManager;
 import java.util.HashMap;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
@@ -186,8 +188,10 @@ public class npcx extends JavaPlugin {
 		
 		for (myNPC npc : npcs.values())
 		{
+			npc.npc.doThinkGreater();
+			
+			//always do pathgroups after think()
 			npc.npc.doThinkLesser();
-			npc.npc.doThink();
 			
 			
 			//System.out.println("npcx : " + event.getEntity().getClass().toString());
@@ -238,6 +242,8 @@ public class npcx extends JavaPlugin {
 				
 			}
 			
+			// VS MONSTERS
+			
 			if (this.monsters.size() > 0)
 			{
 				try
@@ -253,12 +259,19 @@ public class npcx extends JavaPlugin {
 					
 						    if (e instanceof Monster)
 						    {
+						    	// mosnter in range?
 							    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
 							    {
-								    //System.out.println("npcx : inmysights !");
-							    	
-							    		npc.npc.aggro =  e;
-							    		npc.npc.follow =   e;
+								    // monster in range but is it worth chasing?
+							    	// line of site
+							    	for (Block blockinsight : e.getLineOfSight(null, 5))
+							    	{
+							    		if (blockinsight == e.getLocation().getBlock())
+							    		{
+								    		npc.npc.aggro =  e;
+								    		npc.npc.follow =   e;
+							    		}
+							    	}
 							    	
 								}
 						    }

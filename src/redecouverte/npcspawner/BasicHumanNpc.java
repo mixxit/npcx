@@ -95,7 +95,7 @@ public class BasicHumanNpc extends BasicNpc {
 		}
     }
     
-    public void doThink()
+    public void doThinkGreater()
     {
     	if (this.hp > 0)
 		{
@@ -240,10 +240,7 @@ public class BasicHumanNpc extends BasicNpc {
 				
 			}
 			
-			if (this.parent.pathgroup != null)
-			{
-				doPathgroups();
-			}
+			
 		}
     }
     
