@@ -39,7 +39,7 @@ public class npcxEListener extends EntityListener
 				if (edee1.getDamager() instanceof HumanEntity) 
 				{
 					edee1.setDamage(0);
-					System.out.println("npcx : monster go ow");
+					//System.out.println("npcx : monster go ow");
 				}
 					
 				

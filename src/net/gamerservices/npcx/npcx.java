@@ -2461,10 +2461,22 @@ public class npcx extends JavaPlugin {
 			return null;
 	}
 
-	public void dbg(String string) {
+	public void dbg(int debug, String string) {
 		// TODO Auto-generated method stub
-		System.out.println("npcx: "+string);
+		if (debug > 1)
+		{
+			// do stuff with info/warn
+			
+		} else {
+			dbg(string);			
+		}
 	}
+	
+	public void dbg(String string) {
+		System.out.println("npcx: "+string);			
+		
+	}
+
 
 	public void informNpcDeadPlayer(Player player) {
 		// TODO Auto-generated method stub
@@ -2473,12 +2485,12 @@ public class npcx extends JavaPlugin {
 		{
 			if (npc.npc.aggro == player)
 			{
-				dbg("informNpcDeadPlayer:aggro:"+player.getName());
+				dbg(1,"informNpcDeadPlayer:aggro:"+player.getName());
 				npc.npc.follow = null;
 			}
 			if (npc.npc.aggro == player)
 			{
-				dbg("informNpcDeadPlayer:follow:"+player.getName());
+				dbg(1,"informNpcDeadPlayer:follow:"+player.getName());
 				npc.npc.aggro = null;
 			}
 			
