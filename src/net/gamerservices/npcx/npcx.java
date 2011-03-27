@@ -260,18 +260,30 @@ public class npcx extends JavaPlugin {
 						    if (e instanceof Monster)
 						    {
 						    	// mosnter in range?
-							    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+							    if (distancex > -8 && distancey > -8 && distancez > -8 && distancex < 8 && distancey < 8 && distancez < 8)
 							    {
 								    // monster in range but is it worth chasing?
+							    	
+							    	// face direction
+
 							    	// line of site
-							    	for (Block blockinsight : e.getLineOfSight(null, 5))
+
+							    	boolean foundresult = false;
+							    	for (Block blockinsight : e.getLineOfSight(null, 8))
 							    	{
 							    		if (blockinsight == e.getLocation().getBlock())
 							    		{
+							    			foundresult = true;
 								    		npc.npc.aggro =  e;
 								    		npc.npc.follow =   e;
 							    		}
 							    	}
+							    	if (foundresult == false)
+							    	{
+							    		//System.out.println("I can hear one but can't see it");
+							    		npc.npc.faceLocation(e.getLocation());
+							    	}
+
 							    	
 								}
 						    }
@@ -711,6 +723,8 @@ public class npcx extends JavaPlugin {
 	            mPlayerListener = new npcxPListener(this);
 	            pm.registerEvent(Type.ENTITY_TARGET, mEntityListener, Priority.Normal, this);
 	            pm.registerEvent(Type.ENTITY_DAMAGED, mEntityListener, Priority.Normal, this);
+	            pm.registerEvent(Type.ENTITY_EXPLODE, mEntityListener, Priority.Normal, this);
+	            
 	            pm.registerEvent(Type.ENTITY_DEATH, mEntityListener, Priority.Normal, this);
 	            pm.registerEvent(Type.CREATURE_SPAWN, mEntityListener, Priority.Normal, this);
 	            

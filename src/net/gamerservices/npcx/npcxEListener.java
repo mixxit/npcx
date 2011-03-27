@@ -123,6 +123,21 @@ public class npcxEListener extends EntityListener
 
 		}
 	}
+	
+	@Override
+	public void onEntityExplode	(	EntityExplodeEvent 	event	)
+	{
+		
+		
+		if (event.getEntity() instanceof Monster)
+		{
+			
+			//System.out.println("npcx : deregistered monster");
+			this.parent.monsters.remove((Monster)event.getEntity());	
+
+		}
+	}
+	
 	@Override
 	public void onCreatureSpawn	( CreatureSpawnEvent event)	
 	{
@@ -147,46 +162,23 @@ public class npcxEListener extends EntityListener
         if (event instanceof NpcEntityTargetEvent) {
             NpcEntityTargetEvent nevent = (NpcEntityTargetEvent)event;
 
-/*            for (myNPC n : parent.npcs.values())
-            {
-            }*/
-            
+
             BasicHumanNpc npc = parent.npclist.getBasicHumanNpc(event.getEntity());
-    		//System.out.println("npcx : this is an instance of npcentitytargetevent");
             
             
             // Targets player
     		if (npc == null)
     		{
     			
-    			//System.out.println("npcx : npc is null");
-    			/*for (myNPC n : parent.npcs.values())
-                {
-    				if (nevent.getTarget() == n.npc)
-    				{
-    					//System.out.println("npcx : npc found!");
-    					npc = n.npc;
-    				}
-                }*/
     			event.setCancelled(true);
     		}
     		
             if (npc != null && event.getTarget() instanceof Player) 
             {
-        		//System.out.println("npcx : npc is not null and target is a player");
+        		
 
             	if (nevent.getNpcReason() == NpcTargetReason.CLOSEST_PLAYER) {
-            		//System.out.println("npcx : reason of event was closest player");
-
-            		//Player p = (Player) event.getTarget();
-                    // player is near the npc
-                    // do something here
-                	 /*
-                     if (npc != null) {
-                         npc.moveTo(event.getTarget().getLocation().getX(), event.getTarget().getLocation().getY(), event.getTarget().getLocation().getZ(), event.getTarget().getLocation().getYaw(), event.getTarget().getLocation().getPitch());
-                         
-                     }
-                     */
+            		
                     event.setCancelled(true);
 
                 } else if (nevent.getNpcReason() == NpcTargetReason.NPC_RIGHTCLICKED) {
@@ -194,10 +186,6 @@ public class npcxEListener extends EntityListener
 
                 	Player p = (Player) event.getTarget();
 
-                    /*
-                    p.sendMessage("* You say, 'Hail, " + npc.getName() + "!'");
-                    p.sendMessage("* " + npc.getName() + " says, 'Hello " + p.getName() + "!");
-                    */
                     
                     for (myPlayer player : parent.players.values()){
                     	
@@ -212,7 +200,8 @@ public class npcxEListener extends EntityListener
             				} else {
             					player.target = npc;
                                 p.sendMessage("* Active chat target set as: " + npc.getName());
-                                p.sendMessage("* Anything you now type will be redirected: " + npc.getName());
+                                p.sendMessage("* Anything you now type will be redirected to: " + npc.getName());
+                                
                                 
             				}
             				
@@ -220,6 +209,7 @@ public class npcxEListener extends EntityListener
             				if (player.name == p.getName())
             				{
             					p.sendMessage("Your name is right but your player is wrong");
+            					
             				}
             				
             			}

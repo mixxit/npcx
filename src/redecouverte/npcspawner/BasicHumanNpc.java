@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Spider;
 import org.bukkit.entity.Zombie;
+import org.bukkit.util.Vector;
 
 public class BasicHumanNpc extends BasicNpc {
 
@@ -63,36 +64,6 @@ public class BasicHumanNpc extends BasicNpc {
 
     protected CHumanNpc getMCEntity() {
         return this.mcEntity;
-    }
-
-    public void moveclosertolivingentitydepreciates(LivingEntity target)
-    {
-    	double x = target.getLocation().getX();
-		double y = target.getLocation().getY();
-		double z = target.getLocation().getZ();
-		double x2 = this.getBukkitEntity().getLocation().getX();
-		double y2 = this.getBukkitEntity().getLocation().getY();
-		double z2 = this.getBukkitEntity().getLocation().getZ();
-		
-		
-		int xdist = (int) (x - x2);
-		int ydist = (int) (y - y2);
-		int zdist = (int) (z - z2);
-		if ((x - x2) <= 10 && (x - x2) >= -10 && xdist != 0)
-		{
-			
-			this.moveCloserToLocation(target.getLocation());
-		}
-		
-		if ((y - y2) <= 10 && (y - y2) >= -10 && ydist != 0)
-		{
-			this.moveCloserToLocation(target.getLocation());
-		}
-		
-		if ((z - z2) <= 10 && (z - z2) >= -10 && zdist != 0)
-		{
-			this.moveCloserToLocation(target.getLocation());
-		}
     }
     
     public void doThinkGreater()
@@ -165,21 +136,20 @@ public class BasicHumanNpc extends BasicNpc {
 		    			
 		    			Double yaw2 = new Double(spawnyaw);
 		                Double pitch2 = new Double(spawnpitch);
-			    		moveTo(spawnx,spawny,spawnz,yaw2.floatValue(),pitch2.floatValue());
+		                
+		                Location loc = new Location(this.getBukkitEntity().getWorld(),spawnx,spawny,spawnz,yaw2.floatValue(),pitch2.floatValue());
+		                
+		                moveCloserToLocation(loc);
 		    		}
 		    	}
 			}
 	    	// NPC FOLLOW
-	
-	    	
-	    	
-	    	
 	    	
 			if (follow instanceof LivingEntity)
 			{
 				if (this.follow != null)
 				{
-			    		//System.out.println("follow" + follow.toString()+":"+follow.getHealth());
+						Debug(1,this.getName() + ":follow:" + follow.toString()+":"+follow.getHealth());
 						// lets follow this entity
 						if (this.hp == 0 || this.follow.getHealth() == 0)
 						{
@@ -187,6 +157,7 @@ public class BasicHumanNpc extends BasicNpc {
 							// they're dead, stop following
 							this.follow = null;
 							this.aggro = null;
+							
 							
 						} else {
 							
@@ -201,11 +172,10 @@ public class BasicHumanNpc extends BasicNpc {
 				    		int xdist = (int) (x1 - x2);
 				    		int ydist = (int) (y1 - y2);
 				    		int zdist = (int) (z1 - z2);
-				    		//System.out.println("Checking player: " + xdist + " "+  ydist + " "+ zdist);
-				    		 
 				    		
 				    		if (xdist > -30 && xdist < 30 && ydist > -30 && ydist < 30 && zdist > -30 && zdist < 30)
 				    		{
+				    			Debug(1,this.getName() + ":Attacking a monster near to me");
 				    			this.moveCloserToLocation(this.follow.getLocation());
 				    		} else {
 				    			// too far for me
@@ -366,7 +336,7 @@ public class BasicHumanNpc extends BasicNpc {
 
 	private void moveCloserToLocation(Location loc) {
 		// TODO Auto-generated method stub
-		Location newloc = transformCloserToLocation(this.getBukkitEntity().getLocation(),loc);
+		Location newloc = getTransformCloserToLocation(this.getBukkitEntity().getLocation(),loc);
 		if (this.parent != null)
 		{
 			Debug(1,"moveCloserToLocation Moving towards: "+this.parent.currentpathspot+newloc);
@@ -376,7 +346,7 @@ public class BasicHumanNpc extends BasicNpc {
 		
 	}
 	
-	public Location transformCloserToLocation(Location from, Location to)
+	public Location getTransformCloserToLocation(Location from, Location to)
 	{
 		// TODO Auto-generated method stub
 		Debug(1,"transformCloserToLocation:Called!!");
@@ -615,7 +585,11 @@ public class BasicHumanNpc extends BasicNpc {
 		}
 	}
 
-	
+
+	float ComputeAngle(Location origin, Location target) 
+	{ 
+	     return (float)Math.atan2(target.getX() - origin.getX(), target.getZ() - origin.getZ()); 
+	}
 	
 	public void forceMove(Location loc)
 	{
@@ -638,16 +612,19 @@ public class BasicHumanNpc extends BasicNpc {
 		// Save last co-ordinate
 		this.lastloc = this.getBukkitEntity().getLocation().getBlock();
 		
-		if (this.parent.moveforward == false)
-		{
-			this.mcEntity.c(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw()-180, loc.getPitch());
-			return;
-		} else {
-			this.mcEntity.c(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-			return;
-		}
+		// turn to face the location
+		this.mcEntity.c(loc.getX(), loc.getY(), loc.getZ(),ComputeAngle(this.getBukkitEntity().getLocation(),loc), 0);
+		
+		
 	}
     
+	public void faceLocation(Location face)
+	{
+		Location oldloc = this.getBukkitEntity().getLocation();
+		Debug(1,"Direction was: "+this.getBukkitEntity().getLocation().getYaw()+"should be: "+ComputeAngle(this.getBukkitEntity().getLocation(),face));
+		this.mcEntity.c(oldloc.getX(),oldloc.getY(),oldloc.getZ(),ComputeAngle(this.getBukkitEntity().getLocation(),face),oldloc.getPitch());
+	}
+	
 	public void Panic(String type)
 	{
 		Debug("npcx : ***"+ this.getBukkitEntity().getName() + " paniced! : "+ type + " ***");
@@ -655,52 +632,7 @@ public class BasicHumanNpc extends BasicNpc {
 	
     
 
-	public void moveTo(double x, double y, double z, float yaw, float pitch) {
-    	
-		Location loc = new Location(this.getBukkitEntity().getWorld(), x, y, z);
-    	Block block = this.getBukkitEntity().getWorld().getBlockAt(loc);
-    	
-    	Block entityblock = this.getBukkitEntity().getWorld().getBlockAt(this.getBukkitEntity().getLocation());
-    	
-    	if (loc == entityblock)
-    	{
-    		// already here
-    		Debug(1,"Cant move, already here (moveTo)!!");
-    		return;
-    	}
-    	
-    	
-    	// Heading to Air
-    	if (block.getType() == Material.AIR)
-    	{
-    		
-    		Debug(1,block.getType().toString()+":"+this.parent.currentpathspot);
-    		forceMove(loc);
-    		return;
-        	
-    	}
-    	
-    	if (block.getType() != Material.AIR)
-    	{
-    		Debug(1,"Off we go");
-    		/*
-    		Location loc2 = getNextBestLocation(loc);
-    		if (loc2 != null)
-    		{
-    			forceMove(loc2.getX(),loc2.getY(),loc2.getZ(),yaw,pitch);   
-    			return;
-    		}
-    		*/
-    		forceMove(loc);
-    		return;
-        	
-    	}
-    	
-    	//forceMove(x, y, z, yaw, pitch);
-    	Panic("Cant move");
-    	
-    	
-    }
+
 
     
 
