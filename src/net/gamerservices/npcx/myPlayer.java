@@ -1,8 +1,9 @@
 package net.gamerservices.npcx;
 
+import net.gamerservices.npclibfork.BasicHumanNpc;
+
 import org.bukkit.entity.Player;
 
-import redecouverte.npcspawner.BasicHumanNpc;
 
 public class myPlayer {
 

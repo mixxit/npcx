@@ -3,6 +3,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import net.gamerservices.npclibfork.BasicHumanNpc;
+import net.gamerservices.npclibfork.NpcSpawner;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -13,8 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import com.nijiko.coelho.iConomy.iConomy;
 import com.nijiko.coelho.iConomy.system.Account;
 
-import redecouverte.npcspawner.BasicHumanNpc;
-import redecouverte.npcspawner.NpcSpawner;
 public class myNPC {
 	public npcx parent;
 	public String name = "dummy";

@@ -5,9 +5,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
+import net.gamerservices.npclibfork.NpcSpawner;
+
 import org.bukkit.World;
 
-import redecouverte.npcspawner.NpcSpawner;
 
 public class mySpawngroup {
 	public int id;

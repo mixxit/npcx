@@ -1,6 +1,12 @@
 package net.gamerservices.npcx;
 import com.nijiko.coelho.iConomy.iConomy;
 
+import net.gamerservices.npclibfork.BasicHumanNpc;
+import net.gamerservices.npclibfork.BasicHumanNpcList;
+import net.gamerservices.npclibfork.NpcEntityTargetEvent;
+import net.gamerservices.npclibfork.NpcSpawner;
+import net.gamerservices.npclibfork.NpcEntityTargetEvent.NpcTargetReason;
+
 import org.bukkit.plugin.PluginManager;
 import java.util.HashMap;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -31,11 +37,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import org.bukkit.event.Event.Type;
 import java.util.logging.Logger;
-import redecouverte.npcspawner.BasicHumanNpc;
-import redecouverte.npcspawner.BasicHumanNpcList;
-import redecouverte.npcspawner.NpcEntityTargetEvent;
-import redecouverte.npcspawner.NpcEntityTargetEvent.NpcTargetReason;
-import redecouverte.npcspawner.NpcSpawner;
 import org.bukkit.event.Event.Priority;
 
 import java.io.BufferedInputStream;

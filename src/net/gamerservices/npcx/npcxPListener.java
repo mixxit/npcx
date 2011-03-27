@@ -1,5 +1,11 @@
 package net.gamerservices.npcx;
 import java.util.logging.Logger;
+
+import net.gamerservices.npclibfork.BasicHumanNpc;
+import net.gamerservices.npclibfork.NpcEntityTargetEvent;
+import net.gamerservices.npclibfork.NpcSpawner;
+import net.gamerservices.npclibfork.NpcEntityTargetEvent.NpcTargetReason;
+
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -10,10 +16,6 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.HumanEntity;
-import redecouverte.npcspawner.BasicHumanNpc;
-import redecouverte.npcspawner.NpcEntityTargetEvent;
-import redecouverte.npcspawner.NpcEntityTargetEvent.NpcTargetReason;
-import redecouverte.npcspawner.NpcSpawner;
 
 public class npcxPListener extends PlayerListener {
 	
