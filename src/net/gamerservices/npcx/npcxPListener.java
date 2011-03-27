@@ -28,7 +28,7 @@ public class npcxPListener extends PlayerListener {
     {
 		myPlayer player = new myPlayer(event.getPlayer(),event.getPlayer().getName());
 		//System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
-		parent.players.put(player.player.getName(), player);
+		parent.universe.players.put(player.player.getName(), player);
 		
     }
 	
@@ -36,7 +36,7 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerChat(PlayerChatEvent event)
     {
-		for (myPlayer player : parent.players.values()){
+		for (myPlayer player : parent.universe.players.values()){
 			if (player.player == event.getPlayer())
 			{
 				if (player.target != null)
@@ -77,7 +77,7 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerRespawn(PlayerRespawnEvent event)
 	{
-		for (myPlayer player : this.parent.players.values())
+		for (myPlayer player : this.parent.universe.players.values())
 		{
 				// deal with player death changes
 				if (player.player == event.getPlayer())
@@ -94,7 +94,7 @@ public class npcxPListener extends PlayerListener {
 	public void onPlayerQuit(PlayerEvent event)
     {
 		
-		for (myPlayer player : parent.players.values()){
+		for (myPlayer player : parent.universe.players.values()){
 			if (player.player == event.getPlayer())
 			{
 				
@@ -102,7 +102,7 @@ public class npcxPListener extends PlayerListener {
 				this.parent.informNpcDeadPlayer(event.getPlayer());
 				
 				//System.out.println("npcx : removed player ("+ player.player.getName()+")");
-				parent.players.remove(player);
+				parent.universe.players.remove(player);
 			}
 		}
 		

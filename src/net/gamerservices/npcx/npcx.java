@@ -47,86 +47,25 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.*;
-
-
-
 public class npcx extends JavaPlugin {
 
 	private static final Logger logger = Logger.getLogger("Minecraft");
-	private final String FILE_PROPERTIES = "npcx.properties";
-	private final String PROP_DBHOST = "db-host";
-	private final String PROP_DBUSER = "db-user";
-	private final String PROP_DBPASS = "db-pass";
-	private final String PROP_DBNAME = "db-name";
-	private final String PROP_DBPORT = "db-port";
-	private final String PROP_WORLD = "world";
-	private final String PROP_UPDATE = "update";
-	public Connection conn = null;
+	
+	
 	private npcxEListener mEntityListener;
 	private npcxPListener mPlayerListener;
-	public HashMap<String, myPlayer> players = new HashMap<String, myPlayer>();
-	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
-	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
-	public List< Monster > monsters = new CopyOnWriteArrayList< Monster >();
-	public List< myFaction > factions = new CopyOnWriteArrayList< myFaction >();
-	public List< myLoottable > loottables = new CopyOnWriteArrayList< myLoottable >();
-	public List< myPathgroup > pathgroups = new CopyOnWriteArrayList< myPathgroup >();
-
+	public myUniverse universe;
 	
 	// iconomy
 	private static PluginListener PluginListener = null;
     private static iConomy iConomy = null;
     private static Server Server = null;
     // end iconomy
-	
-	private Properties prop;
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
-	private String dsn;
-	private File propfile;
-	private File propfolder;
-	private String dbhost;
-	private String update;
-	private String dbuser;
-	private String dbpass;
-	private String dbname;
-	private String dbport;
-	public String world;
 	private Timer tick = new Timer();
-	
-	
-
-	public HashMap<String, myTriggerword> fetchTriggerWords(int npcid) throws SQLException
-	{
-		//CREATE TABLE npc_triggerwords ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),npcid int,triggerword CHAR(40),reply VARCHAR(256),category CHAR(40))
-		
-		
-		HashMap<String, myTriggerword> triggerwords = new HashMap<String, myTriggerword>();
-
-		Statement s = conn.createStatement ();
-		s.executeQuery ("SELECT id, npcid, triggerword, reply, category FROM npc_triggerwords WHERE npcid =" + npcid );
-		
-		ResultSet rs = s.getResultSet ();
-			int count = 0;
-		   while (rs.next ())
-		   {
-			   count++;
-			   myTriggerword tw = new myTriggerword();
-			   tw.response = rs.getString ("reply");
-			   
-			   tw.word = rs.getString ("triggerword");
-		       tw.id = rs.getInt ("id");
-		       triggerwords.put(Integer.toString(tw.id), tw);
-		   }
-		   //System.out.println("npcx : fetched "+count+" triggerwords");
-		   rs.close ();
-		   s.close ();
-		   
-		return triggerwords;		
-	}
-	
 	public void onNPCDeath(BasicHumanNpc npc)
 	{
-		for (myPlayer player : players.values()){
+		for (myPlayer player : universe.players.values()){
 				if (player.target == npc)
 				{
 					player.target = null;
@@ -135,7 +74,7 @@ public class npcx extends JavaPlugin {
 		}
 		
 		
-		for (myLoottable lt : loottables)
+		for (myLoottable lt : this.universe.loottables)
 		{
 			if (npc.parent != null)
 			{
@@ -158,7 +97,7 @@ public class npcx extends JavaPlugin {
 		}
 		
 		npclist.remove(npc);
-		npcs.remove(npc);
+		universe.npcs.remove(npc);
 		NpcSpawner.RemoveBasicHumanNpc(npc);
 		
 		if (npc.parent != null)
@@ -172,8 +111,7 @@ public class npcx extends JavaPlugin {
 		
 		
 	}
-	
-	
+
 	public double getDistance(double d, double e)
 	{
 		return d-e;
@@ -188,7 +126,7 @@ public class npcx extends JavaPlugin {
 		// check npc logic
 		
 		
-		for (myNPC npc : npcs.values())
+		for (myNPC npc : universe.npcs.values())
 		{
 			if (npc.npc != null)
 			{
@@ -198,15 +136,11 @@ public class npcx extends JavaPlugin {
 				
 				npc.npc.doThinkLesser();
 				
-				
-				//System.out.println("npcx : " + event.getEntity().getClass().toString());
-				//System.out.println("npcx : " + event.getTarget().getClass().toString());
-				
-				if (this.players.size() > 0)
+				if (this.universe.players.size() > 0)
 				{
 					try
 					{
-						for (myPlayer player : this.players.values())
+						for (myPlayer player : this.universe.players.values())
 						{
 							if (player.player != null)
 							{
@@ -249,12 +183,12 @@ public class npcx extends JavaPlugin {
 				
 				// VS MONSTERS
 				
-				if (this.monsters.size() > 0)
+				if (this.universe.monsters.size() > 0)
 				{
 					try
 					{
 						
-						for (LivingEntity e : this.monsters)
+						for (LivingEntity e : this.universe.monsters)
 						{
 							if (e.getHealth() > 0)
 					    	{
@@ -317,7 +251,7 @@ public class npcx extends JavaPlugin {
 		
 		// check spawngroups
 		
-		for (mySpawngroup spawngroup : spawngroups.values())
+		for (mySpawngroup spawngroup : universe.spawngroups.values())
 		{
 			
 			if (spawngroup.activecountdown > 0)
@@ -358,7 +292,7 @@ public class npcx extends JavaPlugin {
 							//System.out.println("npcx : made spawngroup active");
 							Double  pitch = new Double(spawngroup.pitch);
 							Double yaw = new Double(spawngroup.yaw);
-							BasicHumanNpc hnpc = npc.Spawn(npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
+							BasicHumanNpc hnpc = npc.Spawn(npc.id, npc.name, this.getServer().getWorld(this.universe.defaultworld), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
 							
 							npc.npc = hnpc;
 							
@@ -376,7 +310,7 @@ public class npcx extends JavaPlugin {
 			                hnpc.parent = npc;
 			                
 							this.npclist.put(spawngroup.id + "-" + npc.id, hnpc);
-							this.npcs.put(spawngroup.id+"-"+npc.id,npc);
+							this.universe.npcs.put(spawngroup.id+"-"+npc.id,npc);
 							spawngroup.active = true;
 						}
 					}
@@ -391,60 +325,6 @@ public class npcx extends JavaPlugin {
 		
 		
 	
-	}
-	
-	public boolean loadSettings()
-	{
-		// Loads configuration settings from the properties files
-		PluginDescriptionFile pdfFile = this.getDescription();
-		System.out.println("npcx : load settings ("+pdfFile.getVersion()+") begun");
-		
-		Properties config = new Properties();
-		BufferedInputStream stream;
-		// Access the defined properties file
-		try {
-			stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
-			
-			try {
-				
-				// Load the configuration
-				config.load(stream);
-				dbhost = config.getProperty("db-host");
-				dbuser = config.getProperty("db-user");
-				dbpass = config.getProperty("db-pass");
-				dbname = config.getProperty("db-name");
-				dbport = config.getProperty("db-port");
-				world = config.getProperty("world");
-				
-				update = config.getProperty("update");
-				
-				dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
-				System.out.println(dsn);
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		for (World w : getServer().getWorlds())
-		{
-			if (w.getName().matches(world))
-			{
-				System.out.println("npcx : loadsettings() ended");
-				return true;
-			}
-		}
-		
-		System.out.println("**********************************************");
-		System.out.println("* Load settings failed to find default world *");
-		System.out.println("*    Please change it in ncpx.properties     *");
-		System.out.println("**********************************************");
-		return false;
 	}
 	
 	@Override
@@ -465,8 +345,8 @@ public class npcx extends JavaPlugin {
 		try
 		{
 			Class.forName ("com.mysql.jdbc.Driver").newInstance ();
-	        conn = DriverManager.getConnection (dsn, dbuser, dbpass);
-	        Statement s11 = conn.createStatement ();
+	        universe.conn = DriverManager.getConnection (universe.dsn, universe.dbuser, universe.dbpass);
+	        Statement s11 = this.universe.conn.createStatement ();
 	        s11.executeQuery ("SELECT name FROM npc WHERE id ="+string);
 	        ResultSet rs11 = s11.getResultSet ();
 	        
@@ -486,7 +366,7 @@ public class npcx extends JavaPlugin {
 	
 	public myFaction getFactionByID(int id)
 	{
-		for (myFaction f : factions)
+		for (myFaction f : this.universe.factions)
 		{
 			if (f.id == id)
 			{
@@ -503,8 +383,8 @@ public class npcx extends JavaPlugin {
 		try
 		{
 			Class.forName ("com.mysql.jdbc.Driver").newInstance ();
-	        conn = DriverManager.getConnection (dsn, dbuser, dbpass);
-	        PreparedStatement s11 = conn.prepareStatement("SELECT faction_id FROM npc WHERE id = ?",Statement.RETURN_GENERATED_KEYS);
+			universe.conn = DriverManager.getConnection (universe.dsn, universe.dbuser, universe.dbpass);
+	        PreparedStatement s11 = this.universe.conn.prepareStatement("SELECT faction_id FROM npc WHERE id = ?",Statement.RETURN_GENERATED_KEYS);
 	        s11.setInt(1, Integer.parseInt(string));
 	        s11.executeQuery();
 	        ResultSet rs11 = s11.getResultSet ();
@@ -512,7 +392,7 @@ public class npcx extends JavaPlugin {
 	        while (rs11.next ())
 	        {
 	        	int factionid = rs11.getInt ("faction_id");
-	        	for (myFaction f : factions)
+	        	for (myFaction f : this.universe.factions)
 	        	{
 	        		if (f.id == factionid)
 	        		{
@@ -535,8 +415,8 @@ public class npcx extends JavaPlugin {
 		try
 		{
 			Class.forName ("com.mysql.jdbc.Driver").newInstance ();
-	        conn = DriverManager.getConnection (dsn, dbuser, dbpass);
-	        PreparedStatement s11 = conn.prepareStatement("SELECT loottable_id FROM npc WHERE id = ?",Statement.RETURN_GENERATED_KEYS);
+	        universe.conn = DriverManager.getConnection (universe.dsn, universe.dbuser, universe.dbpass);
+	        PreparedStatement s11 = this.universe.conn.prepareStatement("SELECT loottable_id FROM npc WHERE id = ?",Statement.RETURN_GENERATED_KEYS);
 	        s11.setInt(1, Integer.parseInt(string));
 	        s11.executeQuery();
 	        ResultSet rs11 = s11.getResultSet ();
@@ -544,7 +424,7 @@ public class npcx extends JavaPlugin {
 	        while (rs11.next ())
 	        {
 	        	int lootttableid = rs11.getInt ("loottable_id");
-	        	for (myLoottable f : loottables)
+	        	for (myLoottable f : this.universe.loottables)
 	        	{
 	        		if (f.id == lootttableid)
 	        		{
@@ -565,13 +445,13 @@ public class npcx extends JavaPlugin {
 	public void fixDead()
 	{
 		int count = 0;
-		for (myPlayer player : players.values())
+		for (myPlayer player : universe.players.values())
 		{
 			if (player.dead == true)
 			{
 				try
 				{
-				for (Player p : getServer().getWorld(this.world).getPlayers())
+				for (Player p : getServer().getWorld(this.universe.defaultworld).getPlayers())
 				{
 					if (player.name == p.getName())
 					{
@@ -610,520 +490,53 @@ public class npcx extends JavaPlugin {
 	        return true;
 	 }
 
+	 public void EventsSetup()
+	 {
+		 System.out.println("npcx : registering monitored events");
+		 this.Server = getServer();
+	     this.PluginListener = new PluginListener(this);
+		 getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
+		 PluginManager pm = getServer().getPluginManager();
+
+         mEntityListener = new npcxEListener(this);
+         mPlayerListener = new npcxPListener(this);
+         pm.registerEvent(Type.ENTITY_TARGET, mEntityListener, Priority.Normal, this);
+         pm.registerEvent(Type.ENTITY_DAMAGED, mEntityListener, Priority.Normal, this);
+         pm.registerEvent(Type.ENTITY_EXPLODE, mEntityListener, Priority.Normal, this);
+         
+         pm.registerEvent(Type.ENTITY_DEATH, mEntityListener, Priority.Normal, this);
+         pm.registerEvent(Type.CREATURE_SPAWN, mEntityListener, Priority.Normal, this);
+         
+         pm.registerEvent(Type.PLAYER_RESPAWN, mPlayerListener, Priority.Normal, this);
+         
+         pm.registerEvent(Type.PLAYER_JOIN, mPlayerListener, Priority.Normal, this);
+         pm.registerEvent(Type.PLAYER_QUIT, mPlayerListener, Priority.Normal, this);
+         pm.registerEvent(Type.PLAYER_CHAT, mPlayerListener, Priority.Normal, this); 
+		 
+	 }
 	
 	@Override
 	public void onEnable() {
 		
 		// TODO Auto-generated method stub
-		propfolder = getDataFolder();
-		if (!propfolder.exists())
-		{
-			try
-			{
-				propfolder.mkdir();
-				System.out.println("npcx : config folder generation ended");
-			} catch (Exception e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
-		if (!propfile.exists())
-		{
-			try
-			{
-				propfile.createNewFile();
-				prop = new Properties();
-				prop.setProperty(PROP_DBHOST, "localhost");
-				prop.setProperty(PROP_DBUSER, "npcx");
-				prop.setProperty(PROP_DBPASS, "p4ssw0rd!");
-				prop.setProperty(PROP_DBNAME, "npcx");
-				prop.setProperty(PROP_DBPORT, "3306");
-				prop.setProperty(PROP_UPDATE, "true");
-				this.dbhost = "localhost";
-				this.dbuser = "npcx";
-				this.dbname = "npcx";
-				this.dbpass = "p4ssw0rd!";
-				this.dbport = "3306";
-				this.update = "true";
-				
-				
-				
-				prop.setProperty(PROP_WORLD, "world");
-				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
-				prop.store(stream, "Default generated settings, please ensure mysqld matches");
-				System.out.println("npcx : properties file generation ended");
-				
-			} catch(IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-					
-			
-			System.out.println("npcx : initial setup ended");
-		
-		}
+		universe = new myUniverse(this);
+		universe.checkSetup();
 		
 		// Check if world exists and settings are loaded
-		
-		if (!loadSettings())
+		if (!universe.loadSetup())
 			return;
 		
-		
-		
 		// TODO Auto-generated method stub
-		
-		this.Server = getServer();
-        this.PluginListener = new PluginListener(this);
-
-        // Event Registration
-        getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
-
-		 try {	
-			 
-			 	if (dbhost == null)
-			 	{
-				 	this.dbhost = "localhost";
-					this.dbuser = "npcx";
-					this.dbname = "npcx";
-					this.dbpass = "p4ssw0rd!";
-					this.dbport = "3306";
-					this.update = "true";
-					dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
-			 	}
-			 	
-			 
-			 
-	            try 
-	            {
-	            
-			 	System.out.println("npcx : initialising database connection");
-			 	
-			 	try 
-			 	{
-				 	Class.forName ("com.mysql.jdbc.Driver").newInstance ();
-				 		
-			 	} catch (ClassNotFoundException e)
-			 	{
-			 		System.out.println("*****************************************");
-			 		System.out.println("npcx : ERROR - Cannot find MySQL Library!");
-			 		System.out.println("*****************************************");
-			 		return;
-			 	}
-			 	
-			 	try
-			 	{
-			 		conn = DriverManager.getConnection (dsn, dbuser, dbpass);
-			 	} catch (SQLException e)
-			 	{
-			 		System.out.println("*****************************************");
-			 		System.out.println("npcx : ERROR - Error during MySQL login ");
-			 		System.out.println("*****************************************");
-			 		e.printStackTrace();
-			 		return;
-			 	}
-			 	
-			 	System.out.println("npcx : registering monitored events");
-
-			 	PluginManager pm = getServer().getPluginManager();
-
-	            mEntityListener = new npcxEListener(this);
-	            mPlayerListener = new npcxPListener(this);
-	            pm.registerEvent(Type.ENTITY_TARGET, mEntityListener, Priority.Normal, this);
-	            pm.registerEvent(Type.ENTITY_DAMAGED, mEntityListener, Priority.Normal, this);
-	            pm.registerEvent(Type.ENTITY_EXPLODE, mEntityListener, Priority.Normal, this);
-	            
-	            pm.registerEvent(Type.ENTITY_DEATH, mEntityListener, Priority.Normal, this);
-	            pm.registerEvent(Type.CREATURE_SPAWN, mEntityListener, Priority.Normal, this);
-	            
-	            pm.registerEvent(Type.PLAYER_RESPAWN, mPlayerListener, Priority.Normal, this);
-	            
-	            pm.registerEvent(Type.PLAYER_JOIN, mPlayerListener, Priority.Normal, this);
-	            pm.registerEvent(Type.PLAYER_QUIT, mPlayerListener, Priority.Normal, this);
-	            pm.registerEvent(Type.PLAYER_CHAT, mPlayerListener, Priority.Normal, this);
-	            
-	            	            
-	            Properties config = new Properties();
-	    		BufferedInputStream stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
-	            
-	            // Load the configuration
-				config.load(stream);
-				update = config.getProperty("update");
-	            
-	            if (update.matches("true"))
-	            {
-	            	System.out.println("npcx : DB WIPE");
-	            	
-		            /*
-		             * One time Database creation / TODO: Auto Upgrades
-		             * 
-		             * */
-	            	
-	            	
-	            	Statement factionlist = conn.createStatement ();
-		            String dropfactionlist = "DROP TABLE IF EXISTS faction_list; ";
-		            String fationlistsql = "CREATE TABLE faction_list ( id int(11) NOT NULL AUTO_INCREMENT, name varchar(45) DEFAULT NULL, base int(11) DEFAULT NULL, PRIMARY KEY (id))";
-		            factionlist.executeUpdate(dropfactionlist);
-		            factionlist.executeUpdate(fationlistsql);
-		            factionlist.close();
-		            
-		            Statement player_faction = conn.createStatement ();
-		            String dropplayer_faction = "DROP TABLE IF EXISTS player_faction; ";
-		            String player_factionsql = "CREATE TABLE player_faction (  id int(11) NOT NULL AUTO_INCREMENT,  player_name varchar(45) DEFAULT NULL,  faction_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
-		            player_faction.executeUpdate(dropplayer_faction);
-		            player_faction.executeUpdate(player_factionsql);
-		            player_faction.close();
-		            
-		            Statement loottable_entries = conn.createStatement ();
-		            String droploottable_entries = "DROP TABLE IF EXISTS loottable_entries; ";
-		            String loottable_entriessql = "CREATE TABLE loottable_entries (id int(11) NOT NULL AUTO_INCREMENT,  loottable_id int(11) DEFAULT NULL,  item_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
-		            loottable_entries.executeUpdate(droploottable_entries);
-		            loottable_entries.executeUpdate(loottable_entriessql);
-		            loottable_entries.close();
-		            
-		            Statement loottable = conn.createStatement ();
-		            String droploottable = "DROP TABLE IF EXISTS loottables; ";
-		            String loottablesql = "CREATE TABLE loottables (  id int(11) NOT NULL AUTO_INCREMENT,  name varchar(50) DEFAULT NULL,  PRIMARY KEY (id))";
-		            loottable.executeUpdate(droploottable);
-		            loottable.executeUpdate(loottablesql);
-		            loottable.close();
-	            	
-		            Statement npc_faction = conn.createStatement ();
-		            String dropnpc_faction = "DROP TABLE IF EXISTS npc_faction; ";
-		            String npc_factionsql = "CREATE TABLE npc_faction (id int(11) NOT NULL AUTO_INCREMENT, npc_id int(11) DEFAULT NULL, faction_id int(11) DEFAULT NULL, amount int(11) DEFAULT NULL,PRIMARY KEY (id))";
-		            npc_faction.executeUpdate(dropnpc_faction);
-		            npc_faction.executeUpdate(npc_factionsql);
-		            npc_faction.close();
-		            
-		            
-		            Statement s2 = conn.createStatement ();
-		            String droptable = "DROP TABLE IF EXISTS npc; ";
-		            String npctable = "CREATE TABLE npc (  id int(10) unsigned NOT NULL AUTO_INCREMENT,  name char(40) DEFAULT NULL,  category char(40) DEFAULT NULL,  faction_id int(11) DEFAULT NULL,  loottable_id int(11) DEFAULT NULL,  weapon int(11) DEFAULT NULL,  helmet int(11) DEFAULT NULL,  chest int(11) DEFAULT NULL,  legs int(11) DEFAULT NULL,  boots int(11) DEFAULT NULL,  PRIMARY KEY (id)) ";
-
-		            s2.executeUpdate(droptable);
-		            s2.executeUpdate(npctable);
-		            
-		            
-		            String droptable0 = "DROP TABLE IF EXISTS pathgroup; ";
-		            String npctable0 = "CREATE TABLE pathgroup ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),name CHAR(40),category CHAR(40))";
-		            s2.executeUpdate(droptable0);
-		            s2.executeUpdate(npctable0);
-		            
-		            String droptable1 = "DROP TABLE IF EXISTS pathgroup_entries; ";
-		            String npctable1 = "CREATE TABLE pathgroup_entries (  id int(10) unsigned NOT NULL AUTO_INCREMENT,  s int(11) DEFAULT NULL,  pathgroup int(11) DEFAULT NULL,  name char(40) DEFAULT NULL,  x char(40) DEFAULT NULL,  y char(40) DEFAULT NULL,  z char(40) DEFAULT NULL,  yaw char(40) DEFAULT NULL,  pitch char(40) DEFAULT NULL,  PRIMARY KEY (id))";
-		            s2.executeUpdate(droptable1);
-		            s2.executeUpdate(npctable1);
-		            
-		            String droptable2 = "DROP TABLE IF EXISTS spawngroup; ";
-		            String spawngrouptable = "CREATE TABLE spawngroup (  id int(10) unsigned NOT NULL AUTO_INCREMENT,  name char(40) DEFAULT NULL,  world char(40) DEFAULT NULL,  category char(40) DEFAULT NULL,  x char(40) DEFAULT NULL,  y char(40) DEFAULT NULL,  z char(40) DEFAULT NULL,  yaw char(40) DEFAULT NULL,  pitch char(40) DEFAULT NULL,  pathgroupid int(10) DEFAULT NULL,  PRIMARY KEY (id))";
-		            s2.executeUpdate(droptable2);
-		            
-		            s2.executeUpdate(spawngrouptable);
-		            
-		            String droptable3 = "DROP TABLE IF EXISTS spawngroup_entries; ";
-		            String sgetable = "CREATE TABLE spawngroup_entries ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),spawngroupid int,npcid int)";
-		            s2.executeUpdate(droptable3);
-		            
-		            s2.executeUpdate(sgetable);
-		            
-		            String droptable4 = "DROP TABLE IF EXISTS npc_triggerwords; ";
-		            String spawngrouptable4 = "CREATE TABLE npc_triggerwords ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),npcid int,triggerword CHAR(40),reply VARCHAR(256),category CHAR(40))";
-		            s2.executeUpdate(droptable4);
-		            s2.executeUpdate(spawngrouptable4);
-		            
-		            s2.close();
-		            System.out.println("npcx : finished table configuration");
-		            dbhost = config.getProperty("db-host");
-					dbuser = config.getProperty("db-user");
-					dbpass = config.getProperty("db-pass");
-					dbname = config.getProperty("db-name");
-					dbport = config.getProperty("db-port");
-					dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
-					world = config.getProperty("world");
-					config.setProperty(PROP_DBHOST,dbhost);
-					config.setProperty(PROP_DBUSER,dbuser);
-					config.setProperty(PROP_DBPASS,dbpass);
-					config.setProperty(PROP_DBNAME,dbname);
-					config.setProperty(PROP_DBPORT,dbport);
-					config.setProperty(PROP_WORLD,world);
-		            config.setProperty(PROP_UPDATE,"false");
-		            File propfolder = getDataFolder();
-		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
-		            propfile.createNewFile();
-		            
-		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
-					config.store(stream1, "Default generated settings, please ensure mysqld matches");
-					
-	            }
-	            
-	            try 
-	            {
-		            // Load faction_list
-		            Statement s1 = conn.createStatement ();
-		            s1.executeQuery ("SELECT * FROM faction_list");
-		            ResultSet rs1 = s1.getResultSet ();
-		            int countfaction = 0;
-		            System.out.println("npcx : loading factions");
-		            while (rs1.next ())
-		            {
-		            	myFaction faction = new myFaction();
-		            	faction.id = rs1.getInt ("id");
-		            	faction.name = rs1.getString ("name");
-		            	faction.base = rs1.getInt ("base");
-		            	countfaction++;
-		            	factions.add(faction);
-		            	
-		            	
-		            }
-		            rs1.close();
-		            s1.close();
-		            System.out.println("npcx : Loaded " + countfaction + " factions.");
-		            
-	            } catch (NullPointerException e) { 
-			 		System.out.println("npcx : ERROR - faction loading cancelled!");
-	            }
-	            
-	            try 
-	            {
-		            // Load faction_list
-		            Statement spg = conn.createStatement ();
-		            spg.executeQuery ("SELECT * FROM pathgroup");
-		            ResultSet rspg = spg.getResultSet ();
-		            int countpg = 0;
-		            System.out.println("npcx : loading pathgroups");
-		            while (rspg.next ())
-		            {
-		            	myPathgroup pathgroup = new myPathgroup();
-		            	pathgroup.id = rspg.getInt ("id");
-		            	pathgroup.name = rspg.getString ("name");
-		            	pathgroup.category = rspg.getInt ("category");
-
-		            	Statement sFindEntries = conn.createStatement();
-		            	sFindEntries.executeQuery("SELECT * FROM pathgroup_entries WHERE pathgroup = " + pathgroup.id);
-		            	ResultSet rsEntries = sFindEntries.getResultSet ();
-		            	int countentries = 0;
-		            	while (rsEntries.next ())
-			            {
-		            		
-		            		Location pgloc = new Location(getServer().getWorld(this.world),rsEntries.getInt("x"),rsEntries.getInt("y"),rsEntries.getInt("z"),rsEntries.getFloat("yaw"),rsEntries.getFloat("pitch"));
-		            		
-		            		myPathgroup_entry entry = new myPathgroup_entry(pgloc,rsEntries.getInt("id"),pathgroup,rsEntries.getInt("s"));
-		            		
-		            		entry.id = rsEntries.getInt("id");
-		            		entry.name = rsEntries.getString("name");
-		            		entry.pathgroupid = rsEntries.getInt("pathgroup");
-		            		
-		            		countentries++;
-		            		pathgroup.pathgroupentries.add(entry);
-			            }
-		            	rsEntries.close();
-		            	sFindEntries.close();
-		            	
-		            	countpg++;
-		            	pathgroups.add(pathgroup);
-		            	
-		            	
-		            }
-		            rspg.close();
-		            spg.close();
-		            System.out.println("npcx : Loaded " + countpg + " pathgroup.");
-		            
-	            } catch (NullPointerException e) { 
-			 		System.out.println("npcx : ERROR - faction loading cancelled!");
-	            }
-	            
-	            try 
-	            {
-		            // Load loot tables
-		            Statement s1 = conn.createStatement ();
-		            s1.executeQuery ("SELECT * FROM loottables");
-		            ResultSet rs1 = s1.getResultSet ();
-		            int countloottables = 0;
-		            System.out.println("npcx : loading loottables");
-		            while (rs1.next ())
-		            {
-		            	myLoottable loottable = new myLoottable(rs1.getInt ("id"),rs1.getString ("name"));
-		            	loottable.id = rs1.getInt ("id");
-		            	loottable.name = rs1.getString ("name");
-		            	
-		            	Statement sFindEntries = conn.createStatement();
-		            	sFindEntries.executeQuery("SELECT * FROM loottable_entries WHERE loottable_id = " + loottable.id);
-		            	ResultSet rsEntries = sFindEntries.getResultSet ();
-		            	int countentries = 0;
-		            	while (rsEntries.next ())
-			            {
-		            		
-		            		myLoottable_entry entry = new myLoottable_entry();
-		            		entry.id = rsEntries.getInt("id");
-		            		entry.itemid = rsEntries.getInt("item_id");
-		            		entry.loottable_id = rsEntries.getInt("loottable_id");
-		            		entry.amount = rsEntries.getInt("amount");
-		            		
-		            		entry.parent = loottable;
-		            		
-		            		countentries++;
-		            		loottable.loottable_entries.add(entry);
-			            }
-		            	rsEntries.close();
-		            	sFindEntries.close();
-		            	countloottables++;
-		            	loottables.add(loottable);
-		            	
-		            	
-		            }
-		            rs1.close();
-		            s1.close();
-		            System.out.println("npcx : Loaded " + countloottables + " loottables.");
-		            
-	            } catch (NullPointerException e) { 
-			 		System.out.println("npcx : ERROR - loottable loading cancelled!");
-	            }
-	            
-	            
-	            try 
-	            {
-		            // Load Spawngroups
-		            Statement s1 = conn.createStatement ();
-		            s1.executeQuery ("SELECT id, name, category,x,y,z,world,yaw,pitch,pathgroupid FROM spawngroup");
-		            ResultSet rs1 = s1.getResultSet ();
-		            int count1 = 0;
-		            System.out.println("npcx : loading spawngroups");
-		            while (rs1.next ())
-		            {
-		            	
-		            	// load spawngroup into cache
-		                int idVal = rs1.getInt ("id");
-		                String nameVal = rs1.getString ("name");
-		                String catVal = rs1.getString ("category");
-		                
-		                //BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
-		                
-		                // Create a new spawngroup
-		                mySpawngroup spawngroup = new mySpawngroup(this);
-		                spawngroup.name = nameVal;
-		                //System.out.println("npcx : + " + nameVal);
-		                spawngroup.id = idVal;
-		                spawngroup.x = Double.parseDouble(rs1.getString ("x"));
-		                spawngroup.y = Double.parseDouble(rs1.getString ("y"));
-		                spawngroup.z = Double.parseDouble(rs1.getString ("z"));
-		                spawngroup.yaw = Double.parseDouble(rs1.getString ("yaw"));
-		                spawngroup.pitch = Double.parseDouble(rs1.getString ("pitch"));
-		                
-		                Location loc = new Location(getServer().getWorld(this.world),spawngroup.x,spawngroup.y,spawngroup.z);
-		                
-		                spawngroup.pathgroup = dbGetSpawngrouppg(spawngroup.id);
-		                
-		                
-		                // Add to our spawngroup hashmap
-		                this.spawngroups.put(Integer.toString(idVal), spawngroup);
-		                
-		                // Load npcs into spawngroups
-		                Statement s11 = conn.createStatement ();
-			            s11.executeQuery ("SELECT npc.weapon As weapon, npc.helmet As helmet,npc.chest As chest,npc.legs As legs,npc.boots As boots,spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.category As category, npc.loottable_id As loottable_id, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
-			            ResultSet rs11 = s11.getResultSet ();
-			            
-			            while (rs11.next ())
-			            {
-			            	// Load NPCs
-			            	
-			            	myNPC npc = new myNPC(this,fetchTriggerWords(rs11.getInt ("npcid")),loc,rs11.getString ("name"));
-			            	npc.spawngroup = spawngroup;
-			            	npc.id = rs11.getString ("npcid");
-			            	npc.name = rs11.getString ("name");
-			            	npc.category = rs11.getString("category");
-			            	npc.weapon = rs11.getInt("weapon");
-			            	npc.helmet = rs11.getInt("helmet");
-			            	npc.chest = rs11.getInt("chest");
-			            	npc.legs = rs11.getInt("legs");
-			            	npc.boots = rs11.getInt("boots");
-			            	
-			            	if (npc.weapon == 0)
-			            	{
-			            		npc.weapon = 267;
-			            	}
-			            	
-			            	if (npc.helmet == 0)
-			            	{
-			            		// no helmet >_<
-			            		npc.helmet = 0;
-			            	}
-			            	
-			            	if (npc.chest == 0)
-			            	{
-			            		npc.chest = 307;
-			            	}
-			            	
-			            	if (npc.legs == 0)
-			            	{
-			            		npc.legs = 308;
-			            	}
-			            	if (npc.boots == 0)
-			            	{
-			            		npc.boots = 309;
-			            	}
-			            	
-			            	
-			            	
-			            	for (myFaction faction : factions)
-			            	{
-			            		if (rs11.getInt("faction_id") == faction.id)
-			            			npc.faction = faction;
-			            	}
-			            	
-			            	npc.pathgroup = spawngroup.pathgroup;
-			            	
-			            	for (myLoottable loottable : loottables)
-			            	{
-			            		if (rs11.getInt("loottable_id") == loottable.id)
-			            			npc.loottable = loottable;
-			            	}
-			            	
-			            	
-			            	//System.out.println("npcx : + npc.name + " + rs11.getString ("npcid"));
-			            	spawngroup.npcs.put(spawngroup.id+"-"+rs11.getString ("npcid"), npc);
-			            	
-			            	
-			            	
-			            	
-			            }
-		                
-		               /* System.out.println (
-		                        "id = " + idVal
-		                        + ", name = " + nameVal
-		                        + ", category = " + catVal);*/
-		                ++count1;
-		                
-		                
-		            }
-		            rs1.close ();
-		            s1.close ();
-		            System.out.println (count1 + " spawngroups loaded");
-	            } catch (NullPointerException e) { 
-			 		System.out.println("npcx : ERROR - spawngroup loading cancelled!");
-	            }
-	            
-	            //this.HumanNPCList = new BasicHumanNpcList();
-			 	//System.out.println("npcx : caching npcs");
-			 	
-	            } catch (Exception e)
-	            {
-	            	e.printStackTrace();
-	            }
-			 	
-	            
-	            
-	            PluginDescriptionFile pdfFile = this.getDescription();
-	            logger.log(Level.INFO, pdfFile.getName() + " version " + pdfFile.getVersion() + " enabled.");
-	        } catch (Exception e) {
-	            logger.log(Level.WARNING, "npcx : error: " + e.getMessage() + e.getStackTrace().toString());
-	            e.printStackTrace();
-	            return;
-	        }
-	        
-	        think();
+        EventsSetup();
+        
+        universe.checkDbSetup();
+        universe.loadData();
+        
+        PluginDescriptionFile pdfFile = this.getDescription();
+        logger.log(Level.INFO, pdfFile.getName() + " version " + pdfFile.getVersion() + " enabled.");
+        
+        think();
+        
 	}
 	
 	@Override
@@ -1216,7 +629,7 @@ public class npcx extends JavaPlugin {
             			double pitch = player.getLocation().getPitch();
             			double yaw = player.getLocation().getYaw();
             			
-            			PreparedStatement stmt = conn.prepareStatement("INSERT INTO spawngroup (name,x,y,z,pitch,yaw) VALUES (?,?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
+            			PreparedStatement stmt = this.universe.conn.prepareStatement("INSERT INTO spawngroup (name,x,y,z,pitch,yaw) VALUES (?,?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
             			stmt.setString(1,args[2]);
             			stmt.setString(2, Double.toString(x));
             		    stmt.setString(3, Double.toString(y));
@@ -1244,7 +657,7 @@ public class npcx extends JavaPlugin {
             			sg.yaw = yaw;
             			sg.world = player.getWorld();
             			
-            			this.spawngroups.put(Integer.toString(key),sg);
+            			this.universe.spawngroups.put(Integer.toString(key),sg);
             			System.out.println("npcx : + cached new spawngroup("+ args[2] + ")");
         	            
         	            
@@ -1261,7 +674,7 @@ public class npcx extends JavaPlugin {
             			
          		    } else {
          		    	int count = 0;
-         		    	for (mySpawngroup spawngroup : this.spawngroups.values())
+         		    	for (mySpawngroup spawngroup : this.universe.spawngroups.values())
          		    	{
          		    		if (spawngroup.id == Integer.parseInt(args[2]))
          		    		{
@@ -1287,20 +700,20 @@ public class npcx extends JavaPlugin {
             			
             		} else {
 
-        	            PreparedStatement stmt = conn.prepareStatement("UPDATE spawngroup SET pathgroupid = ? WHERE id = ?;");
+        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE spawngroup SET pathgroupid = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
         	            
         	            stmt.executeUpdate();
         	            
-        	            for(mySpawngroup sg : spawngroups.values())
+        	            for(mySpawngroup sg : universe.spawngroups.values())
         	            {
         	            	if (sg.id == Integer.parseInt(args[2]))
         	            	{
         	            		if (Integer.parseInt(args[3]) != 0)
         	            		{
         	            			sg.pathgroup = getPathgroupByID(Integer.parseInt(args[3]));
-        	            			for (myNPC n : npcs.values())
+        	            			for (myNPC n : universe.npcs.values())
         	            			{
         	            				if (n.spawngroup == sg)
         	            				{
@@ -1313,7 +726,7 @@ public class npcx extends JavaPlugin {
         	            			sg.pathgroup = null;
         	            			
         	            			sg.pathgroup = getPathgroupByID(Integer.parseInt(args[3]));
-        	            			for (myNPC n : npcs.values())
+        	            			for (myNPC n : universe.npcs.values())
         	            			{
         	            				if (n.spawngroup == sg)
         	            				{
@@ -1346,7 +759,7 @@ public class npcx extends JavaPlugin {
             			// add to database
             		
             			
-            			PreparedStatement s2 = conn.prepareStatement("INSERT INTO spawngroup_entries (spawngroupid,npcid) VALUES (?,?);",Statement.RETURN_GENERATED_KEYS);
+            			PreparedStatement s2 = this.universe.conn.prepareStatement("INSERT INTO spawngroup_entries (spawngroupid,npcid) VALUES (?,?);",Statement.RETURN_GENERATED_KEYS);
             			s2.setString(1,args[2]);
             			s2.setString(2,args[3]);
             		    
@@ -1354,7 +767,7 @@ public class npcx extends JavaPlugin {
         	            player.sendMessage("NPC ["+ args[3] + "] added to group ["+ args[2] + "]");
             			
         	            // add to cached spawngroup
-        	            for (mySpawngroup sg : this.spawngroups.values())
+        	            for (mySpawngroup sg : universe.spawngroups.values())
         	            {
         	            	if (sg.id == Integer.parseInt(args[2]))
         	            	{
@@ -1363,16 +776,16 @@ public class npcx extends JavaPlugin {
         	            		
         	            		
         	            		
-        	            		PreparedStatement stmtNPC = conn.prepareStatement("SELECT * FROM npc WHERE id = ?;");
+        	            		PreparedStatement stmtNPC = this.universe.conn.prepareStatement("SELECT * FROM npc WHERE id = ?;");
         	            		stmtNPC.setString(1,args[3]);
         	            		stmtNPC.executeQuery();
                     			ResultSet rsNPC = stmtNPC.getResultSet ();
                      		    int count = 0;
                      		    while (rsNPC.next ())
                      		    {
-                     		       Location loc = new Location(getServer().getWorld(this.world),0,0,0,0,0);
+                     		       Location loc = new Location(getServer().getWorld(this.universe.defaultworld),0,0,0,0,0);
             	            		
-                     		       myNPC npc = new myNPC(this,fetchTriggerWords(Integer.parseInt(args[3])), loc, "dummy");
+                     		       myNPC npc = new myNPC(this,universe.fetchTriggerWords(Integer.parseInt(args[3])), loc, "dummy");
                      		       npc.name = rsNPC.getString ("name");
                      		       npc.category = rsNPC.getString ("category");
                      		       npc.faction = dbGetNPCfaction(args[3]);
@@ -1388,7 +801,7 @@ public class npcx extends JavaPlugin {
                      		       npc.id = args[3];
                     		       
                      		      sg.npcs.put(sg.id+"-"+npc.id, npc);
-          	            		  npcs.put(sg.id+"-"+npc.id, npc);
+                     		     universe.npcs.put(sg.id+"-"+npc.id, npc);
                      		       
                      		       ++count;
                      		    }
@@ -1424,7 +837,7 @@ public class npcx extends JavaPlugin {
          		    } else {
          		    	
             			Location loc = player.getLocation();
-            			PreparedStatement s2 = conn.prepareStatement("UPDATE spawngroup SET x=?,y=?,z=?,yaw=?,pitch=? WHERE id = ?;");
+            			PreparedStatement s2 = this.universe.conn.prepareStatement("UPDATE spawngroup SET x=?,y=?,z=?,yaw=?,pitch=? WHERE id = ?;");
             			s2.setString(1,Double.toString(loc.getX()));
             			s2.setString(2,Double.toString(loc.getY()));
             			s2.setString(3,Double.toString(loc.getZ()));
@@ -1437,7 +850,7 @@ public class npcx extends JavaPlugin {
             			player.sendMessage("Updated Spawngroup " + args[2] + " to your position");
                 		
         	            // Update cached spawngroups
-        	            for (mySpawngroup sg : this.spawngroups.values())
+        	            for (mySpawngroup sg : this.universe.spawngroups.values())
         	            {
         	            	if (sg.id == Integer.parseInt(args[2]))
         	            	{
@@ -1462,7 +875,7 @@ public class npcx extends JavaPlugin {
 	        	            			np.npc.spawnz = sg.z;
 	        	            			np.npc.spawnyaw = sg.yaw;
 	        	            			np.npc.spawnpitch = sg.pitch;
-	        	            			Location locnpc = new Location(getServer().getWorld(this.world),loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
+	        	            			Location locnpc = new Location(getServer().getWorld(this.universe.defaultworld),loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
 	        	            			np.npc.forceMove(locnpc);
 	        	            			
         	            			}
@@ -1490,10 +903,10 @@ public class npcx extends JavaPlugin {
             		   
             		   if (args.length < 3)
             		   {
-            			   sglist = conn.prepareStatement("SELECT id, name, category FROM spawngroup ORDER BY ID DESC LIMIT 10");
+            			   sglist = this.universe.conn.prepareStatement("SELECT id, name, category FROM spawngroup ORDER BY ID DESC LIMIT 10");
             		   } else {
 
-                		   sglist = conn.prepareStatement("SELECT id, name, category FROM spawngroup WHERE name LIKE '%"+args[2]+"%'");
+                		   sglist = this.universe.conn.prepareStatement("SELECT id, name, category FROM spawngroup WHERE name LIKE '%"+args[2]+"%'");
             		   }
             		   sglist.executeQuery ();
             		   ResultSet rs = sglist.getResultSet ();
@@ -1550,7 +963,7 @@ public class npcx extends JavaPlugin {
             			// add to database
             		
             			
-            			PreparedStatement s2 = conn.prepareStatement("INSERT INTO loottable_entries (loottable_id,item_id,amount) VALUES (?,?,?);",Statement.RETURN_GENERATED_KEYS);
+            			PreparedStatement s2 = this.universe.conn.prepareStatement("INSERT INTO loottable_entries (loottable_id,item_id,amount) VALUES (?,?,?);",Statement.RETURN_GENERATED_KEYS);
             			s2.setString(1,args[2]);
             			s2.setString(2,args[3]);
             			s2.setString(3,args[4]);
@@ -1559,7 +972,7 @@ public class npcx extends JavaPlugin {
         	            player.sendMessage("NPC ["+ args[3] + "x"+args[4]+"] added to group ["+ args[2] + "]");
             			
         	            // add to cached loottable
-        	            for (myLoottable lt : this.loottables)
+        	            for (myLoottable lt : this.universe.loottables)
         	            {
         	            	if (lt.id == Integer.parseInt(args[2]))
         	            	{
@@ -1596,7 +1009,7 @@ public class npcx extends JavaPlugin {
            			
             			try
             			{
-	            			PreparedStatement stmt = conn.prepareStatement("INSERT INTO loottables (name) VALUES (?);",Statement.RETURN_GENERATED_KEYS);
+	            			PreparedStatement stmt = this.universe.conn.prepareStatement("INSERT INTO loottables (name) VALUES (?);",Statement.RETURN_GENERATED_KEYS);
 	            			stmt.setString(1,args[2]);
 	            			
 	            			stmt.executeUpdate();
@@ -1614,7 +1027,7 @@ public class npcx extends JavaPlugin {
 	            			fa.id = key;
 	            			fa.name = args[2];
 	            			
-	            			this.loottables.add(fa);
+	            			this.universe.loottables.add(fa);
 	            			dbg(1,"npcx : + cached new loottable ("+ args[2] + ")");
 	            			
             			} catch (IndexOutOfBoundsException e)
@@ -1629,7 +1042,7 @@ public class npcx extends JavaPlugin {
             	if (args[1].equals("list")) {
             		player.sendMessage("Loottables:");
             		
-            		Statement s = conn.createStatement ();
+            		Statement s = this.universe.conn.createStatement ();
             		   s.executeQuery ("SELECT id, name FROM loottables");
             		   ResultSet rs = s.getResultSet ();
             		   int count = 0;
@@ -1641,7 +1054,7 @@ public class npcx extends JavaPlugin {
             		               "id = " + idVal
             		               + ", name = " + nameVal);
             		       
-            		        Statement sFindEntries = conn.createStatement();
+            		        Statement sFindEntries = this.universe.conn.createStatement();
 	   		            	sFindEntries.executeQuery("SELECT * FROM loottable_entries WHERE loottable_id = " + idVal);
 	   		            	ResultSet rsEntries = sFindEntries.getResultSet ();
 	   		            	int countentries = 0;
@@ -1700,7 +1113,7 @@ public class npcx extends JavaPlugin {
            			
             			try
             			{
-	            			PreparedStatement stmt = conn.prepareStatement("INSERT INTO faction_list (name,base) VALUES (?,?);",Statement.RETURN_GENERATED_KEYS);
+	            			PreparedStatement stmt = this.universe.conn.prepareStatement("INSERT INTO faction_list (name,base) VALUES (?,?);",Statement.RETURN_GENERATED_KEYS);
 	            			stmt.setString(1,args[3]);
 	            			stmt.setInt(2,Integer.parseInt(args[2]));
 	            			
@@ -1720,7 +1133,7 @@ public class npcx extends JavaPlugin {
 	            			fa.name = args[3];
 	            			fa.base = Integer.parseInt(args[2]);
 	            			
-	            			this.factions.add(fa);
+	            			this.universe.factions.add(fa);
 	            			dbg(1,"npcx : + cached new faction("+ args[3] + ")");
             			} catch (IndexOutOfBoundsException e)
             			{
@@ -1734,7 +1147,7 @@ public class npcx extends JavaPlugin {
             	if (args[1].equals("list")) {
             		player.sendMessage("Factions:");
             		
-            		Statement s = conn.createStatement ();
+            		Statement s = this.universe.conn.createStatement ();
             		   s.executeQuery ("SELECT id, name, base FROM faction_list");
             		   ResultSet rs = s.getResultSet ();
             		   int count = 0;
@@ -1789,7 +1202,7 @@ public class npcx extends JavaPlugin {
             			// add to database
             		
             			
-            			PreparedStatement s2 = conn.prepareStatement("INSERT INTO pathgroup_entries (pathgroup,s,x,y,z,pitch,yaw) VALUES (?,?,?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
+            			PreparedStatement s2 = this.universe.conn.prepareStatement("INSERT INTO pathgroup_entries (pathgroup,s,x,y,z,pitch,yaw) VALUES (?,?,?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
             			s2.setString(1,args[2]);
             			s2.setString(2,args[3]);
             			s2.setDouble(3,player.getLocation().getX());
@@ -1803,7 +1216,7 @@ public class npcx extends JavaPlugin {
         	            player.sendMessage("Pathing Position ["+ args[3] + "] added to pathggroup ["+ args[2] + "]");
             			
         	            // add to cached spawngroup
-        	            for (myPathgroup pg : this.pathgroups)
+        	            for (myPathgroup pg : this.universe.pathgroups)
         	            {
         	            	if (pg.id == Integer.parseInt(args[2]))
         	            	{
@@ -1836,7 +1249,7 @@ public class npcx extends JavaPlugin {
             		} else {
             			
             			
-            			PreparedStatement statementPCreate = conn.prepareStatement("INSERT INTO pathgroup (name) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
+            			PreparedStatement statementPCreate = this.universe.conn.prepareStatement("INSERT INTO pathgroup (name) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
             			statementPCreate.setString(1, args[2]);
             			statementPCreate.executeUpdate();
         	            
@@ -1853,7 +1266,7 @@ public class npcx extends JavaPlugin {
             			pathgroup.id = key;
             			pathgroup.name = args[2];
 
-            			this.pathgroups.add(pathgroup);
+            			this.universe.pathgroups.add(pathgroup);
             			
             			
             			statementPCreate.close();
@@ -1871,10 +1284,10 @@ public class npcx extends JavaPlugin {
           		   
           		   if (args.length < 3)
           		   {
-          			   sglist = conn.prepareStatement("SELECT id, name, category FROM pathgroup ORDER BY ID DESC LIMIT 10");
+          			   sglist = this.universe.conn.prepareStatement("SELECT id, name, category FROM pathgroup ORDER BY ID DESC LIMIT 10");
           		   } else {
 
-              		   sglist = conn.prepareStatement("SELECT id, name, category FROM pathgroup WHERE name LIKE '%"+args[2]+"%'");
+              		   sglist = this.universe.conn.prepareStatement("SELECT id, name, category FROM pathgroup WHERE name LIKE '%"+args[2]+"%'");
           		   }
           		   sglist.executeQuery ();
           		   ResultSet rs = sglist.getResultSet ();
@@ -1909,7 +1322,7 @@ public class npcx extends JavaPlugin {
       		   if (args.length >= 3)
       		   {
       			   
-      			   PreparedStatement pginspect = conn.prepareStatement("SELECT id,s,x,y,z,pathgroup,name FROM pathgroup_entries WHERE pathgroup = ? ORDER BY s ASC");
+      			   PreparedStatement pginspect = this.universe.conn.prepareStatement("SELECT id,s,x,y,z,pathgroup,name FROM pathgroup_entries WHERE pathgroup = ? ORDER BY s ASC");
         		   pginspect.setInt(1, Integer.parseInt(args[2]));
       			   pginspect.executeQuery ();
           		   ResultSet rspginspect = pginspect.getResultSet ();
@@ -2003,7 +1416,7 @@ public class npcx extends JavaPlugin {
             			reply = reply.substring(0,reply.length()-1);
             			
             			
-            			PreparedStatement statementTword = conn.prepareStatement("INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES (?,?,?)",Statement.RETURN_GENERATED_KEYS);
+            			PreparedStatement statementTword = this.universe.conn.prepareStatement("INSERT INTO npc_triggerwords (npcid,triggerword,reply) VALUES (?,?,?)",Statement.RETURN_GENERATED_KEYS);
             			statementTword.setString(1,args[3]);
             			statementTword.setString(2,args[4]);
             			statementTword.setString(3,reply);
@@ -2016,11 +1429,11 @@ public class npcx extends JavaPlugin {
 	            			key = keyset.getInt(1);
 	            			
             			}
-            			player.sendMessage("Added ("+npcs.values().size()+") triggerword ["+key+"] to npc "+args[3]);
+            			player.sendMessage("Added ("+universe.npcs.values().size()+") triggerword ["+key+"] to npc "+args[3]);
             			
             			
             			// add it to any spawned npcs
-            			for (myNPC npc : npcs.values())
+            			for (myNPC npc : universe.npcs.values())
             			{
             				dbg("my id="+npc.id.toString());
             				if (npc.id.equals(args[3]))
@@ -2050,14 +1463,14 @@ public class npcx extends JavaPlugin {
             		} else {
 
            			
-        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET chest = ? WHERE id = ?;");
+        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE npc SET chest = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
         	            
         	            //TODO not in schema yet
         	            //stmt.executeUpdate();
         	            
-        	            for(myNPC n : npcs.values())
+        	            for(myNPC n : universe.npcs.values())
         	            {
         	            	if (n.id.matches(args[2]))
         	            	{
@@ -2088,14 +1501,14 @@ public class npcx extends JavaPlugin {
             		} else {
 
            			
-        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET helmet = ? WHERE id = ?;");
+        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE npc SET helmet = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
         	            
         	            //TODO not in schema yet
         	            //stmt.executeUpdate();
         	            
-        	            for(myNPC n : npcs.values())
+        	            for(myNPC n : universe.npcs.values())
         	            {
         	            	if (n.id.matches(args[2]))
         	            	{
@@ -2124,14 +1537,14 @@ public class npcx extends JavaPlugin {
             		} else {
 
            			
-        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET weapon = ? WHERE id = ?;");
+        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE npc SET weapon = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
         	            
         	            //TODO not in schema yet
         	            //stmt.executeUpdate();
         	            
-        	            for(myNPC n : npcs.values())
+        	            for(myNPC n : universe.npcs.values())
         	            {
         	            	if (n.id.matches(args[2]))
         	            	{
@@ -2162,14 +1575,14 @@ public class npcx extends JavaPlugin {
             		} else {
 
            			
-        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET boots = ? WHERE id = ?;");
+        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE npc SET boots = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
         	            
         	            //TODO not in schema yet
         	            //stmt.executeUpdate();
         	            
-        	            for(myNPC n : npcs.values())
+        	            for(myNPC n : universe.npcs.values())
         	            {
         	            	if (n.id.matches(args[2]))
         	            	{
@@ -2201,14 +1614,14 @@ public class npcx extends JavaPlugin {
             		} else {
 
            			
-        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET legs = ? WHERE id = ?;");
+        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE npc SET legs = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
         	            
         	            //TODO not in schema yet
         	            //stmt.executeUpdate();
         	            
-        	            for(myNPC n : npcs.values())
+        	            for(myNPC n : universe.npcs.values())
         	            {
         	            	if (n.id.matches(args[2]))
         	            	{
@@ -2240,13 +1653,13 @@ public class npcx extends JavaPlugin {
             		} else {
 
            			
-        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET faction_id = ? WHERE id = ?;");
+        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE npc SET faction_id = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
         	            
         	            stmt.executeUpdate();
         	            
-        	            for(myNPC n : npcs.values())
+        	            for(myNPC n : universe.npcs.values())
         	            {
         	            	if (n.id.matches(args[2]))
         	            	{
@@ -2277,13 +1690,13 @@ public class npcx extends JavaPlugin {
             		} else {
 
             			
-        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET category = ? WHERE id = ?;");
+        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE npc SET category = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
         	            
         	            stmt.executeUpdate();
         	            
-        	            for(myNPC n : npcs.values())
+        	            for(myNPC n : universe.npcs.values())
         	            {
         	            	if (n.id.matches(args[2]))
         	            	{
@@ -2310,10 +1723,10 @@ public class npcx extends JavaPlugin {
          		   
          		   if (args.length < 3)
          		   {
-         			   sglist = conn.prepareStatement("SELECT id, name, category FROM npc ORDER BY ID DESC LIMIT 10");
+         			   sglist = this.universe.conn.prepareStatement("SELECT id, name, category FROM npc ORDER BY ID DESC LIMIT 10");
          		   } else {
 
-             		   sglist = conn.prepareStatement("SELECT id, name, category FROM npc WHERE name LIKE '%"+args[2]+"%'");
+             		   sglist = this.universe.conn.prepareStatement("SELECT id, name, category FROM npc WHERE name LIKE '%"+args[2]+"%'");
          		   }
          		   sglist.executeQuery ();
          		   ResultSet rs = sglist.getResultSet ();
@@ -2349,13 +1762,13 @@ public class npcx extends JavaPlugin {
             			
             		} else {
 
-        	            PreparedStatement stmt = conn.prepareStatement("UPDATE npc SET loottable_id = ? WHERE id = ?;");
+        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE npc SET loottable_id = ? WHERE id = ?;");
         	            stmt.setString(1, args[3]);
         	            stmt.setString(2, args[2]);
         	            
         	            stmt.executeUpdate();
         	            
-        	            for(myNPC n : npcs.values())
+        	            for(myNPC n : universe.npcs.values())
         	            {
         	            	if (n.id.matches(args[2]))
         	            	{
@@ -2379,9 +1792,9 @@ public class npcx extends JavaPlugin {
                     	
             		} else {
                     	
-            			Statement s2 = conn.createStatement ();
+            			Statement s2 = this.universe.conn.createStatement ();
             			
-        	            PreparedStatement stmt = conn.prepareStatement("INSERT INTO npc (name,weapon,helmet,chest,legs,boots) VALUES (?,'267','0','307','308','309');",Statement.RETURN_GENERATED_KEYS);
+        	            PreparedStatement stmt = this.universe.conn.prepareStatement("INSERT INTO npc (name,weapon,helmet,chest,legs,boots) VALUES (?,'267','0','307','308','309');",Statement.RETURN_GENERATED_KEYS);
         	            stmt.setString(1, args[2]);
         	            stmt.executeUpdate();
             			ResultSet keyset = stmt.getGeneratedKeys();
@@ -2452,78 +1865,12 @@ public class npcx extends JavaPlugin {
 		            		}
 	            		} catch (Exception e)
 	            		{
-	            			
-		                    
-	            			
+	            			e.printStackTrace();
 	            		}
 	            		return true;
-	                   
                 }
-
             }
             
-            
-
-            
-            /*
-             * 
-             * For reference: NPC Spawner Code (thanks to the npc lib)
-
-            // create npc-id npc-name
-            if (subCommand.equals("create")) {
-                if (args.length < 3) {
-                	player.sendMessage("Insufficient arguments /npcx create id name ");
-                    return false;
-                }
-
-                if (this.npclist.get(args[1]) != null) {
-                    player.sendMessage("This npc-id is already in use.");
-                    return true;
-                }
-
-            	player.sendMessage("Creating npc....");
-
-                BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[1], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
-                this.npclist.put(args[1], hnpc);
-                
-                ItemStack is = new ItemStack(Material.BOOKSHELF);
-                is.setAmount(1);
-                hnpc.getBukkitEntity().setItemInHand(is);
-
-
-            // attackme npc-id
-            } else if (subCommand.equals("attackme")) {
-
-                if (args.length < 2) {
-                    return false;
-                }
-
-                BasicHumanNpc npc = this.npclist.get(args[1]);
-                if (npc != null) {
-                    npc.attackLivingEntity(player);
-                    return true;
-                }
-
-            // move npc-id
-            } else if (subCommand.equals("move")) {
-                if (args.length < 2) {
-                    return false;
-                }
-
-                BasicHumanNpc npc = this.npclist.get(args[1]);
-                if (npc != null) {
-                    npc.moveTo(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
-                    return true;
-                }
-
-            // spawnpig
-            } else if (subCommand.equals("spawnpig")) {
-                NpcSpawner.SpawnMob(MobType.PIG, player.getWorld(), l.getX(), l.getY(), l.getZ());
-            }
-            
-            */
-
-
         } catch (Exception e) {
             sender.sendMessage("An error occured.");
             logger.log(Level.WARNING, "npcx: error: " + e.getMessage() + e.getStackTrace().toString());
@@ -2534,41 +1881,12 @@ public class npcx extends JavaPlugin {
         return true;
     }
 
-	private myPathgroup dbGetSpawngrouppg(int id) 
-	{
-			try
-			{
-				Class.forName ("com.mysql.jdbc.Driver").newInstance ();
-		        conn = DriverManager.getConnection (dsn, dbuser, dbpass);
-		        PreparedStatement s11 = conn.prepareStatement("SELECT pathgroupid FROM spawngroup WHERE id = ?",Statement.RETURN_GENERATED_KEYS);
-		        s11.setInt(1, id);
-		        s11.executeQuery();
-		        ResultSet rs11 = s11.getResultSet ();
-		        
-		        while (rs11.next ())
-		        {
-		        	int pathgroupid = rs11.getInt ("pathgroupid");
-		        	for (myPathgroup f : pathgroups)
-		        	{
-		        		if (f.id == pathgroupid)
-		        		{
-		        			return f;
-		        		}
-		        	}
-		        	
-		        }
-			} catch (Exception e)
-			{
-		        return null;
-		
-			}
-	        return null;
-	}
+	
 
 	private myPathgroup getPathgroupByID(int parseInt) {
 		// TODO Auto-generated method stub
 		dbg(1,"getPathgroupByID:called ("+parseInt+")!");
-		for (myPathgroup g : pathgroups)
+		for (myPathgroup g : this.universe.pathgroups)
 		{
 			dbg(1,"getPathgroupByID:iterating!");
 
@@ -2584,7 +1902,7 @@ public class npcx extends JavaPlugin {
 
 	private myLoottable getLoottableByID(int parseInt) {
 		
-			for (myLoottable f : loottables)
+			for (myLoottable f : this.universe.loottables)
 			{
 				if (f.id == parseInt)
 				{
@@ -2614,7 +1932,7 @@ public class npcx extends JavaPlugin {
 	public void informNpcDeadPlayer(Player player) {
 		// TODO Auto-generated method stub
 		
-		for (myNPC npc : this.npcs.values())
+		for (myNPC npc : this.universe.npcs.values())
 		{
 			if (npc.npc.aggro == player)
 			{

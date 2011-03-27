@@ -68,7 +68,7 @@ public class mySpawngroup {
 		// TODO Auto-generated method stub
 		PreparedStatement s2;
 		try {
-			s2 = this.parent.conn.prepareStatement("DELETE FROM spawngroup_entries WHERE spawngroupid = ? AND id = ?;");
+			s2 = this.parent.universe.conn.prepareStatement("DELETE FROM spawngroup_entries WHERE spawngroupid = ? AND id = ?;");
 			s2.setInt(1,this.id);
 			s2.setInt(2,id2);
 		    
@@ -83,7 +83,7 @@ public class mySpawngroup {
 	{
 		PreparedStatement s2;
 		try {
-			s2 = this.parent.conn.prepareStatement("DELETE FROM spawngroup WHERE id = ?;");
+			s2 = this.parent.universe.conn.prepareStatement("DELETE FROM spawngroup WHERE id = ?;");
 			s2.setInt(1,this.id);
 		    
 			s2.executeUpdate();

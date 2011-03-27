@@ -91,7 +91,7 @@ public class BasicHumanNpc extends BasicNpc {
 	    		// PLAYER TARGET DISTANCE
 	    		//
 	    		
-		    	for (myPlayer p : this.parent.parent.players.values())
+		    	for (myPlayer p : this.parent.parent.universe.players.values())
 		    	{
 		    		if (p.target == this)
 		    		{

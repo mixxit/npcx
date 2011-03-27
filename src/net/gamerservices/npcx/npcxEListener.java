@@ -62,7 +62,7 @@ public class npcxEListener extends EntityListener
 		        	Entity p = edee.getDamager();
 		        	if (npc.parent != null)
 		        	{
-		        		for (myPlayer player : parent.players.values())
+		        		for (myPlayer player : parent.universe.players.values())
 		        		{
 		        			if (player.player == edee.getDamager())
 		        			{
@@ -112,7 +112,7 @@ public class npcxEListener extends EntityListener
 		{
 			
 			//System.out.println("npcx : deregistered monster");
-			this.parent.monsters.remove((Monster)event.getEntity());	
+			this.parent.universe.monsters.remove((Monster)event.getEntity());	
 
 		}
 	}
@@ -126,7 +126,7 @@ public class npcxEListener extends EntityListener
 		{
 			
 			//System.out.println("npcx : deregistered monster");
-			this.parent.monsters.remove((Monster)event.getEntity());	
+			this.parent.universe.monsters.remove((Monster)event.getEntity());	
 
 		}
 	}
@@ -138,7 +138,7 @@ public class npcxEListener extends EntityListener
 		if (event.getEntity() instanceof Monster)
 		{
 			//System.out.println("npcx : registered monster");
-			this.parent.monsters.add((Monster)event.getEntity());
+			this.parent.universe.monsters.add((Monster)event.getEntity());
 		}
 	}
 
@@ -180,7 +180,7 @@ public class npcxEListener extends EntityListener
                 	Player p = (Player) event.getTarget();
 
                     
-                    for (myPlayer player : parent.players.values()){
+                    for (myPlayer player : parent.universe.players.values()){
                     	
                     	
             			if (player.player == p)
