@@ -211,9 +211,10 @@ public class npcxEListener extends EntityListener
                 						tLTID = npc.parent.loottable.id;
             					}
             					
-                                p.sendMessage("* Active chat target set as: " + npc.getName() + "NPCID("+tNPCID+"):GP("+tGPID+"):F("+tFID+"):PG("+tPGID+"):L("+tLTID+")");
+                                p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+")");
+                                p.sendMessage("* Active chat target set as: " + npc.getName() + "- Click again to cancel.");
                                 p.sendMessage("* Anything you now type will be redirected to: " + npc.getName());
-                                
+                                p.sendMessage(">Words in [brackets] are commands. Try hello to begin in most cases.");
                                 
             				}
             				
