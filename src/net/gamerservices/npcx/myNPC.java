@@ -282,12 +282,15 @@ public class myNPC {
 					item.setTypeId(Material.matchMaterial(aMsg[1]).getId());
 				} catch (NullPointerException e)
 				{
+					// lol
+					this.parent.sendPlayerItemList(player.player);
 					player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
 					//e.printStackTrace();
 					return;
 				
 				} catch (Exception e)
 				{
+					this.parent.sendPlayerItemList(player.player);
 					player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
 					//e.printStackTrace();
 					return;
@@ -408,6 +411,7 @@ public class myNPC {
 							
 							} catch (NullPointerException e)
 							{
+								this.parent.sendPlayerItemList(player.player);
 								player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
 								return;
 							}
