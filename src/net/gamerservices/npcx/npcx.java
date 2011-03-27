@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.event.*;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -356,10 +357,11 @@ public class npcx extends JavaPlugin {
 	
 	}
 	
-	public void loadSettings()
+	public boolean loadSettings()
 	{
 		// Loads configuration settings from the properties files
-		System.out.println("npcx : load settings begun");
+		PluginDescriptionFile pdfFile = this.getDescription();
+		System.out.println("npcx : load settings ("+pdfFile.getVersion()+") begun");
 		
 		Properties config = new Properties();
 		BufferedInputStream stream;
@@ -392,7 +394,21 @@ public class npcx extends JavaPlugin {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("npcx : loadsettings() ended");
+
+		for (World w : getServer().getWorlds())
+		{
+			if (w.getName().matches(world))
+			{
+				System.out.println("npcx : loadsettings() ended");
+				return true;
+			}
+		}
+		
+		System.out.println("**********************************************");
+		System.out.println("* Load settings failed to find default world *");
+		System.out.println("*    Please change it in ncpx.properties     *");
+		System.out.println("**********************************************");
+		return false;
 	}
 	
 	@Override
@@ -615,7 +631,11 @@ public class npcx extends JavaPlugin {
 		
 		}
 		
-		loadSettings();
+		// Check if world exists and settings are loaded
+		
+		if (!loadSettings())
+			return;
+		
 		
 		
 		// TODO Auto-generated method stub
