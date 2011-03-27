@@ -2,6 +2,9 @@ package redecouverte.npcspawner;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import net.gamerservices.npcx.myNPC;
+import net.gamerservices.npcx.npcx;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityTypes;
 import net.minecraft.server.ItemInWorldManager;
@@ -59,7 +62,7 @@ public class NpcSpawner {
         return null;
     }
 
-    public static BasicHumanNpc SpawnBasicHumanNpc(String uniqueId, String name, World world, double x, double y, double z, double yaw, double pitch) {
+    public static BasicHumanNpc SpawnBasicHumanNpc(myNPC parent, String uniqueId, String name, World world, double x, double y, double z, double yaw, double pitch) {
         try {
             WorldServer ws = GetWorldServer(world);
             MinecraftServer ms = GetMinecraftServer(ws.getServer());
@@ -88,7 +91,7 @@ public class NpcSpawner {
             method.invoke(ws, margs);
 
 
-            return new BasicHumanNpc(eh, uniqueId, name, x,y,z, yaw2, pitch2);
+            return new BasicHumanNpc(parent, eh, uniqueId, name, x,y,z, yaw2, pitch2);
 
         } catch (Exception e) {
             e.printStackTrace();

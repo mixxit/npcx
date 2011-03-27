@@ -70,6 +70,7 @@ public class npcx extends JavaPlugin {
 	public List< myFaction > factions = new CopyOnWriteArrayList< myFaction >();
 	public List< myLoottable > loottables = new CopyOnWriteArrayList< myLoottable >();
 	public List< myPathgroup > pathgroups = new CopyOnWriteArrayList< myPathgroup >();
+
 	
 	// iconomy
 	private static PluginListener PluginListener = null;
@@ -191,6 +192,7 @@ public class npcx extends JavaPlugin {
 			npc.npc.doThinkGreater();
 			
 			//always do pathgroups after think()
+			
 			npc.npc.doThinkLesser();
 			
 			
@@ -353,7 +355,7 @@ public class npcx extends JavaPlugin {
 							//System.out.println("npcx : made spawngroup active");
 							Double  pitch = new Double(spawngroup.pitch);
 							Double yaw = new Double(spawngroup.yaw);
-							BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
+							BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc,npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
 			                
 							
 							npc.npc = hnpc;
@@ -1268,6 +1270,14 @@ public class npcx extends JavaPlugin {
         	            		if (Integer.parseInt(args[3]) != 0)
         	            		{
         	            			sg.pathgroup = getPathgroupByID(Integer.parseInt(args[3]));
+        	            			for (myNPC n : npcs.values())
+        	            			{
+        	            				if (n.spawngroup == sg)
+        	            				{
+        	            					n.pathgroup = sg.pathgroup;
+        	            				}
+        	            			}
+        	            			
         	            			player.sendMessage("npcx : Updated spawngroups cached pathgroup ("+args[3]+"): "+sg.pathgroup.name);
         	            		} else {
         	            			sg.pathgroup = null;
@@ -1344,7 +1354,7 @@ public class npcx extends JavaPlugin {
         	            		        	            		
         	            		npc.spawngroup = sg;
         	            		npc.id = args[3];
-        	            		System.out.println("npcx : + cached new spawngroup entry("+ args[3] + ")");
+        	            		dbg(1,"npcx : + cached new spawngroup entry("+ args[3] + ")");
         	            		sg.npcs.put(args[3], npc);
         	            		
         	            	}
@@ -1394,7 +1404,7 @@ public class npcx extends JavaPlugin {
         	            		sg.yaw = loc.getYaw();
         	            		sg.pitch = loc.getPitch();
         	            		
-        	            		System.out.println("npcx : + cached updated spawngroup ("+ args[2] + ")");
+        	            		dbg(1,"npcx : + cached updated spawngroup ("+ args[2] + ")");
         	            		
         	            		// Found the spawngroup, lets make sure the NPCs have their spawn values set right
         	            		
@@ -1517,7 +1527,7 @@ public class npcx extends JavaPlugin {
         	            		entry.itemid = Integer.parseInt(args[3]);
         	            		entry.amount = Integer.parseInt(args[4]);
         	            		
-        	            		System.out.println("npcx : + cached new loottable entry("+ args[3] + ")");
+        	            		dbg(1,"npcx : + cached new loottable entry("+ args[3] + ")");
         	            		lt.loottable_entries.add(entry);
         	            		
         	            	}
@@ -1561,7 +1571,7 @@ public class npcx extends JavaPlugin {
 	            			fa.name = args[2];
 	            			
 	            			this.loottables.add(fa);
-	            			System.out.println("npcx : + cached new loottable ("+ args[2] + ")");
+	            			dbg(1,"npcx : + cached new loottable ("+ args[2] + ")");
 	            			
             			} catch (IndexOutOfBoundsException e)
             			{
@@ -1667,7 +1677,7 @@ public class npcx extends JavaPlugin {
 	            			fa.base = Integer.parseInt(args[2]);
 	            			
 	            			this.factions.add(fa);
-	            			System.out.println("npcx : + cached new faction("+ args[3] + ")");
+	            			dbg(1,"npcx : + cached new faction("+ args[3] + ")");
             			} catch (IndexOutOfBoundsException e)
             			{
             				player.sendMessage("Insufficient arguments");
@@ -1757,7 +1767,7 @@ public class npcx extends JavaPlugin {
         	            		int dpathgroupid = Integer.parseInt(args[2]);
         	            		int dspot = Integer.parseInt(args[3]);
         	            		myPathgroup_entry pge = new myPathgroup_entry(player.getLocation(),dpathgroupid,pg,dspot);
-        	            		System.out.println("npcx : + cached new pathgroup entry("+ args[3] + ")");
+        	            		dbg(1,"npcx : + cached new pathgroup entry("+ args[3] + ")");
         	            		
         	            		// add new pathgroup entry object to the pathgroups entry list
         	            		pg.pathgroupentries.add(pge);
@@ -1970,7 +1980,7 @@ public class npcx extends JavaPlugin {
             			{
             				if (npc.id.equals(args[3]))
             				{
-            					System.out.println("npcx : adding reply because ("+ npc.id +") is ("+args[3]+")  ("+ reply + ") and trigger ("+ reply +") for [" + args[3] + "] npc to npc: " + npc.id);
+            					dbg(1,"npcx : adding reply because ("+ npc.id +") is ("+args[3]+")  ("+ reply + ") and trigger ("+ reply +") for [" + args[3] + "] npc to npc: " + npc.id);
                 				
             					myTriggerword tw = new myTriggerword();
             					tw.word = args[4];
@@ -2351,7 +2361,8 @@ public class npcx extends JavaPlugin {
             	if (args[1].equals("spawn")) {
 	            		player.sendMessage("Spawning new (temporary) NPC: " + args[2]);
 	                    // temporary
-	            		 BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
+	            		myNPC npc = new myNPC(this, null);
+	            		BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc,args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
 		                 
 	            		 this.npclist.put(args[2], hnpc);
 	            		 
@@ -2509,10 +2520,15 @@ public class npcx extends JavaPlugin {
 
 	private myPathgroup getPathgroupByID(int parseInt) {
 		// TODO Auto-generated method stub
+		dbg(1,"getPathgroupByID:called ("+parseInt+")!");
 		for (myPathgroup g : pathgroups)
 		{
+			dbg(1,"getPathgroupByID:iterating!");
+
 			if (g.id == parseInt)
 			{
+				dbg(1,"getPathgroupByID:found!");
+
 				return g;
 			}
 		}

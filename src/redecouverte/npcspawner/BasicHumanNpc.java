@@ -45,8 +45,9 @@ public class BasicHumanNpc extends BasicNpc {
     public CHumanNpc mcEntity;
     private static final Logger logger = Logger.getLogger("Minecraft");
     public myNPC parent;
-    public BasicHumanNpc(CHumanNpc entity, String uniqueId, String name, double spawnx, double spawny, double spawnz,double spawnyaw, double spawnpitch) {
-        super(uniqueId, name);
+    public BasicHumanNpc(myNPC parent,CHumanNpc entity, String uniqueId, String name, double spawnx, double spawny, double spawnz,double spawnyaw, double spawnpitch) {
+    	super(uniqueId, name);
+    	this.parent = parent;
     	this.spawnx = spawnx;
     	this.spawny = spawny;
     	this.spawnz = spawnz;
@@ -68,6 +69,17 @@ public class BasicHumanNpc extends BasicNpc {
     
     public void doThinkGreater()
     {
+    	
+    	
+    	try 
+    	{
+    		Debug(1,"My pathgroup is:"+ this.parent.pathgroup.toString());
+    		
+    	} catch (Exception e )
+    	{
+    		
+    	}
+    	
     	if (this.hp > 0)
 		{
 	    	//System.out.println("npcx : think");
@@ -217,8 +229,11 @@ public class BasicHumanNpc extends BasicNpc {
     {
     	if (this.parent != null)
     	{
+    		Debug(1,"doThinkLesser:Checking if pathgroup is not null");
+    		
 	    	if (this.parent.pathgroup != null)
 			{
+	    		Debug(1,"doThinkLesser:Path group was NOT null");
 				doPathgroups();
 			}
     	}
@@ -233,7 +248,7 @@ public class BasicHumanNpc extends BasicNpc {
 		// TODO Auto-generated method stub
     	
 		
-    	Debug(1,"doPathing Called - Countdown : "+ this.parent.movecountdown);
+    	Debug(1,"doPathgroups:Begun:Countdown: "+ this.parent.movecountdown);
     	if (this.parent.movecountdown == 0)
 		{
     		// It's time to execute
@@ -244,10 +259,13 @@ public class BasicHumanNpc extends BasicNpc {
     			// In a pathgroup but not in a pathspot! Fix it
     			this.parent.currentpathspot = 1;
 			}
+    		Debug(1,"doPathgroups:Checking entries");
     		
     		// Lets look at all the pathgroup entries and get the one we're on
     		for (myPathgroup_entry entry : this.parent.pathgroup.pathgroupentries)
 			{
+        		Debug(1,"doPathgroups:Cycling entries");
+
     			// This is the entry the npc is on
     			if (entry.spot == this.parent.currentpathspot)
 				{
