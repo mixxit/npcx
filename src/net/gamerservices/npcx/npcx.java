@@ -451,15 +451,19 @@ public class npcx extends JavaPlugin {
 			{
 				try
 				{
-				for (Player p : getServer().getWorld(this.universe.defaultworld).getPlayers())
-				{
-					if (player.name == p.getName())
+					for (World w : getServer().getWorlds())
 					{
-						player.player = p;
-						player.dead = false;
-						count++;
+						for (Player p : w.getPlayers())
+						{
+							if (player.name == p.getName())
+							{
+								player.player = p;
+								player.dead = false;
+								count++;
+							}
+						}
 					}
-				}
+					
 				} catch (ConcurrentModificationException e)
 				{
 					System.out.println("npcx : FAILED establishing dead player");

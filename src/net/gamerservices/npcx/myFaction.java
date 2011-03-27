@@ -1,8 +1,8 @@
 package net.gamerservices.npcx;
 
 public class myFaction {
-	int id;
+	public int id;
 	String name;
-	int base = 0; // neutral
+	public int base = 0; // neutral
 	
 }

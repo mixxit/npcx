@@ -172,71 +172,25 @@ public class npcxEListener extends EntityListener
 
             	if (nevent.getNpcReason() == NpcTargetReason.CLOSEST_PLAYER) {
             		
+            		Player p = (Player) event.getTarget();
+            		npc.onClosestPlayer(p);
                     event.setCancelled(true);
 
                 } else if (nevent.getNpcReason() == NpcTargetReason.NPC_RIGHTCLICKED) {
             		//System.out.println("npcx : reason of event was rightclicked");
 
                 	Player p = (Player) event.getTarget();
+                	npc.onRightClick(p);
 
-                    
-                    for (myPlayer player : parent.universe.players.values()){
-                    	
-                    	
-            			if (player.player == p)
-            			{
-            				if (player.target != null)
-            				{
-                                p.sendMessage("* Target cleared!");
-                                player.target = null;
-            					
-            				} else {
-            					player.target = npc;
-            					
-            					int tNPCID = 0;
-            					int tGPID = 0;
-            					int tFID = 0;
-            					int tPGID = 0;
-            					int tLTID = 0;
-            					
-            					if (npc.parent != null)
-            					{
-            						tNPCID = Integer.parseInt(npc.parent.id);
-            						
-                					if (npc.parent.spawngroup != null)
-                						tGPID = npc.parent.spawngroup.id;
-                					if (npc.parent.faction != null)
-                						tFID = npc.parent.faction.id;
-                					if (npc.parent.pathgroup != null)
-                						tPGID = npc.parent.pathgroup.id;
-                					if (npc.parent.loottable != null)
-                						tLTID = npc.parent.loottable.id;
-            					}
-            					
-                                p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+")");
-                                p.sendMessage("* Active chat target set as: " + npc.getName() + ". Click again to cancel.");
-                                p.sendMessage("* Anything you now type will be redirected to: " + npc.getName());
-                                p.sendMessage("* Words in [brackets] are commands. Type 'hello' to begin.");
-                                
-            				}
-            				
-            			} else {
-            				if (player.name == p.getName())
-            				{
-            					p.sendMessage("Your name is right but your player is wrong");
-            					
-            				}
-            				
-            			}
-            		}
                     
                     
                     event.setCancelled(true);
                     
                 } else if (nevent.getNpcReason() == NpcTargetReason.NPC_BOUNCED) {
-                    //Player p = (Player) event.getTarget();
+                    Player p = (Player) event.getTarget();
                     // do something here
                     //p.sendMessage("<" + npc.getName() + "> Stop bouncing on me!");
+                	npc.onBounce(p);
                     event.setCancelled(true);
                 }
             } 

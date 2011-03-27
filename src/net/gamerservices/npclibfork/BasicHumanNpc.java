@@ -53,9 +53,6 @@ public class BasicHumanNpc extends BasicNpc {
     	this.spawnz = spawnz;
     	this.spawnyaw = spawnyaw;
     	this.spawnpitch = spawnpitch;
-    	
-    	
-
         this.mcEntity = entity;
     }
 
@@ -69,28 +66,14 @@ public class BasicHumanNpc extends BasicNpc {
     
     public void doThinkGreater()
     {
-    	
-    	
-    	try 
-    	{
-    		Debug(1,"My pathgroup is:"+ this.parent.pathgroup.toString());
-    		
-    	} catch (Exception e )
-    	{
-    		
-    	}
-    	
     	if (this.hp > 0)
 		{
 	    	//System.out.println("npcx : think");
-	    			
 	    	if (this.parent != null)
 	    	{
-	    		
 	    		//
 	    		// PLAYER TARGET DISTANCE
 	    		//
-	    		
 		    	for (myPlayer p : this.parent.parent.universe.players.values())
 		    	{
 		    		if (p.target == this)
@@ -112,18 +95,12 @@ public class BasicHumanNpc extends BasicNpc {
 				    		p.target = null;
 				    		p.player.sendMessage("You have lost your target");
 			    		}
-			    			
-			    		
-			    		
 				    	// remove target
 		    		}
-		    		
 		    	}
 		    	
 		    	// END PLAYER TARGET DISTANCE
 	    	}
-	    	
-	    	
 	    	// NPC RETURN TO SPAWN IDLE
 	    	if (this.parent.pathgroup != null)
 			{
@@ -155,7 +132,10 @@ public class BasicHumanNpc extends BasicNpc {
 		    		}
 		    	}
 			}
+
+	    	//
 	    	// NPC FOLLOW
+	    	//
 	    	
 			if (follow instanceof LivingEntity)
 			{
@@ -198,32 +178,52 @@ public class BasicHumanNpc extends BasicNpc {
 				}
 			}
 			
+			//
 			// NPC ATTACK
+			//
 			
 			if (aggro instanceof LivingEntity)
 			{
-	//    		System.out.println("GRR");
-	
 				// lets follow this entity
 				if (this.aggro != null)
 					{
 					if (this.hp == 0)
 					{
-		
 						this.follow = null;
 						this.aggro = null;
-		
 					} else {
 						attackLivingEntity(aggro);
-		
 					}
 				}
-				
 			}
-			
-			
 		}
     }
+    
+    public Location getFaceLocationFromMe(Location location,boolean on) {
+    	try
+    	{
+			// citizens - https://github.com/fullwall/Citizens
+			Location loc = this.getBukkitEntity().getLocation();
+			double xDiff = location.getX() - loc.getX();
+			double yDiff = location.getY() - loc.getY();
+			double zDiff = location.getZ() - loc.getZ();
+	
+			double DistanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
+			double DistanceY = Math.sqrt(DistanceXZ * DistanceXZ + yDiff * yDiff);
+			double yaw = (Math.acos(xDiff / DistanceXZ) * 180 / Math.PI);
+			double pitch = (Math.acos(yDiff / DistanceY) * 180 / Math.PI) - 90;
+			if (zDiff < 0.0) {
+				yaw = yaw + (Math.abs(180 - yaw) * 2);
+			}
+			Location finalloc = new Location(loc.getWorld(),loc.getX(),loc.getY(),loc.getZ(),(float)yaw-90,(float)pitch);
+			return finalloc;
+			
+    	} catch (Exception e)
+    	{
+    		e.printStackTrace();
+    		return null;
+    	}
+	}
     
     public void doThinkLesser()
     {
@@ -360,7 +360,10 @@ public class BasicHumanNpc extends BasicNpc {
 			Debug(1,"moveCloserToLocation Moving towards: "+this.parent.currentpathspot+newloc);
 		}
 		
-		forceMove(newloc);
+		Location locforface = getFaceLocationFromMe(loc,true);
+		Location modifiedloc = new Location(newloc.getWorld(),newloc.getX(),newloc.getY(),newloc.getZ(),locforface.getYaw(),locforface.getPitch());
+		
+		forceMove(modifiedloc);
 		
 	}
 	
@@ -611,6 +614,7 @@ public class BasicHumanNpc extends BasicNpc {
 	
 	public void forceMove(Location loc)
 	{
+		
 		Debug(1,"forceMove Called ("+loc.getX()+","+loc.getY()+","+loc.getZ()+") from ("+this.mcEntity.getBukkitEntity().getLocation().getX()+","+this.mcEntity.getBukkitEntity().getLocation().getY()+","+this.mcEntity.getBukkitEntity().getLocation().getZ()+")");
 		
 		
@@ -630,8 +634,8 @@ public class BasicHumanNpc extends BasicNpc {
 		// Save last co-ordinate
 		this.lastloc = this.getBukkitEntity().getLocation().getBlock();
 		
-		// turn to face the location
-		this.mcEntity.c(loc.getX(), loc.getY(), loc.getZ(),ComputeAngle(this.getBukkitEntity().getLocation(),loc), 0);
+		
+		this.mcEntity.c(loc.getX(), loc.getY(), loc.getZ(),loc.getYaw(), loc.getPitch());
 		
 		
 	}
@@ -731,6 +735,71 @@ public class BasicHumanNpc extends BasicNpc {
     {
         this.mcEntity.animateArmSwing();
     }
+
+	public void onBounce(Player p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onRightClick(Player p) {
+		// TODO Auto-generated method stub
+        
+        for (myPlayer player : parent.parent.universe.players.values()){
+        	
+        	
+			if (player.player == p)
+			{
+				if (player.target != null)
+				{
+                    p.sendMessage("* Target cleared!");
+                    player.target = null;
+					
+				} else {
+					player.target = this;
+					
+					int tNPCID = 0;
+					int tGPID = 0;
+					int tFID = 0;
+					int tPGID = 0;
+					int tLTID = 0;
+					
+					if (this.parent != null)
+					{
+						tNPCID = Integer.parseInt(this.parent.id);
+						
+    					if (this.parent.spawngroup != null)
+    						tGPID = this.parent.spawngroup.id;
+    					if (this.parent.faction != null)
+    						tFID = this.parent.faction.id;
+    					if (this.parent.pathgroup != null)
+    						tPGID = this.parent.pathgroup.id;
+    					if (this.parent.loottable != null)
+    						tLTID = this.parent.loottable.id;
+					}
+					
+                    p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+")");
+                    p.sendMessage("* Active chat target set as: " + this.getName() + ". Click again to cancel.");
+                    p.sendMessage("* Anything you now type will be redirected to: " + this.getName());
+                    p.sendMessage("* Words in [brackets] are commands. Type 'hello' to begin.");
+                    
+				}
+				
+			} else {
+				if (player.name == p.getName())
+				{
+					p.sendMessage("Your name is right but your player is wrong");
+					
+				}
+				
+			}
+		}
+		
+	}
+
+	public void onClosestPlayer(Player p) {
+		// TODO Auto-generated method stub
+		forceMove(getFaceLocationFromMe(p.getLocation(),true));
+	}
 
 
 }
