@@ -1189,6 +1189,8 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx spawngroup add spawngroupid npcid");
                 	player.sendMessage("Insufficient arguments /npcx spawngroup pathgroup spawngroupid pathgroupid");
                 	player.sendMessage("Insufficient arguments /npcx spawngroup list [name]");
+                	player.sendMessage("Insufficient arguments /npcx spawngroup updatepos spawngroupid");
+                	
                 	return false;
             		
             		
@@ -1358,6 +1360,68 @@ public class npcx extends JavaPlugin {
         			
         		}
             	
+            	if (args[1].equals("updatepos")) 
+            	{
+            		if (args.length < 3)
+         		    {
+                    	player.sendMessage("Insufficient arguments /npcx spawngroup updatepos spawngroupid");
+                    	
+            			
+         		    } else {
+         		    	
+            			Location loc = player.getLocation();
+            			PreparedStatement s2 = conn.prepareStatement("UPDATE spawngroup SET x=?,y=?,z=?,yaw=?,pitch=? WHERE id = ?;");
+            			s2.setString(1,Double.toString(loc.getX()));
+            			s2.setString(2,Double.toString(loc.getY()));
+            			s2.setString(3,Double.toString(loc.getZ()));
+            			s2.setString(4,Double.toString(loc.getYaw()));
+            			s2.setString(5,Double.toString(loc.getPitch()));
+            			s2.setString(6,args[2]);
+            			
+            			
+            			s2.executeUpdate();
+            			player.sendMessage("Updated Spawngroup " + args[2] + " to your position");
+                		
+        	            // Update cached spawngroups
+        	            for (mySpawngroup sg : this.spawngroups.values())
+        	            {
+        	            	if (sg.id == Integer.parseInt(args[2]))
+        	            	{
+        	            		// update the spawngroup
+        	            		sg.x = loc.getX();
+        	            		sg.y = loc.getY();
+        	            		sg.z = loc.getZ();
+        	            		sg.yaw = loc.getYaw();
+        	            		sg.pitch = loc.getPitch();
+        	            		
+        	            		System.out.println("npcx : + cached updated spawngroup ("+ args[2] + ")");
+        	            		
+        	            		// Found the spawngroup, lets make sure the NPCs have their spawn values set right
+        	            		
+        	            		for (myNPC np : sg.npcs.values())
+        	            		{
+        	            			np.npc.spawnx = sg.x;
+        	            			np.npc.spawny = sg.y;
+        	            			np.npc.spawnz = sg.z;
+        	            			np.npc.spawnyaw = sg.yaw;
+        	            			np.npc.spawnpitch = sg.pitch;
+        	            			
+        	            				
+        	            		}
+        	            		
+        	            		
+        	            		
+        	            	}
+        	            }
+        	            
+        	            
+            			
+            			// close statement
+        	            s2.close();
+         		    	
+         		    }
+            		
+            	}
             	
             	if (args[1].equals("list")) {
             		   player.sendMessage("Spawngroups:");
@@ -1456,7 +1520,7 @@ public class npcx extends JavaPlugin {
         	            
         	            mySpawngroup sg = new mySpawngroup();
             			
-            			// close db
+            			// close statement
         	            s2.close();
         	            
             		}

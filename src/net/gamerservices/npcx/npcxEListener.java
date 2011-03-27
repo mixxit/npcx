@@ -190,7 +190,7 @@ public class npcxEListener extends EntityListener
             					
             				} else {
             					player.target = npc;
-                                p.sendMessage("* Active chat target set as: " + npc.getName());
+                                p.sendMessage("* Active chat target set as: " + npc.getName() + "NPCID("+npc.parent.id+"):GP("+npc.parent.spawngroup.id+"):F("+npc.parent.faction.id+"):PG("+npc.parent.pathgroup.id+"):L("+npc.parent.loottable.id+")");
                                 p.sendMessage("* Anything you now type will be redirected to: " + npc.getName());
                                 
                                 
