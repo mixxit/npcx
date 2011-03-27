@@ -65,7 +65,7 @@ public class BasicHumanNpc extends BasicNpc {
         return this.mcEntity;
     }
 
-    public void moveclosertolivingentity(LivingEntity target)
+    public void moveclosertolivingentitydepreciates(LivingEntity target)
     {
     	double x = target.getLocation().getX();
 		double y = target.getLocation().getY();
@@ -206,8 +206,7 @@ public class BasicHumanNpc extends BasicNpc {
 				    		
 				    		if (xdist > -30 && xdist < 30 && ydist > -30 && ydist < 30 && zdist > -30 && zdist < 30)
 				    		{
-				    			
-				    			moveclosertolivingentity(follow);
+				    			this.moveCloserToLocation(this.follow.getLocation());
 				    		} else {
 				    			// too far for me
 				    			this.follow = null;
