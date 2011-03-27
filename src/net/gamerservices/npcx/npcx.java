@@ -1281,6 +1281,16 @@ public class npcx extends JavaPlugin {
         	            			player.sendMessage("npcx : Updated spawngroups cached pathgroup ("+args[3]+"): "+sg.pathgroup.name);
         	            		} else {
         	            			sg.pathgroup = null;
+        	            			
+        	            			sg.pathgroup = getPathgroupByID(Integer.parseInt(args[3]));
+        	            			for (myNPC n : npcs.values())
+        	            			{
+        	            				if (n.spawngroup == sg)
+        	            				{
+        	            					n.pathgroup = null;
+        	            				}
+        	            			}
+        	            			
         	            			player.sendMessage("npcx : Updated spawngroups cached pathgroup (0)");
 
         	            		}
