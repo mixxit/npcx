@@ -279,17 +279,17 @@ public class myNPC {
 				
 				try 
 				{
-				item.setTypeId(Material.matchMaterial(aMsg[1]).getId());
+					item.setTypeId(Material.matchMaterial(aMsg[1]).getId());
 				} catch (NullPointerException e)
 				{
 					player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
-					e.printStackTrace();
+					//e.printStackTrace();
 					return;
 				
 				} catch (Exception e)
 				{
 					player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
-					e.printStackTrace();
+					//e.printStackTrace();
 					return;
 					
 				}
