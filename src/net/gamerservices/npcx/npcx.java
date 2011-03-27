@@ -217,7 +217,7 @@ public class npcx extends JavaPlugin {
 							    		{
 							    			if (npc.npc.parent.faction != null)
 							    			{
-							    				if (npc.npc.parent.faction.base < 1000)
+							    				if (npc.npc.parent.faction.base <= -1000)
 							    				{
 							    					npc.npc.aggro = player.player;
 							    					npc.npc.follow = player.player;
@@ -260,7 +260,7 @@ public class npcx extends JavaPlugin {
 						    if (e instanceof Monster)
 						    {
 						    	// mosnter in range?
-							    if (distancex > -8 && distancey > -8 && distancez > -8 && distancex < 8 && distancey < 8 && distancez < 8)
+							    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
 							    {
 								    // monster in range but is it worth chasing?
 							    	
@@ -269,7 +269,7 @@ public class npcx extends JavaPlugin {
 							    	// line of site
 
 							    	boolean foundresult = false;
-							    	for (Block blockinsight : e.getLineOfSight(null, 8))
+							    	for (Block blockinsight : e.getLineOfSight(null, 5))
 							    	{
 							    		// Entities seem to be Y + 1
 							    		Location eloc = e.getLocation();
@@ -286,6 +286,8 @@ public class npcx extends JavaPlugin {
 							    	{
 							    		//System.out.println("I can hear one but can't see it");
 							    		npc.npc.faceLocation(e.getLocation());
+							    		npc.npc.aggro = null;
+							    		npc.npc.follow = null;
 							    		
 							    	}
 
@@ -2462,5 +2464,25 @@ public class npcx extends JavaPlugin {
 	public void dbg(String string) {
 		// TODO Auto-generated method stub
 		System.out.println("npcx: "+string);
+	}
+
+	public void informNpcDeadPlayer(Player player) {
+		// TODO Auto-generated method stub
+		
+		for (myNPC npc : this.npcs.values())
+		{
+			if (npc.npc.aggro == player)
+			{
+				dbg("informNpcDeadPlayer:aggro:"+player.getName());
+				npc.npc.follow = null;
+			}
+			if (npc.npc.aggro == player)
+			{
+				dbg("informNpcDeadPlayer:follow:"+player.getName());
+				npc.npc.aggro = null;
+			}
+			
+		}
+		
 	}
 }

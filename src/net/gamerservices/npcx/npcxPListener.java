@@ -95,7 +95,10 @@ public class npcxPListener extends PlayerListener {
 		for (myPlayer player : parent.players.values()){
 			if (player.player == event.getPlayer())
 			{
+				
 				player.dead = true;
+				this.parent.informNpcDeadPlayer(event.getPlayer());
+				
 				//System.out.println("npcx : removed player ("+ player.player.getName()+")");
 				parent.players.remove(player);
 			}

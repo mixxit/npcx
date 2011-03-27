@@ -38,8 +38,8 @@ public class npcxEListener extends EntityListener
 				EntityDamageByEntityEvent edee1 = (EntityDamageByEntityEvent)event;
 				if (edee1.getDamager() instanceof HumanEntity) 
 				{
-					
-					//System.out.println("npcx : monster go ow");
+					edee1.setDamage(0);
+					System.out.println("npcx : monster go ow");
 				}
 					
 				
@@ -53,13 +53,7 @@ public class npcxEListener extends EntityListener
 		    {
 				EntityDamageByEntityEvent edee = (EntityDamageByEntityEvent) event;
 
-				/*if (npc != null && npc.aggro != null && edee.getDamager() == npc.aggro) 
-				{
-					npc.follow = null;
-					npc.aggro = null;
-					//System.out.println("npcx : forgot about target");
-						 
-   			    }*/
+				
 		        if (npc != null && edee.getDamager() instanceof LivingEntity) 
 		        {
 	
@@ -72,13 +66,10 @@ public class npcxEListener extends EntityListener
 		        			{
 		        				if (npc.aggro == null)
 		        				{
+		        					// First time sent an event
 			        				npc.parent.onPlayerAggroChange(player);
 		        					
-		        				} else {
-		        					// else dont fire again
-		        				}
-		        				
-		        				
+		        				} 
 		        			}
 		        		}
 		        	}
