@@ -60,7 +60,7 @@ public class npcx extends JavaPlugin {
 	private final String PROP_DBPORT = "db-port";
 	private final String PROP_WORLD = "world";
 	private final String PROP_UPDATE = "update";
-	private Connection conn = null;
+	public Connection conn = null;
 	private npcxEListener mEntityListener;
 	private npcxPListener mPlayerListener;
 	public HashMap<String, myPlayer> players = new HashMap<String, myPlayer>();
@@ -189,125 +189,127 @@ public class npcx extends JavaPlugin {
 		
 		for (myNPC npc : npcs.values())
 		{
-			npc.npc.doThinkGreater();
-			
-			//always do pathgroups after think()
-			
-			npc.npc.doThinkLesser();
-			
-			
-			//System.out.println("npcx : " + event.getEntity().getClass().toString());
-			//System.out.println("npcx : " + event.getTarget().getClass().toString());
-			
-			if (this.players.size() > 0)
+			if (npc.npc != null)
 			{
-				try
+				npc.npc.doThinkGreater();
+				
+				//always do pathgroups after think()
+				
+				npc.npc.doThinkLesser();
+				
+				
+				//System.out.println("npcx : " + event.getEntity().getClass().toString());
+				//System.out.println("npcx : " + event.getTarget().getClass().toString());
+				
+				if (this.players.size() > 0)
 				{
-					for (myPlayer player : this.players.values())
+					try
 					{
-						if (player.player != null)
+						for (myPlayer player : this.players.values())
 						{
-							if (player.player.getHealth() > 0)
-					    	{
-								double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), player.player.getLocation().getX());
-							    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), player.player.getLocation().getY());
-							    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), player.player.getLocation().getZ());
-							    
-							    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
-							    {
-							    		if (npc.parent != null)
-							    		{
-							    			if (npc.npc.parent.faction != null)
-							    			{
-							    				if (npc.npc.parent.faction.base <= -1000)
-							    				{
-							    					npc.npc.aggro = player.player;
-							    					npc.npc.follow = player.player;
-							    				}
-							    			} else {
-							    				//System.out.println("npcx : i have no faction so ill be be neutral");
-							    			}
-							    		}
-							    	
-								}
-							    
-								
-					    	}
+							if (player.player != null)
+							{
+								if (player.player.getHealth() > 0)
+						    	{
+									double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), player.player.getLocation().getX());
+								    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), player.player.getLocation().getY());
+								    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), player.player.getLocation().getZ());
+								    
+								    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+								    {
+								    		if (npc.parent != null)
+								    		{
+								    			if (npc.npc.parent.faction != null)
+								    			{
+								    				if (npc.npc.parent.faction.base <= -1000)
+								    				{
+								    					npc.npc.aggro = player.player;
+								    					npc.npc.follow = player.player;
+								    				}
+								    			} else {
+								    				//System.out.println("npcx : i have no faction so ill be be neutral");
+								    			}
+								    		}
+								    	
+									}
+								    
+									
+						    	}
+							}
 						}
 					}
-				}
-					catch (Exception e)
-				{
-					// Concurrent modification occured
-					e.printStackTrace();
+						catch (Exception e)
+					{
+						// Concurrent modification occured
+						e.printStackTrace();
+					}
+					
 				}
 				
-			}
-			
-			// VS MONSTERS
-			
-			if (this.monsters.size() > 0)
-			{
-				try
+				// VS MONSTERS
+				
+				if (this.monsters.size() > 0)
 				{
-					
-					for (LivingEntity e : this.monsters)
+					try
 					{
-						if (e.getHealth() > 0)
-				    	{
-							double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
-						    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
-						    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
-					
-						    if (e instanceof Monster)
-						    {
-						    	// mosnter in range?
-							    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+						
+						for (LivingEntity e : this.monsters)
+						{
+							if (e.getHealth() > 0)
+					    	{
+								double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
+							    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
+							    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
+						
+							    if (e instanceof Monster)
 							    {
-								    // monster in range but is it worth chasing?
-							    	
-							    	// face direction
-
-							    	// line of site
-
-							    	boolean foundresult = false;
-							    	for (Block blockinsight : e.getLineOfSight(null, 5))
-							    	{
-							    		// Entities seem to be Y + 1
-							    		Location eloc = e.getLocation();
-							    		eloc.setY(eloc.getY()+1);
-							    		
-							    		if (blockinsight == eloc.getBlock())
-							    		{
-							    			foundresult = true;
-								    		npc.npc.aggro =  e;
-								    		npc.npc.follow =   e;
-							    		}
-							    	}
-							    	if (foundresult == false)
-							    	{
-							    		//System.out.println("I can hear one but can't see it");
-							    		npc.npc.faceLocation(e.getLocation());
-							    		npc.npc.aggro = null;
-							    		npc.npc.follow = null;
-							    		
-							    	}
-
-							    	
-								}
-						    }
-				    	}
+							    	// mosnter in range?
+								    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+								    {
+									    // monster in range but is it worth chasing?
+								    	
+								    	// face direction
+	
+								    	// line of site
+	
+								    	boolean foundresult = false;
+								    	for (Block blockinsight : e.getLineOfSight(null, 5))
+								    	{
+								    		// Entities seem to be Y + 1
+								    		Location eloc = e.getLocation();
+								    		eloc.setY(eloc.getY()+1);
+								    		
+								    		if (blockinsight == eloc.getBlock())
+								    		{
+								    			foundresult = true;
+									    		npc.npc.aggro =  e;
+									    		npc.npc.follow =   e;
+								    		}
+								    	}
+								    	if (foundresult == false)
+								    	{
+								    		//System.out.println("I can hear one but can't see it");
+								    		npc.npc.faceLocation(e.getLocation());
+								    		npc.npc.aggro = null;
+								    		npc.npc.follow = null;
+								    		
+								    	}
+	
+								    	
+									}
+							    }
+					    	}
+						}
+					} 
+						catch (Exception e)
+					{
+						// Concurrent modification occured
+						e.printStackTrace();
 					}
-				} 
-					catch (Exception e)
-				{
-					// Concurrent modification occured
-					e.printStackTrace();
 				}
 			}
+			
 		}
-			
-			
 		
 			
 			
@@ -355,8 +357,7 @@ public class npcx extends JavaPlugin {
 							//System.out.println("npcx : made spawngroup active");
 							Double  pitch = new Double(spawngroup.pitch);
 							Double yaw = new Double(spawngroup.yaw);
-							BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc,npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
-			                
+							BasicHumanNpc hnpc = npc.Spawn(npc.id, npc.name, this.getServer().getWorld(this.world), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
 							
 							npc.npc = hnpc;
 							
@@ -373,8 +374,8 @@ public class npcx extends JavaPlugin {
 							npc.npc.getBukkitEntity().getInventory().setBoots(iboots);
 			                hnpc.parent = npc;
 			                
-							this.npclist.put(spawngroup.id + "" + npc.id, hnpc);
-							this.npcs.put(npc.id,npc);
+							this.npclist.put(spawngroup.id + "-" + npc.id, hnpc);
+							this.npcs.put(spawngroup.id+"-"+npc.id,npc);
 							spawngroup.active = true;
 						}
 					}
@@ -1000,7 +1001,7 @@ public class npcx extends JavaPlugin {
 		                //BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
 		                
 		                // Create a new spawngroup
-		                mySpawngroup spawngroup = new mySpawngroup();
+		                mySpawngroup spawngroup = new mySpawngroup(this);
 		                spawngroup.name = nameVal;
 		                //System.out.println("npcx : + " + nameVal);
 		                spawngroup.id = idVal;
@@ -1009,6 +1010,8 @@ public class npcx extends JavaPlugin {
 		                spawngroup.z = Double.parseDouble(rs1.getString ("z"));
 		                spawngroup.yaw = Double.parseDouble(rs1.getString ("yaw"));
 		                spawngroup.pitch = Double.parseDouble(rs1.getString ("pitch"));
+		                
+		                Location loc = new Location(getServer().getWorld(this.world),spawngroup.x,spawngroup.y,spawngroup.z);
 		                
 		                spawngroup.pathgroup = dbGetSpawngrouppg(spawngroup.id);
 		                
@@ -1025,7 +1028,7 @@ public class npcx extends JavaPlugin {
 			            {
 			            	// Load NPCs
 			            	
-			            	myNPC npc = new myNPC(this,fetchTriggerWords(rs11.getInt ("npcid")));
+			            	myNPC npc = new myNPC(this,fetchTriggerWords(rs11.getInt ("npcid")),loc,rs11.getString ("name"));
 			            	npc.spawngroup = spawngroup;
 			            	npc.id = rs11.getString ("npcid");
 			            	npc.name = rs11.getString ("name");
@@ -1079,7 +1082,7 @@ public class npcx extends JavaPlugin {
 			            	
 			            	
 			            	//System.out.println("npcx : + npc.name + " + rs11.getString ("npcid"));
-			            	spawngroup.npcs.put(rs11.getString ("npcid"), npc);
+			            	spawngroup.npcs.put(spawngroup.id+"-"+rs11.getString ("npcid"), npc);
 			            	
 			            	
 			            	
@@ -1192,7 +1195,7 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx spawngroup pathgroup spawngroupid pathgroupid");
                 	player.sendMessage("Insufficient arguments /npcx spawngroup list [name]");
                 	player.sendMessage("Insufficient arguments /npcx spawngroup updatepos spawngroupid");
-                	
+                	player.sendMessage("Insufficient arguments /npcx spawngroup delete spawngroupid");
                 	return false;
             		
             		
@@ -1230,7 +1233,7 @@ public class npcx extends JavaPlugin {
             			stmt.close();
             			
         	            player.sendMessage("Spawngroup ["+ key + "] now active at your position");
-            			mySpawngroup sg = new mySpawngroup();
+            			mySpawngroup sg = new mySpawngroup(this);
             			sg.id = key;
             			sg.name = args[2];
             			sg.x = x;
@@ -1247,6 +1250,32 @@ public class npcx extends JavaPlugin {
             		}
         			
         		}
+            	
+            	if (args[1].equals("delete")) 
+            	{
+            		if (args.length < 3)
+         		    {
+                    	player.sendMessage("Insufficient arguments /npcx spawngroup delete spawngroupid");
+                    	
+            			
+         		    } else {
+         		    	int count = 0;
+         		    	for (mySpawngroup spawngroup : this.spawngroups.values())
+         		    	{
+         		    		if (spawngroup.id == Integer.parseInt(args[2]))
+         		    		{
+         		    			spawngroup.Delete();
+         		    			count++;
+         		    		}
+         		    	}
+         		    	player.sendMessage("Deleted cached "+count+" spawngroups.");
+         		    	
+         		    	
+         		    }
+            		
+            	}
+            	
+            	
             	
             	
             	if (args[1].equals("pathgroup")) {
@@ -1331,7 +1360,6 @@ public class npcx extends JavaPlugin {
         	            		
         	            		
         	            		
-        	            		myNPC npc = new myNPC(this,fetchTriggerWords(Integer.parseInt(args[3])));
         	            		
         	            		
         	            		PreparedStatement stmtNPC = conn.prepareStatement("SELECT * FROM npc WHERE id = ?;");
@@ -1341,7 +1369,9 @@ public class npcx extends JavaPlugin {
                      		    int count = 0;
                      		    while (rsNPC.next ())
                      		    {
-                     		       
+                     		       Location loc = new Location(getServer().getWorld(this.world),0,0,0,0,0);
+            	            		
+                     		       myNPC npc = new myNPC(this,fetchTriggerWords(Integer.parseInt(args[3])), loc, "dummy");
                      		       npc.name = rsNPC.getString ("name");
                      		       npc.category = rsNPC.getString ("category");
                      		       npc.faction = dbGetNPCfaction(args[3]);
@@ -1353,7 +1383,11 @@ public class npcx extends JavaPlugin {
                      		       npc.boots = rsNPC.getInt ("boots");
                      		       npc.weapon = rsNPC.getInt ("weapon");
                      		       
+                     		       npc.spawngroup = sg;
+                     		       npc.id = args[3];
                     		       
+                     		      sg.npcs.put(sg.id+"-"+npc.id, npc);
+          	            		  npcs.put(sg.id+"-"+npc.id, npc);
                      		       
                      		       ++count;
                      		    }
@@ -1362,16 +1396,15 @@ public class npcx extends JavaPlugin {
                      		    
                      		    
         	            		        	            		
-        	            		npc.spawngroup = sg;
-        	            		npc.id = args[3];
+        	            		
         	            		dbg(1,"npcx : + cached new spawngroup entry("+ args[3] + ")");
-        	            		sg.npcs.put(args[3], npc);
+        	            		
         	            		
         	            	}
         	            }
         	            
         	            
-        	            mySpawngroup sg = new mySpawngroup();
+        	            mySpawngroup sg = new mySpawngroup(this);
             			
             			// close db
         	            s2.close();
@@ -1544,7 +1577,7 @@ public class npcx extends JavaPlugin {
         	            }
         	            
         	            
-        	            mySpawngroup sg = new mySpawngroup();
+        	            mySpawngroup sg = new mySpawngroup(this);
             			
             			// close statement
         	            s2.close();
@@ -1988,6 +2021,7 @@ public class npcx extends JavaPlugin {
             			// add it to any spawned npcs
             			for (myNPC npc : npcs.values())
             			{
+            				dbg("my id="+npc.id.toString());
             				if (npc.id.equals(args[3]))
             				{
             					dbg(1,"npcx : adding reply because ("+ npc.id +") is ("+args[3]+")  ("+ reply + ") and trigger ("+ reply +") for [" + args[3] + "] npc to npc: " + npc.id);
@@ -2356,7 +2390,7 @@ public class npcx extends JavaPlugin {
             			    key = keyset.getInt(1);
             			    
             			}
-            			player.sendMessage("Created npc: " + args[2] + "ID:[" + key  + "]");
+            			player.sendMessage("Created npc: " + args[2] + " ID:[" + key  + "]");
         	            
         	            s2.close();
         	            
@@ -2371,10 +2405,12 @@ public class npcx extends JavaPlugin {
             	if (args[1].equals("spawn")) {
 	            		player.sendMessage("Spawning new (temporary) NPC: " + args[2]);
 	                    // temporary
-	            		myNPC npc = new myNPC(this, null);
-	            		BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(npc,args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
+	            		Location loc = new Location(player.getWorld(),player.getLocation().getX(),player.getLocation().getY(),player.getLocation().getZ(),player.getLocation().getYaw(),player.getLocation().getPitch());
+	            		
+	            		 myNPC npc = new myNPC(this, null, loc, args[2]);
+	            		
 		                 
-	            		 this.npclist.put(args[2], hnpc);
+	            		 this.npclist.put(args[2], npc.npc);
 	            		 
 		                
 	            		
@@ -2389,7 +2425,7 @@ public class npcx extends JavaPlugin {
 		            				
 				                    ItemStack is = new ItemStack(Material.IRON_SWORD);
 				                    is.setAmount(1);
-				                    hnpc.getBukkitEntity().setItemInHand(is);
+				                    npc.npc.getBukkitEntity().setItemInHand(is);
 				                    
 				                    /*
 				                    ItemStack ic = new ItemStack(Material.IRON_CHESTPLATE);
@@ -2559,7 +2595,7 @@ public class npcx extends JavaPlugin {
 
 	public void dbg(int debug, String string) {
 		// TODO Auto-generated method stub
-		if (debug > 1)
+		if (debug >= 1)
 		{
 			// do stuff with info/warn
 			
@@ -2596,9 +2632,8 @@ public class npcx extends JavaPlugin {
 
 	public void sendPlayerItemList(Player player) {
 		// TODO Auto-generated method stub
-		String list = "AIR STONE GRASS DIRT COBBLESTONE WOOD SAPLING BEDROCK WATER STATIONARY_WATER LAVA STATIONARY_LAVA SAND GRAVEL GOLD_ORE IRON_ORE COAL_ORE LOG LEAVES SPONGE GLASS LAPIS_ORE LAPIS_BLOCK DISPENSER SANDSTONE NOTE_BLOCK BED_BLOCK WOOL YELLOW_FLOWER RED_ROSE BROWN_MUSHROOM RED_MUSHROOM GOLD_BLOCK IRON_BLOCK DOUBLE_STEP STEP BRICK TNT BOOKSHELF MOSSY_COBBLESTONE OBSIDIAN TORCH FIRE MOB_SPAWNER WOOD_STAIRS CHEST REDSTONE_WIRE DIAMOND_ORE DIAMOND_BLOCK WORKBENCH CROPS SOIL FURNACE BURNING_FURNACE SIGN_POST WOODEN_DOOR LADDER RAILS COBBLESTONE_STAIRS WALL_SIGN LEVER STONE_PLATE IRON_DOOR_BLOCK WOOD_PLATE REDSTONE_ORE GLOWING_REDSTONE_ORE REDSTONE_TORCH_OFF REDSTONE_TORCH_ON STONE_BUTTON SNOW ICE SNOW_BLOCK CACTUS CLAY SUGAR_CANE_BLOCK JUKEBOX FENCE PUMPKIN NETHERRACK SOUL_SAND GLOWSTONE SLIME_BALL STORAGE_MINECART POWERED_MINECART EGG COMPASS FISHING_ROD WATCH GLOWSTONE_DUST RAW_FISH COOKED_FISH INK_SACK BONE SUGAR CAKE BED DIODE GOLD_RECORD GREEN_RECORD PORTAL JACK_O_LANTERN ";
-		String list2 = "CAKE_BLOCK DIODE_BLOCK_OFF DIODE_BLOCK_ON IRON_SPADE IRON_PICKAXE IRON_AXE FLINT_AND_STEEL APPLE BOW ARROW COAL DIAMOND IRON_INGOT GOLD_INGOT IRON_SWORD WOOD_SWORD WOOD_SPADE WOOD_PICKAXE WOOD_AXE STONE_SWORD STONE_SPADE STONE_PICKAXE STONE_AXE DIAMOND_SWORD DIAMOND_SPADE DIAMOND_PICKAXE DIAMOND_AXE STICK BOWL MUSHROOM_SOUP GOLD_SWORD GOLD_SPADE GOLD_PICKAXE GOLD_AXE STRING FEATHER SULPHUR WOOD_HOE STONE_HOE IRON_HOE DIAMOND_HOE GOLD_HOE SEEDS WHEAT BREAD LEATHER_HELMET LEATHER_CHESTPLATE LEATHER_LEGGINGS LEATHER_BOOTS CHAINMAIL_HELMET CHAINMAIL_CHESTPLATE CHAINMAIL_LEGGINGS CHAINMAIL_BOOTS IRON_HELMET IRON_CHESTPLATE IRON_LEGGINGS IRON_BOOTS DIAMOND_HELMET DIAMOND_CHESTPLATE DIAMOND_LEGGINGS DIAMOND_BOOTS GOLD_HELMET GOLD_CHESTPLATE GOLD_LEGGINGS GOLD_BOOTS FLINT PORK GRILLED_PORK PAINTING GOLDEN_APPLE SIGN WOOD_DOOR BUCKET WATER_BUCKET LAVA_BUCKET MINECART SADDLE IRON_DOOR REDSTONE SNOW_BALL BOAT LEATHER MILK_BUCKET CLAY_BRICK CLAY_BALL SUGAR_CANE PAPER BOOK";
+		String list = "Examples are: STONE GRASS DIRT IRON_SPADE LOG LEAVES GLASS LAPIS_ORE LAPIS_BLOCK IRON_INGOT";
 		player.sendMessage(list);
-		player.sendMessage(list2);
+		
 	}
 }

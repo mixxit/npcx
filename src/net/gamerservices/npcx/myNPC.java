@@ -5,6 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,6 +14,7 @@ import com.nijiko.coelho.iConomy.iConomy;
 import com.nijiko.coelho.iConomy.system.Account;
 
 import redecouverte.npcspawner.BasicHumanNpc;
+import redecouverte.npcspawner.NpcSpawner;
 public class myNPC {
 	public npcx parent;
 	public String name = "dummy";
@@ -36,10 +38,14 @@ public class myNPC {
 	public int movecountdown = 0;
 	public boolean moveforward = true;
 			
-	myNPC(npcx parent, HashMap<String, myTriggerword> triggerwords)
+	myNPC(npcx parent, HashMap<String, myTriggerword> triggerwords, Location location, String name)
 	{
+		this.name = name;
+		
 		this.parent = parent;
+		
 		this.triggerwords = triggerwords;
+		
 	}
 	
 	public void onPlayerAggroChange(myPlayer myplayer)
@@ -495,5 +501,19 @@ public class myNPC {
 			h.price = (float)each;
 			h.age = 0;
 			this.hints.add(h);
+	}
+
+	public BasicHumanNpc Spawn(String id2, String name2,
+			World world, double x, double y, double z, Double yaw, Double pitch) {
+		// TODO Auto-generated method stub
+		BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(this,id2, name2, world, x, y, z,yaw , pitch);
+		this.npc = hnpc;
+        
+		return hnpc;
+	}
+
+	public void Delete() {
+		// TODO Auto-generated method stub
+		
 	}
 }
