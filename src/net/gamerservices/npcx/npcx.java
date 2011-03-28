@@ -1608,7 +1608,7 @@ public class npcx extends JavaPlugin {
             	            stmt.executeUpdate();
             	            stmt.close();
             			}
-        	            
+        	            int count = 0;
         	            for(myNPC sg : universe.npcs.values())
         	            {
         	            	if (sg.id == args[2])
@@ -1618,16 +1618,18 @@ public class npcx extends JavaPlugin {
         	            			sg.merchant = getMerchantByID(Integer.parseInt(args[3]));
         	            			
         	            			player.sendMessage("npcx : Updated NPCs cached merchant ("+args[3]+"): "+sg.merchant.name);
+        	            			count++;
         	            		} else {
         	            			sg.merchant = null;
         	            			player.sendMessage("npcx : Updated NPCs cached merchant (0)");
+        	            			count++;
 
         	            		}
         	            		
         	            	}
         	            }
             			
-            			player.sendMessage("Updated Merchant ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
+            			player.sendMessage("Updated "+count+" entries.");
         	            
             			
             		}
