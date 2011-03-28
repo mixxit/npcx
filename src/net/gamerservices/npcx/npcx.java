@@ -119,7 +119,7 @@ public class npcx extends JavaPlugin {
 	
 	public void think()
 	{
-		tick.schedule(new Tick(this), 1 * 300);
+		tick.schedule(new Tick(this), 1 * 500);
 		
 		fixDead();
 		
@@ -1611,7 +1611,8 @@ public class npcx extends JavaPlugin {
         	            int count = 0;
         	            for(myNPC sg : universe.npcs.values())
         	            {
-        	            	if (sg.id == args[2])
+        	            	//player.sendMessage("npcx : Checking: "+sg.name);
+        	            	if (sg.id.matches(args[2]))
         	            	{
         	            		if (Integer.parseInt(args[3]) != 0)
         	            		{
