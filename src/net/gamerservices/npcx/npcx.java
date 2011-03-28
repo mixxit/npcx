@@ -1573,7 +1573,10 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx npc faction npcid factionid");
                 	player.sendMessage("Insufficient arguments /npcx npc loottable npcid loottableid");
                 	player.sendMessage("Insufficient arguments /npcx npc category npcid category");
-                	player.sendMessage("Insufficient arguments /npcx npc primary npcid itemid");
+                	player.sendMessage("Insufficient arguments /npcx npc merchant npcid merchantid");
+                	
+                	
+                	player.sendMessage("Insufficient arguments /npcx npc weapon npcid itemid");
                 	player.sendMessage("Insufficient arguments /npcx npc helmet npcid itemid");
                 	player.sendMessage("Insufficient arguments /npcx npc chest npcid itemid");
                 	player.sendMessage("Insufficient arguments /npcx npc legs npcid itemid");
@@ -1581,6 +1584,52 @@ public class npcx extends JavaPlugin {
                     return false;
                 }
             	
+            	if (args[1].equals("merchant")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx npc merchant npcid merchantid");
+            			
+            			
+            			
+            		} else {
+            			if (Integer.parseInt(args[2]) == 0)
+            			{
+            			
+	        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE npc SET merchantid = null WHERE id = ?;");
+	        	            stmt.setString(1, args[2]);
+	        	            stmt.executeUpdate();
+	        	            stmt.close();
+	        	            
+            			} else {
+            				PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE npc SET merchantid = ? WHERE id = ?;");
+            	            stmt.setString(1, args[3]);
+            	            stmt.setString(2, args[2]);
+            	            stmt.executeUpdate();
+            	            stmt.close();
+            			}
+        	            
+        	            for(myNPC sg : universe.npcs.values())
+        	            {
+        	            	if (sg.id == args[2])
+        	            	{
+        	            		if (Integer.parseInt(args[3]) != 0)
+        	            		{
+        	            			sg.merchant = getMerchantByID(Integer.parseInt(args[3]));
+        	            			
+        	            			player.sendMessage("npcx : Updated NPCs cached merchant ("+args[3]+"): "+sg.merchant.name);
+        	            		} else {
+        	            			sg.merchant = null;
+        	            			player.sendMessage("npcx : Updated NPCs cached merchant (0)");
+
+        	            		}
+        	            		
+        	            	}
+        	            }
+            			
+            			player.sendMessage("Updated Merchant ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
+        	            
+            			
+            		}
+            	}
             	
             	if (args[1].equals("triggerword")) {
             		if (args.length < 6) {
@@ -1746,7 +1795,7 @@ public class npcx extends JavaPlugin {
         	            	}
         	            }
             			
-            			player.sendMessage("Updated npc primary: item ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
+            			player.sendMessage("Updated npc weapon: item ID:" + args[3] + " on NPC ID:[" + args[2]  + "]");
         	            
             			stmt.close();
             		}
@@ -2029,6 +2078,19 @@ public class npcx extends JavaPlugin {
     }
 
 	
+
+	private myMerchant getMerchantByID(int parseInt) {
+		// TODO Auto-generated method stub
+		for (myMerchant g : this.universe.merchants)
+		{
+			if (g.id == parseInt)
+			{
+				System.out.println("Found a merchant");
+				return g;
+			}
+		}
+		return null;
+	}
 
 	private myPathgroup getPathgroupByID(int parseInt) {
 		// TODO Auto-generated method stub

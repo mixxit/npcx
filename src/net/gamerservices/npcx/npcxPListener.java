@@ -52,14 +52,23 @@ public class npcxPListener extends PlayerListener {
 						// does it have a category set?
 						if (player.target.parent.category != null)
 						{
+							
+							// check what type of category it is
 							if (player.target.parent.category.matches("shop"))
 							{
 								// shop
 								player.target.parent.onPlayerChat(player, event.getMessage(),"shop");
 								
 							} else {
-								// normal chat event / unknown category
-								player.target.parent.onPlayerChat(player, event.getMessage(),"");
+								if (player.target.parent.category.matches("merchant"))
+								{
+									// merchant
+									player.target.parent.onPlayerChat(player, event.getMessage(),"merchant");
+									
+								} else {
+									// normal chat event / unknown category
+									player.target.parent.onPlayerChat(player, event.getMessage(),"");
+								}
 							}
 						} else {
 							// normal chat event

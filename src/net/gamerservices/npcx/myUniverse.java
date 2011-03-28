@@ -547,6 +547,7 @@ public class myUniverse {
 
 	public void loadData() {
 		// TODO Auto-generated method stub
+		loadMerchants();
 		loadFactions();
 		loadPathgroups();
 		loadLoottables();
@@ -654,7 +655,7 @@ public class myUniverse {
             
             // Load npcs into spawngroups
             Statement s11 = conn.createStatement ();
-            s11.executeQuery ("SELECT npc.weapon As weapon, npc.helmet As helmet,npc.chest As chest,npc.legs As legs,npc.boots As boots,spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.category As category, npc.loottable_id As loottable_id, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
+            s11.executeQuery ("SELECT npc.weapon As weapon, npc.merchantid As merchantid, npc.helmet As helmet,npc.chest As chest,npc.legs As legs,npc.boots As boots,spawngroup_entries.spawngroupid As spawngroupid,spawngroup_entries.npcid As npcid, npc.name As name, npc.category As category, npc.loottable_id As loottable_id, npc.faction_id As faction_id FROM spawngroup_entries,npc WHERE npc.id = spawngroup_entries.npcid AND spawngroup_entries.spawngroupid ="+idVal);
             ResultSet rs11 = s11.getResultSet ();
             
             while (rs11.next ())
@@ -699,7 +700,11 @@ public class myUniverse {
 	            		npc.boots = 309;
 	            	}
 	            	
-	            	
+	            	for (myMerchant merchant : merchants)
+	            	{
+	            		if (rs11.getInt("merchantid") == merchant.id)
+	            			npc.merchant = merchant;
+	            	}
 	            	
 	            	for (myFaction faction : factions)
 	            	{
@@ -869,7 +874,6 @@ public class myUniverse {
             	while (rsEntries.next ())
 	            {
             		
-            		Location pgloc = new Location(parent.getServer().getWorld(this.defaultworld),rsEntries.getInt("x"),rsEntries.getInt("y"),rsEntries.getInt("z"),rsEntries.getFloat("yaw"),rsEntries.getFloat("pitch"));
             		
             		myMerchant_entry entry = new myMerchant_entry(Merchant, Merchant.id, rsEntries.getInt("itemid"), rsEntries.getInt("amount"), rsEntries.getInt("pricebuy"), rsEntries.getInt("pricesell"));
             		
