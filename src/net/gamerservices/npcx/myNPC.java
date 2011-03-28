@@ -255,7 +255,7 @@ public class myNPC {
 								say(player,Material.matchMaterial(aMsg[1]) + " x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
 							}
 						} else {
-							say(player,item.itemid + " x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+							say(player,item.itemid + "("+Material.matchMaterial(aMsg[1]).toString()+") x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
 						}
 					}
 					
