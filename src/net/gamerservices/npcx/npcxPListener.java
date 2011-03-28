@@ -59,11 +59,11 @@ public class npcxPListener extends PlayerListener {
 								
 							} else {
 								// normal chat event / unknown category
-								player.target.parent.parseChat(player, event.getMessage());
+								player.target.parent.onPlayerChat(player, event.getMessage());
 							}
 						} else {
 							// normal chat event
-							player.target.parent.parseChat(player, event.getMessage());
+							player.target.parent.onPlayerChat(player, event.getMessage());
 						}
 					} else {
 						player.player.sendMessage("You cannot talk to temporary spawns");

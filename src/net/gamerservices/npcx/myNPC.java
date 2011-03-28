@@ -70,7 +70,9 @@ public class myNPC {
 		}
 	}
 	
-	public void parseChat(myPlayer myplayer, String message)
+	
+	
+	public void onPlayerChat(myPlayer myplayer, String message)
 	{
 		int count = 0;
 		int size = 0;
@@ -128,7 +130,6 @@ public class myNPC {
 							
 							myplayer.player.sendMessage(npc.getName() + " says to you, 'Look out!'");
 							return;
-
 						}
 
 						
@@ -473,7 +474,7 @@ public class myNPC {
 		}
 		
 		// Unknown command
-		parseChat(player,message);
+		onPlayerChat(player,message);
 		player.player.sendMessage(npc.getName() + " says to you, 'Sorry, can i [help] you?'");
 		
 		return;
@@ -516,5 +517,109 @@ public class myNPC {
 	public void Delete() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void onRightClick(Player p) {
+		// TODO Auto-generated method stub
+		for (myPlayer player : parent.universe.players.values()){
+			if (player.player == p)
+			{
+				if (player.target != null)
+				{
+                    p.sendMessage("* Target cleared!");
+                    player.target = null;
+					
+				} else {
+					player.target = this.npc;
+					
+					int tNPCID = 0;
+					int tGPID = 0;
+					int tFID = 0;
+					int tPGID = 0;
+					int tLTID = 0;
+					
+					if (this.parent != null)
+					{
+						tNPCID = Integer.parseInt(this.id);
+						
+    					if (this.spawngroup != null)
+    						tGPID = this.spawngroup.id;
+    					if (this.faction != null)
+    						tFID = this.faction.id;
+    					if (this.pathgroup != null)
+    						tPGID = this.pathgroup.id;
+    					if (this.loottable != null)
+    						tLTID = this.loottable.id;
+					}
+					
+                    p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+")");
+                    p.sendMessage("* Active chat target set as: " + name + ". Click again to cancel.");
+                    p.sendMessage("* Anything you now type will be redirected to: " + name);
+                    p.sendMessage("* Words in [brackets] are commands. Type 'hello' to begin.");
+                    
+				}
+				
+			} else {
+				if (player.name == p.getName())
+				{
+					p.sendMessage("Your name is right but your player is wrong");
+					
+				}
+				
+			}
+		}
+	}
+
+	public void onClosestPlayer(Player p) {
+		// TODO Auto-generated method stub
+		
+		int count2 = 0;
+		for (myTriggerword tw : triggerwords.values())
+		{
+			//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
+			if (tw.word.toLowerCase().contains("EVENT_CLOSEST"))
+			{
+				String send = variablise(tw.response,p);
+				
+				p.sendMessage(npc.getName() + " says to you, '" + send + "'");
+				count2++;
+				return;
+			}
+			
+			
+		}
+		if (count2 == 0)
+		{
+			// If i dont have a triggerword, dont respond
+			//p.sendMessage(npc.getName() + " says to you, 'Watch your back.'");
+		}
+		
+		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation(),true));
+	}
+
+	public void onBounce(Player p) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		
+		int count2 = 0;
+		for (myTriggerword tw : triggerwords.values())
+		{
+			//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
+			if (tw.word.toLowerCase().contains("EVENT_BOUNCE"))
+			{
+				String send = variablise(tw.response,p);
+				
+				p.sendMessage(npc.getName() + " says to you, '" + send + "'");
+				count2++;
+				return;
+			}
+			
+			
+		}
+		if (count2 == 0)
+		{
+			// If i dont have a triggerword, dont respond
+			p.sendMessage(npc.getName() + " says to you, 'Hey! Watch where you are going!'");
+		}
 	}
 }

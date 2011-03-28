@@ -636,8 +636,6 @@ public class BasicHumanNpc extends BasicNpc {
 		
 		
 		this.mcEntity.c(loc.getX(), loc.getY(), loc.getZ(),loc.getYaw(), loc.getPitch());
-		
-		
 	}
     
 	public void faceLocation(Location face)
@@ -651,12 +649,6 @@ public class BasicHumanNpc extends BasicNpc {
 	{
 		Debug("npcx : ***"+ this.getBukkitEntity().getName() + " paniced! : "+ type + " ***");
 	}
-	
-    
-
-
-
-    
 
 	public void attackLivingEntity(LivingEntity ent) {
         try {
@@ -738,67 +730,17 @@ public class BasicHumanNpc extends BasicNpc {
 
 	public void onBounce(Player p) {
 		// TODO Auto-generated method stub
-		
+		this.parent.onBounce(p);
 	}
 
 	public void onRightClick(Player p) {
 		// TODO Auto-generated method stub
-        
-        for (myPlayer player : parent.parent.universe.players.values()){
-        	
-        	
-			if (player.player == p)
-			{
-				if (player.target != null)
-				{
-                    p.sendMessage("* Target cleared!");
-                    player.target = null;
-					
-				} else {
-					player.target = this;
-					
-					int tNPCID = 0;
-					int tGPID = 0;
-					int tFID = 0;
-					int tPGID = 0;
-					int tLTID = 0;
-					
-					if (this.parent != null)
-					{
-						tNPCID = Integer.parseInt(this.parent.id);
-						
-    					if (this.parent.spawngroup != null)
-    						tGPID = this.parent.spawngroup.id;
-    					if (this.parent.faction != null)
-    						tFID = this.parent.faction.id;
-    					if (this.parent.pathgroup != null)
-    						tPGID = this.parent.pathgroup.id;
-    					if (this.parent.loottable != null)
-    						tLTID = this.parent.loottable.id;
-					}
-					
-                    p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+")");
-                    p.sendMessage("* Active chat target set as: " + this.getName() + ". Click again to cancel.");
-                    p.sendMessage("* Anything you now type will be redirected to: " + this.getName());
-                    p.sendMessage("* Words in [brackets] are commands. Type 'hello' to begin.");
-                    
-				}
-				
-			} else {
-				if (player.name == p.getName())
-				{
-					p.sendMessage("Your name is right but your player is wrong");
-					
-				}
-				
-			}
-		}
-		
+        this.parent.onRightClick(p);
 	}
 
 	public void onClosestPlayer(Player p) {
 		// TODO Auto-generated method stub
-		forceMove(getFaceLocationFromMe(p.getLocation(),true));
+		this.parent.onClosestPlayer(p);
 	}
 
 
