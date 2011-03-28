@@ -89,65 +89,69 @@ public class myNPC {
 						
 			if(count == 0)
 			{
-				for (myTriggerword tw : triggerwords.values())
+				if (triggerwords != null)
 				{
-					//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
-					if (word.toLowerCase().contains(tw.word.toLowerCase()))
+					for (myTriggerword tw : triggerwords.values())
 					{
-						String npcattack = "NPCATTACK";
-						String summonplayer = "NPCSUMMONPLAYER";
-						String npcsummonzombie = "NPCSUMMONZOMBIE";
-						
-						
-						// NPCATTACK variable
-						if (tw.response.toLowerCase().contains(npcattack.toLowerCase()))
+						//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
+						if (word.toLowerCase().contains(tw.word.toLowerCase()))
 						{
-								say(myplayer,"You will regret that");
-								npc.aggro = myplayer.player;
-								npc.follow = myplayer.player;
-								return;
-
-						}
-
-						// NPCSUMMONPLAYER
-						if (tw.response.toLowerCase().contains(summonplayer.toLowerCase()))
-						{
-								say(myplayer,"Come here");
-								double x = npc.getBukkitEntity().getLocation().getX();
-								double y = npc.getBukkitEntity().getLocation().getY();
-								double z = npc.getBukkitEntity().getLocation().getZ();
+							String npcattack = "NPCATTACK";
+							String summonplayer = "NPCSUMMONPLAYER";
+							String npcsummonzombie = "NPCSUMMONZOMBIE";
+							
+							
+							// NPCATTACK variable
+							if (tw.response.toLowerCase().contains(npcattack.toLowerCase()))
+							{
+									say(myplayer,"You will regret that");
+									npc.aggro = myplayer.player;
+									npc.follow = myplayer.player;
+									return;
+	
+							}
+	
+							// NPCSUMMONPLAYER
+							if (tw.response.toLowerCase().contains(summonplayer.toLowerCase()))
+							{
+									say(myplayer,"Come here");
+									double x = npc.getBukkitEntity().getLocation().getX();
+									double y = npc.getBukkitEntity().getLocation().getY();
+									double z = npc.getBukkitEntity().getLocation().getZ();
+									Location location = new Location(npc.getBukkitEntity().getLocation().getWorld(), x, y, z);
+									
+									myplayer.player.teleportTo(location);
+									return;
+	
+							}
+	
+							// NPCSUMMONMOB
+							if (tw.response.toLowerCase().contains(npcsummonzombie.toLowerCase()))
+							{
+								double x = myplayer.player.getLocation().getX();
+								double y = myplayer.player.getLocation().getY();
+								double z = myplayer.player.getLocation().getZ();
 								Location location = new Location(npc.getBukkitEntity().getLocation().getWorld(), x, y, z);
 								
-								myplayer.player.teleportTo(location);
+								
+								npc.getBukkitEntity().getWorld().spawnCreature(location,CreatureType.ZOMBIE);
+								
+								say(myplayer,"Look out");
 								return;
-
-						}
-
-						// NPCSUMMONMOB
-						if (tw.response.toLowerCase().contains(npcsummonzombie.toLowerCase()))
-						{
-							double x = myplayer.player.getLocation().getX();
-							double y = myplayer.player.getLocation().getY();
-							double z = myplayer.player.getLocation().getZ();
-							Location location = new Location(npc.getBukkitEntity().getLocation().getWorld(), x, y, z);
-							
-							
-							npc.getBukkitEntity().getWorld().spawnCreature(location,CreatureType.ZOMBIE);
-							
-							say(myplayer,"Look out");
-							return;
-						}
-
-						
-						String send = variablise(tw.response,myplayer.player);
-						say(myplayer,send);
-						count++;
-						return;
+							}
 	
+							
+							String send = variablise(tw.response,myplayer.player);
+							say(myplayer,send);
+							count++;
+							return;
+		
+						}
+						
+						
+						size++;
 					}
-					
-					
-					size++;
+				
 				}
 			}
 		}
@@ -610,34 +614,40 @@ public class myNPC {
 	public void onClosestPlayer(Player p) {
 		// TODO Auto-generated method stub
 		
-		int count2 = 0;
-		for (myTriggerword tw : triggerwords.values())
+		if (triggerwords != null)
 		{
-			//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
-			if (tw.word.toLowerCase().contains("event_close"))
+			int count2 = 0;
+			for (myTriggerword tw : triggerwords.values())
 			{
-				String send = variablise(tw.response,p);
-				
-				for (myPlayer player : this.parent.universe.players.values())
+				//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
+				if (tw.word.toLowerCase().contains("event_close"))
 				{
-					if (p == player.player)
+					String send = variablise(tw.response,p);
+					
+					for (myPlayer player : this.parent.universe.players.values())
 					{
-						say(player,send + "'");
+						if (p == player.player)
+						{
+							say(player,send + "'");
+						}
 					}
+					
+					count2++;
+					
 				}
-				
-				count2++;
-				
 			}
-		}
-		if (count2 == 0)
-		{
-			// If i dont have a triggerword, dont respond
-			//p.sendMessage(npc.getName() + " says to you, 'Watch your back.'");
-		}
+			if (count2 == 0)
+			{
+				// If i dont have a triggerword, dont respond
+				//p.sendMessage(npc.getName() + " says to you, 'Watch your back.'");
+			}
 		
 		// face target
 		//this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation(),true));
+		
+		} else {
+			// Either a standard spawn or has no triggers!
+		}
 	}
 
 	public void onBounce(Player p) {
@@ -741,5 +751,18 @@ public class myNPC {
 			
 			
 		}
+	}
+
+	public BasicHumanNpc Spawn(String name, Location loc) {
+		// TODO Auto-generated method stub
+		World world = loc.getWorld();
+		double x = loc.getX();
+		double y = loc.getY();
+		double z = loc.getZ();
+		double yaw = loc.getYaw();
+		double pitch = loc.getPitch();
+		
+		BasicHumanNpc hnpc = Spawn(name,name,world,x,y,z,yaw,pitch);
+		return hnpc;
 	}
 }

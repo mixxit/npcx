@@ -1833,53 +1833,11 @@ public class npcx extends JavaPlugin {
 	            		player.sendMessage("Spawning new (temporary) NPC: " + args[2]);
 	                    // temporary
 	            		Location loc = new Location(player.getWorld(),player.getLocation().getX(),player.getLocation().getY(),player.getLocation().getZ(),player.getLocation().getYaw(),player.getLocation().getPitch());
-	            		
 	            		 myNPC npc = new myNPC(this, null, loc, args[2]);
-	            		
-		                 
+	            		 npc.Spawn(args[2],loc);
+	            		 this.universe.npcs.put("ZZSpawns"+"-"+npc.id,npc);
 	            		 this.npclist.put(args[2], npc.npc);
 	            		 
-		                
-	            		
-	            		try {
-		            		if (args.length < 4)
-		            		{
-		            			if (args[3].equals("1"))
-		            			{
-		            				
-		            				
-		            				
-		            				
-				                    ItemStack is = new ItemStack(Material.IRON_SWORD);
-				                    is.setAmount(1);
-				                    npc.npc.getBukkitEntity().setItemInHand(is);
-				                    
-				                    /*
-				                    ItemStack ic = new ItemStack(Material.IRON_CHESTPLATE);
-				                    ic.setAmount(1);
-				                    hnpc.getBukkitEntity().getInventory().setChestplate(ic);
-
-				                    ItemStack ih = new ItemStack(Material.IRON_HELMET);
-				                    ih.setAmount(1);
-				                    hnpc.getBukkitEntity().getInventory().setHelmet(ih);
-				                    
-				                    ItemStack il = new ItemStack(Material.IRON_LEGGINGS);
-				                    il.setAmount(1);
-				                    hnpc.getBukkitEntity().getInventory().setLeggings(il);
-				                    
-				                    ItemStack ib = new ItemStack(Material.IRON_BOOTS);
-				                    ib.setAmount(1);
-				                    hnpc.getBukkitEntity().getInventory().setBoots(ib);
-				                    
-				                    */
-				                    
-		            			}
-		            			
-		            		}
-	            		} catch (Exception e)
-	            		{
-	            			e.printStackTrace();
-	            		}
 	            		return true;
                 }
             }
