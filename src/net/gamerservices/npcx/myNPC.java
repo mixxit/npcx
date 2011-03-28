@@ -710,4 +710,36 @@ public class myNPC {
 		}
 
 	}
+
+	public void onKilled(LivingEntity ent) {
+		// TODO Auto-generated method stub
+		if (ent instanceof Player)
+		{
+			int count2 = 0;
+			for (myTriggerword tw : triggerwords.values())
+			{
+				//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
+				if (tw.word.toLowerCase().contains("event_killed"))
+				{
+					String send = variablise(tw.response,(Player)ent);
+					
+					for (myPlayer player : this.parent.universe.players.values())
+					{
+						if (ent == player.player)
+						{
+							say(player,send + "'");
+						}
+					}
+					count2++;
+				}
+			}
+			if (count2 == 0)
+			{
+				// If i dont have a triggerword, respond with
+				((Player) ent).sendMessage(npc.getName() + " says to you, 'Not a strong as I thought'");
+			}
+			
+			
+		}
+	}
 }

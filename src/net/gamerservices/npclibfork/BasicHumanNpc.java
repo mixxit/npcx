@@ -663,6 +663,7 @@ public class BasicHumanNpc extends BasicNpc {
             	{
             		((Player) ent).getServer().broadcastMessage(((Player) ent).getName() + " was slaughtered by " + getName() + ".");
             		((Player) ent).sendMessage("You have been slaughtered by " + getName());
+            		this.onKilled(ent);
             		
             	}
             } else {
@@ -723,7 +724,12 @@ public class BasicHumanNpc extends BasicNpc {
         }
     }
 
-    public void animateArmSwing()
+    private void onKilled(LivingEntity ent) {
+		// TODO Auto-generated method stub
+		this.parent.onKilled(ent);
+	}
+
+	public void animateArmSwing()
     {
         this.mcEntity.animateArmSwing();
     }
