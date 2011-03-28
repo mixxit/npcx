@@ -1567,7 +1567,7 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx npc list [name]");
                 	
                 	// spawns the npc temporarily at your current spot for testing
-                	player.sendMessage("Insufficient arguments /npcx npc spawn name");
+                	//player.sendMessage("Insufficient arguments /npcx npc spawn name");
                 	
                 	player.sendMessage("Insufficient arguments /npcx npc triggerword add npcid triggerword response");
                 	player.sendMessage("Insufficient arguments /npcx npc faction npcid factionid");
@@ -2001,7 +2001,9 @@ public class npcx extends JavaPlugin {
             	
             	
             	
-            	
+            	/*
+            	 * Disabled temporarily
+            	 * 
             	if (args[1].equals("spawn")) {
 	            		player.sendMessage("Spawning new (temporary) NPC: " + args[2]);
 	                    // temporary
@@ -2013,6 +2015,7 @@ public class npcx extends JavaPlugin {
 	            		 
 	            		return true;
                 }
+                */
             }
             
         } catch (Exception e) {
