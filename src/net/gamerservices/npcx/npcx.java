@@ -540,6 +540,9 @@ public class npcx extends JavaPlugin {
         EventsSetup();
         
         universe.checkDbSetup();
+        universe.checkUpdates();
+        
+        
         universe.loadData();
         
         PluginDescriptionFile pdfFile = this.getDescription();

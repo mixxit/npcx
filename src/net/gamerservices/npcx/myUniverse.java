@@ -183,14 +183,7 @@ public class myUniverse {
 			return false;
 		}
 		
-		if (updateDB() != true)
-		{
-			System.out.println("**********************************************");
-			System.out.println("* Your DB is currently out of sync with your *");
-			System.out.println("*           version of NPCX                  *");
-			System.out.println("**********************************************");			
-			return false;
-		}
+		
 		
 		
 		// TODO i need to handle this instead
@@ -341,6 +334,21 @@ public class myUniverse {
 		}
 	}
 	
+	
+	public boolean checkUpdates()
+	{
+		if (updateDB() != true)
+		{
+			System.out.println("**********************************************");
+			System.out.println("* Your DB is currently out of sync with your *");
+			System.out.println("*           version of NPCX                  *");
+			System.out.println("**********************************************");			
+			return false;
+		} else {
+			return true;
+		}
+		
+	}
 	
 
 	public void checkDbSetup() {
