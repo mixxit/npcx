@@ -1377,7 +1377,7 @@ public class npcx extends JavaPlugin {
             	// creates a new npc with name       
             	
             	
-            	if (args.length < 2) {
+            	if (args.length < 1) {
             		// todo: need to implement npc types here ie: 0 = default 1 = banker 2 = merchant
             		// todo: need to implement '/npcx npc edit' here
                 	player.sendMessage("Insufficient arguments /npcx npc create name");
@@ -1406,6 +1406,7 @@ public class npcx extends JavaPlugin {
             	if (args[1].equals("triggerword")) {
             		if (args.length < 6) {
             			player.sendMessage("Insufficient arguments /npcx npc triggerword add npcid triggerword response");
+            			
             		
             		} else {
             			
