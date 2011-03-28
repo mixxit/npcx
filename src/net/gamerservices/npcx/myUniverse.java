@@ -30,6 +30,8 @@ public class myUniverse {
 	public final String PROP_DBPORT = "db-port";
 	public final String PROP_WORLD = "world";
 	public final String PROP_UPDATE = "update";
+	public final String PROP_DBVERSION = "db-version";
+	
 	
 	// db
 	public String dsn;
@@ -40,6 +42,8 @@ public class myUniverse {
 	public String dbpass;
 	public String dbname;
 	public String dbport;
+	public String dbversion;
+	
 	
 	public Properties prop;
 	public File propfile;
@@ -63,7 +67,7 @@ public class myUniverse {
 		this.parent = parent;
 	}
 	
-	public void openDB()
+	public boolean openDB()
 	{
 		if (dbhost == null)
 	 	{
@@ -73,6 +77,8 @@ public class myUniverse {
 			this.dbpass = "p4ssw0rd!";
 			this.dbport = "3306";
 			this.update = "true";
+			this.dbversion = "1";
+			
 			dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
 	 	}
 	 
@@ -90,7 +96,7 @@ public class myUniverse {
 		 		System.out.println("*****************************************");
 		 		System.out.println("npcx : ERROR - Cannot find MySQL Library!");
 		 		System.out.println("*****************************************");
-		 		return;
+		 		return false;
 		 	}
 		 	
 		 	try
@@ -102,11 +108,14 @@ public class myUniverse {
 		 		System.out.println("npcx : ERROR - Error during MySQL login ");
 		 		System.out.println("*****************************************");
 		 		e.printStackTrace();
-		 		return;
+		 		return false;
 		 	}
+		 	
+		 	return true;
         } catch (Exception e)
         {
         	e.printStackTrace();
+        	return false;
         }
 	}
 
@@ -132,12 +141,26 @@ public class myUniverse {
 				dbpass = config.getProperty("db-pass");
 				dbname = config.getProperty("db-name");
 				dbport = config.getProperty("db-port");
+				dbversion = config.getProperty("db-version");
+				
 				this.defaultworld = config.getProperty("world");
 				
 				update = config.getProperty("update");
 				
 				dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
 				System.out.println(dsn);
+				
+				if (dbversion == null)
+				{
+					System.out.println("************************************************");
+					System.out.println("* Load settings failed to load your DB setup   *");
+					System.out.println("*    YOU ARE USING AN OLD RELEASE OF NPCX      *");
+					System.out.println("*  AND MUST NOW WIPE YOUR DB BY REMOVING YOUR  *");
+					System.out.println("* PLUGINS/NPCX FOLDER AND RESTARTING BUKKIT    *");
+					System.out.println("* PLEASE RECONFIGURE ANY SETTINGS AS NECESSARY *");
+					System.out.println("************************************************");
+					return false;
+				}
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -148,7 +171,18 @@ public class myUniverse {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
+		
+		if (openDB() != true)
+		{
+			System.out.println("**********************************************");
+			System.out.println("* Load settings failed to load your DB setup *");
+			System.out.println("*                 openDB()                   *");
+			System.out.println("**********************************************");
+			return false;
+		}
+		
+		
 		// TODO i need to handle this instead
 		for (World w : parent.getServer().getWorlds())
 		{
@@ -194,12 +228,15 @@ public class myUniverse {
 				prop.setProperty(PROP_DBPASS, "p4ssw0rd!");
 				prop.setProperty(PROP_DBNAME, "npcx");
 				prop.setProperty(PROP_DBPORT, "3306");
+				prop.setProperty(PROP_DBVERSION, "1");
+				
 				prop.setProperty(PROP_UPDATE, "true");
 				this.dbhost = "localhost";
 				this.dbuser = "npcx";
 				this.dbname = "npcx";
 				this.dbpass = "p4ssw0rd!";
 				this.dbport = "3306";
+				this.dbversion = "1";
 				this.update = "true";
 				
 				
@@ -223,7 +260,7 @@ public class myUniverse {
 
 	public void checkDbSetup() {
 		// TODO Auto-generated method stub
-		openDB();
+		
 		
 		// Check the config file
 		try {
@@ -252,79 +289,133 @@ public class myUniverse {
 		             * 
 		             * */
 	            	
+	            	// Purge old tables
 	            	
-	            	Statement factionlist = conn.createStatement ();
-		            String dropfactionlist = "DROP TABLE IF EXISTS faction_list; ";
-		            String fationlistsql = "CREATE TABLE faction_list ( id int(11) NOT NULL AUTO_INCREMENT, name varchar(45) DEFAULT NULL, base int(11) DEFAULT NULL, PRIMARY KEY (id))";
-		            factionlist.executeUpdate(dropfactionlist);
-		            factionlist.executeUpdate(fationlistsql);
-		            factionlist.close();
-		            
-		            Statement player_faction = conn.createStatement ();
-		            String dropplayer_faction = "DROP TABLE IF EXISTS player_faction; ";
-		            String player_factionsql = "CREATE TABLE player_faction (  id int(11) NOT NULL AUTO_INCREMENT,  player_name varchar(45) DEFAULT NULL,  faction_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
-		            player_faction.executeUpdate(dropplayer_faction);
-		            player_faction.executeUpdate(player_factionsql);
-		            player_faction.close();
-		            
-		            Statement loottable_entries = conn.createStatement ();
-		            String droploottable_entries = "DROP TABLE IF EXISTS loottable_entries; ";
-		            String loottable_entriessql = "CREATE TABLE loottable_entries (id int(11) NOT NULL AUTO_INCREMENT,  loottable_id int(11) DEFAULT NULL,  item_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
-		            loottable_entries.executeUpdate(droploottable_entries);
-		            loottable_entries.executeUpdate(loottable_entriessql);
-		            loottable_entries.close();
-		            
-		            Statement loottable = conn.createStatement ();
-		            String droploottable = "DROP TABLE IF EXISTS loottables; ";
-		            String loottablesql = "CREATE TABLE loottables (  id int(11) NOT NULL AUTO_INCREMENT,  name varchar(50) DEFAULT NULL,  PRIMARY KEY (id))";
-		            loottable.executeUpdate(droploottable);
-		            loottable.executeUpdate(loottablesql);
-		            loottable.close();
 	            	
-		            Statement npc_faction = conn.createStatement ();
-		            String dropnpc_faction = "DROP TABLE IF EXISTS npc_faction; ";
-		            String npc_factionsql = "CREATE TABLE npc_faction (id int(11) NOT NULL AUTO_INCREMENT, npc_id int(11) DEFAULT NULL, faction_id int(11) DEFAULT NULL, amount int(11) DEFAULT NULL,PRIMARY KEY (id))";
-		            npc_faction.executeUpdate(dropnpc_faction);
-		            npc_faction.executeUpdate(npc_factionsql);
-		            npc_faction.close();
-		            
-		            
-		            Statement s2 = conn.createStatement ();
-		            String droptable = "DROP TABLE IF EXISTS npc; ";
-		            String npctable = "CREATE TABLE npc (  id int(10) unsigned NOT NULL AUTO_INCREMENT,  name char(40) DEFAULT NULL,  category char(40) DEFAULT NULL,  faction_id int(11) DEFAULT NULL,  loottable_id int(11) DEFAULT NULL,  weapon int(11) DEFAULT NULL,  helmet int(11) DEFAULT NULL,  chest int(11) DEFAULT NULL,  legs int(11) DEFAULT NULL,  boots int(11) DEFAULT NULL,  PRIMARY KEY (id)) ";
+	            	Statement sqlDropstmt = conn.createStatement();
+	            	String sqldrop = "DROP TABLE IF EXISTS npc_triggerwords; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
 
-		            s2.executeUpdate(droptable);
-		            s2.executeUpdate(npctable);
+		            sqldrop = "DROP TABLE IF EXISTS spawngroup_entries; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
+		            
+		            sqldrop = "DROP TABLE IF EXISTS npc_faction; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
+		            
+		            sqldrop = "DROP TABLE IF EXISTS npc; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
+
+		            sqldrop = "DROP TABLE IF EXISTS loottables; ";
+	            	sqlDropstmt.executeUpdate(sqldrop);
+		            
+	            	sqldrop = "DROP TABLE IF EXISTS loottable_entries; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
+
+		            sqldrop = "DROP TABLE IF EXISTS merchant_entries";
+		            sqlDropstmt.executeUpdate(sqldrop);
+		            
+		            sqldrop = "DROP TABLE IF EXISTS merchant";
+		            sqlDropstmt.executeUpdate(sqldrop);
+		            
+		            sqldrop = "DROP TABLE IF EXISTS player_faction";
+		            sqlDropstmt.executeUpdate(sqldrop);
+		            
+		            sqldrop = "DROP TABLE IF EXISTS faction_list; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
 		            
 		            
-		            String droptable0 = "DROP TABLE IF EXISTS pathgroup; ";
-		            String npctable0 = "CREATE TABLE pathgroup ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),name CHAR(40),category CHAR(40))";
-		            s2.executeUpdate(droptable0);
-		            s2.executeUpdate(npctable0);
 		            
-		            String droptable1 = "DROP TABLE IF EXISTS pathgroup_entries; ";
-		            String npctable1 = "CREATE TABLE pathgroup_entries (  id int(10) unsigned NOT NULL AUTO_INCREMENT,  s int(11) DEFAULT NULL,  pathgroup int(11) DEFAULT NULL,  name char(40) DEFAULT NULL,  x char(40) DEFAULT NULL,  y char(40) DEFAULT NULL,  z char(40) DEFAULT NULL,  yaw char(40) DEFAULT NULL,  pitch char(40) DEFAULT NULL,  PRIMARY KEY (id))";
-		            s2.executeUpdate(droptable1);
-		            s2.executeUpdate(npctable1);
+		            sqldrop = "DROP TABLE IF EXISTS spawngroup; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
 		            
-		            String droptable2 = "DROP TABLE IF EXISTS spawngroup; ";
-		            String spawngrouptable = "CREATE TABLE spawngroup (  id int(10) unsigned NOT NULL AUTO_INCREMENT,  name char(40) DEFAULT NULL,  world char(40) DEFAULT NULL,  category char(40) DEFAULT NULL,  x char(40) DEFAULT NULL,  y char(40) DEFAULT NULL,  z char(40) DEFAULT NULL,  yaw char(40) DEFAULT NULL,  pitch char(40) DEFAULT NULL,  pathgroupid int(10) DEFAULT NULL,  PRIMARY KEY (id))";
-		            s2.executeUpdate(droptable2);
+		            sqldrop = "DROP TABLE IF EXISTS pathgroup_entries; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
 		            
-		            s2.executeUpdate(spawngrouptable);
+		            sqldrop = "DROP TABLE IF EXISTS pathgroup; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
 		            
-		            String droptable3 = "DROP TABLE IF EXISTS spawngroup_entries; ";
-		            String sgetable = "CREATE TABLE spawngroup_entries ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),spawngroupid int,npcid int)";
-		            s2.executeUpdate(droptable3);
+		            sqldrop = "DROP TABLE IF EXISTS player_bank";
+		            sqlDropstmt.executeUpdate(sqldrop);
 		            
-		            s2.executeUpdate(sgetable);
+		            sqldrop = "DROP TABLE IF EXISTS player_flags";
+		            sqlDropstmt.executeUpdate(sqldrop);
 		            
-		            String droptable4 = "DROP TABLE IF EXISTS npc_triggerwords; ";
-		            String spawngrouptable4 = "CREATE TABLE npc_triggerwords ( id INT UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),npcid int,triggerword CHAR(40),reply VARCHAR(256),category CHAR(40))";
-		            s2.executeUpdate(droptable4);
-		            s2.executeUpdate(spawngrouptable4);
+		            sqldrop = "DROP TABLE IF EXISTS flags; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
 		            
-		            s2.close();
+		            sqldrop = "DROP TABLE IF EXISTS settings";
+		            sqlDropstmt.executeUpdate(sqldrop);
+		            
+		            sqldrop = "DROP TABLE IF EXISTS storage_entries";
+		            sqlDropstmt.executeUpdate(sqldrop);
+		            
+		            sqldrop = "DROP TABLE IF EXISTS storage";
+		            sqlDropstmt.executeUpdate(sqldrop);
+		            sqlDropstmt.close();
+		            
+		            // Create Tables
+		            
+	            	Statement sqlCreatestmt = conn.createStatement();
+		        
+	            	
+	            	String sqlcreate = "CREATE TABLE storage ( id int(10) unsigned NOT NULL AUTO_INCREMENT, name varchar(45) DEFAULT NULL, PRIMARY KEY (id) ) ";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE storage_entries ( id int(10) unsigned NOT NULL AUTO_INCREMENT, storageid int(10) unsigned DEFAULT NULL, itemid int(10) unsigned DEFAULT '0', amount int(10) unsigned DEFAULT '0', price int(10) unsigned DEFAULT '0', PRIMARY KEY (id), KEY fk_storage_id (storageid), CONSTRAINT fk_storage_id FOREIGN KEY (storageid) REFERENCES storage (id) ON DELETE NO ACTION ON UPDATE NO ACTION ) ";
+	            	
+		            sqlcreate = "CREATE TABLE flags ( id int(10) unsigned NOT NULL AUTO_INCREMENT, name varchar(45) DEFAULT NULL, PRIMARY KEY (id) )";
+	            	sqlCreatestmt.executeUpdate(sqlcreate);
+	            	
+		            sqlcreate = "CREATE TABLE faction_list ( id int(11) unsigned NOT NULL AUTO_INCREMENT, name varchar(45) DEFAULT NULL, base int(11) DEFAULT NULL, PRIMARY KEY (id) )";
+	            	sqlCreatestmt.executeUpdate(sqlcreate);
+	            	
+		            sqlcreate = "CREATE TABLE loottable_entries (id int(11) NOT NULL AUTO_INCREMENT,  loottable_id int(11) DEFAULT NULL,  item_id int(11) DEFAULT NULL,  amount int(11) DEFAULT NULL,  PRIMARY KEY (id))";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE loottables ( id int(11) unsigned NOT NULL AUTO_INCREMENT, name varchar(50) DEFAULT NULL, PRIMARY KEY (id) ) ";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE merchant ( id int(10) unsigned NOT NULL AUTO_INCREMENT, name varchar(45) DEFAULT NULL, PRIMARY KEY (id) ) ";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE merchant_entries ( id int(10) unsigned NOT NULL, merchantid int(10) unsigned DEFAULT NULL, itemid int(10) unsigned DEFAULT NULL, amount int(10) unsigned DEFAULT NULL, pricebuy int(10) unsigned DEFAULT NULL, pricesell int(10) unsigned DEFAULT NULL, PRIMARY KEY (id), KEY fk_merchantid (merchantid), CONSTRAINT fk_merchantid FOREIGN KEY (merchantid) REFERENCES merchant (id) ON DELETE NO ACTION ON UPDATE NO ACTION ) ";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE npc ( id int(11) unsigned NOT NULL AUTO_INCREMENT, name char(40) DEFAULT 'dummy', category char(40) DEFAULT NULL, faction_id int(11) unsigned DEFAULT NULL, loottable_id int(11) unsigned DEFAULT NULL, weapon int(11) unsigned DEFAULT '0', helmet int(11) unsigned DEFAULT '0', chest int(11) unsigned DEFAULT '0', legs int(11) unsigned DEFAULT '0', boots int(11) unsigned DEFAULT '0', merchantid int(10) unsigned DEFAULT NULL, hp int(11) unsigned DEFAULT '100', damage int(11) unsigned DEFAULT '3', coin int(11) unsigned DEFAULT '100', storageid int(11) unsigned DEFAULT NULL, PRIMARY KEY (id), KEY fk_npc_factionid (faction_id), KEY fk_npc_loottableid (loottable_id), KEY fk_npc_merchantid (merchantid), KEY fk_npc_storageid (storageid), CONSTRAINT fk_npc_storageid FOREIGN KEY (storageid) REFERENCES storage (id) ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT fk_npc_factionid FOREIGN KEY (faction_id) REFERENCES faction_list (id) ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT fk_npc_loottableid FOREIGN KEY (loottable_id) REFERENCES loottables (id) ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT fk_npc_merchantid FOREIGN KEY (merchantid) REFERENCES merchant (id) ON DELETE NO ACTION ON UPDATE NO ACTION )";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE npc_faction ( id int(11) unsigned NOT NULL AUTO_INCREMENT, npc_id int(11) unsigned DEFAULT NULL, faction_id int(11) unsigned DEFAULT NULL, amount int(11) DEFAULT NULL, PRIMARY KEY (id), KEY fk_npcid (npc_id), KEY fk_factionid (faction_id), CONSTRAINT fk_npcid FOREIGN KEY (npc_id) REFERENCES npc (id) ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT fk_factionid FOREIGN KEY (faction_id) REFERENCES faction_list (id) ON DELETE NO ACTION ON UPDATE NO ACTION )";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE pathgroup ( id int(10) unsigned NOT NULL AUTO_INCREMENT, name char(40) DEFAULT NULL, category char(40) DEFAULT NULL, PRIMARY KEY (id) ) ";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE pathgroup_entries ( id int(10) unsigned NOT NULL AUTO_INCREMENT, s int(11) unsigned DEFAULT NULL, pathgroup int(11) unsigned DEFAULT NULL, name char(40) DEFAULT NULL, x char(40) DEFAULT NULL, y char(40) DEFAULT NULL, z char(40) DEFAULT NULL, yaw char(40) DEFAULT NULL, pitch char(40) DEFAULT NULL, PRIMARY KEY (id), KEY fk_pathgroupid (pathgroup), CONSTRAINT fk_pathgroupid FOREIGN KEY (pathgroup) REFERENCES pathgroup (id) ON DELETE NO ACTION ON UPDATE NO ACTION ) ";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE spawngroup ( id int(10) unsigned NOT NULL AUTO_INCREMENT, name char(40) DEFAULT 'defaultspawngroup', world char(40) DEFAULT NULL, category char(40) DEFAULT NULL, x char(40) DEFAULT NULL, y char(40) DEFAULT NULL, z char(40) DEFAULT NULL, yaw char(40) DEFAULT NULL, pitch char(40) DEFAULT NULL, pathgroupid int(10) unsigned DEFAULT '0', PRIMARY KEY (id) )";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE spawngroup_entries ( id int(10) unsigned NOT NULL AUTO_INCREMENT, spawngroupid int(11) unsigned DEFAULT NULL, npcid int(11) unsigned DEFAULT NULL, PRIMARY KEY (id), KEY fk_spawngroupid (spawngroupid), KEY fk_npcidSGE (npcid), CONSTRAINT fk_npcidSGE FOREIGN KEY (npcid) REFERENCES npc (id) ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT fk_spawngroupid FOREIGN KEY (spawngroupid) REFERENCES spawngroup (id) ON DELETE NO ACTION ON UPDATE NO ACTION )";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE npc_triggerwords ( id int(10) unsigned NOT NULL AUTO_INCREMENT, npcid int(11) unsigned DEFAULT NULL, triggerword char(40) DEFAULT NULL, reply varchar(256) DEFAULT NULL, category char(40) DEFAULT NULL, PRIMARY KEY (id), KEY fk_npct2n (npcid), CONSTRAINT fk_npct2n FOREIGN KEY (npcid) REFERENCES npc (id) ON DELETE NO ACTION ON UPDATE NO ACTION )";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE player_bank ( id int(10) unsigned NOT NULL AUTO_INCREMENT, playername varchar(45) DEFAULT NULL, itemid int(10) unsigned DEFAULT NULL, coin int(10) unsigned DEFAULT NULL, amount int(10) unsigned DEFAULT NULL, PRIMARY KEY (id) ) ";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE player_faction ( id int(11) unsigned NOT NULL AUTO_INCREMENT, player_name varchar(45) DEFAULT NULL, faction_id int(11) unsigned DEFAULT NULL, amount int(11) DEFAULT NULL, PRIMARY KEY (id), KEY fk_faction_id (faction_id), CONSTRAINT fk_faction_id FOREIGN KEY (faction_id) REFERENCES faction_list (id) ON DELETE NO ACTION ON UPDATE NO ACTION ) ";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE player_flags ( id int(10) unsigned NOT NULL AUTO_INCREMENT, flagid int(10) unsigned DEFAULT NULL, playername varchar(45) DEFAULT NULL, value varchar(45) DEFAULT NULL, PRIMARY KEY (id), KEY fk_flagid (flagid), CONSTRAINT fk_flagid FOREIGN KEY (flagid) REFERENCES flags (id) ON DELETE NO ACTION ON UPDATE NO ACTION ) ";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+		            sqlcreate = "CREATE TABLE settings ( id int(10) unsigned NOT NULL AUTO_INCREMENT, name varchar(45) DEFAULT NULL, value varchar(45) DEFAULT NULL, PRIMARY KEY (id) )";
+		            sqlCreatestmt.executeUpdate(sqlcreate);
+		            
+	            	sqlCreatestmt.close();
+		            
 		            System.out.println("npcx : finished table configuration");
 
 		            dbhost = config.getProperty("db-host");
@@ -332,6 +423,8 @@ public class myUniverse {
 		            dbpass = config.getProperty("db-pass");
 		            dbname = config.getProperty("db-name");
 		            dbport = config.getProperty("db-port");
+		            dbversion = config.getProperty("db-version");
+		            
 		            dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
 		            defaultworld = config.getProperty("world");
 					config.setProperty(PROP_DBHOST,dbhost);
@@ -339,8 +432,10 @@ public class myUniverse {
 					config.setProperty(PROP_DBPASS,dbpass);
 					config.setProperty(PROP_DBNAME,dbname);
 					config.setProperty(PROP_DBPORT,dbport);
+		            config.setProperty(PROP_DBVERSION,dbversion);
 					config.setProperty(PROP_WORLD,defaultworld);
 		            config.setProperty(PROP_UPDATE,"false");
+		            
 		            File propfolder = parent.getDataFolder();
 		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
 		            propfile.createNewFile();
