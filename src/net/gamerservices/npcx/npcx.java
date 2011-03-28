@@ -578,6 +578,7 @@ public class npcx extends JavaPlugin {
             	player.sendMessage("Insufficient arguments /npcx loottable");
             	player.sendMessage("Insufficient arguments /npcx npc");
             	player.sendMessage("Insufficient arguments /npcx pathgroup");
+            	player.sendMessage("Insufficient arguments /npcx merchant");
             	
             	return false;
             }
@@ -1363,7 +1364,179 @@ public class npcx extends JavaPlugin {
         		}
             }
             
-            
+            if (subCommand.equals("merchant"))
+            {
+            	if (args.length < 2) {
+            		// todo: need to implement npc types here ie: 0 = default 1 = banker 2 = merchant
+            		// todo: need to implement '/npcx npc edit' here
+                	player.sendMessage("Insufficient arguments /npcx merchant create name");
+
+                	// todo needs to force the player to provide a search term to not spam them with lots of results in the event of a huge npc list
+                	player.sendMessage("Insufficient arguments /npcx merchant list");
+        			player.sendMessage("Insufficient arguments /npcx merchant add merchantid item amount pricebuyat pricesellat");
+         			player.sendMessage("Insufficient arguments /npcx merchant inspect merchantid");
+
+               	
+                    return false;
+                }
+            	
+            	if (args[1].equals("inspect")) {
+            		
+            		player.sendMessage("Merchant Entries:");
+       		       
+          		   
+          		   if (args.length >= 3)
+          		   {
+          			   
+          			   PreparedStatement pginspect = this.universe.conn.prepareStatement("SELECT id,merchantid,itemid,amount,pricebuy,pricesell FROM merchant_entries WHERE merchantid = ? ORDER BY id ASC");
+            		   pginspect.setInt(1, Integer.parseInt(args[2]));
+          			   pginspect.executeQuery ();
+              		   ResultSet rspginspect = pginspect.getResultSet ();
+              		   
+              		   int count = 0;
+              		   while (rspginspect.next ())
+              		   {
+              			   	   int idVal = rspginspect.getInt ("id");
+              			   	   int merchantid = rspginspect.getInt ("merchantid");
+              			   	   int itemid = rspginspect.getInt ("itemid");
+           			   	   	   int amount = rspginspect.getInt ("amount");
+           			   	   	   int pricebuy = rspginspect.getInt ("pricebuy");
+           			   	   	   int pricesell = rspginspect.getInt ("pricesell");
+              				   
+        	       		       player.sendMessage("EID:"+idVal+":MID:"+merchantid+" Item:"+itemid +" - Amount: "+amount+" Buying: "+pricebuy+"Selling: "+pricesell);
+        	       		       ++count;
+              		   }
+              		   rspginspect.close ();
+              		   pginspect.close ();
+              		   player.sendMessage (count + " rows were retrieved");
+
+          		   }  else {
+          			 player.sendMessage("Insufficient arguments /npcx merchant inspect merchantid");
+          		   }
+          		
+            		
+        			
+        		}
+            	
+            	if (args[1].equals("add")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx merchant add merchantid item amount pricebuyat pricesellat");
+                    	
+            		} else {
+            			player.sendMessage("Added to merchant " + args[2] + "<"+ args[3]+ "x"+args[4]+"@"+args[5]+".");
+            			
+            			// add to database
+            		
+            			
+            			PreparedStatement s2 = this.universe.conn.prepareStatement("INSERT INTO merchant_entries (merchantid,itemid,amount,pricebuy,pricesell) VALUES (?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
+            			
+            			s2.setInt (1,Integer.parseInt(args[2]));
+            			s2.setInt (2,Integer.parseInt(args[3]));
+            			s2.setInt (3,Integer.parseInt(args[4]));
+            			s2.setInt (4,Integer.parseInt(args[5]));
+            			s2.setInt (5,Integer.parseInt(args[6]));
+            			s2.executeUpdate();
+        	            player.sendMessage("Merchant Item ["+ args[3] + "x" + args[4] + "@"+args[5]+"/"+args[6]+"] added to Merchant: ["+ args[2] + "]");
+            			
+        	            // add to cached spawngroup
+        	            for (myMerchant pg : this.universe.merchants)
+        	            {
+        	            	if (pg.id == Integer.parseInt(args[2]))
+        	            	{
+        	            		
+        	            		int dmerchantid = Integer.parseInt(args[2]);
+        	            		int itemid = Integer.parseInt(args[3]);
+        	            		int amount = Integer.parseInt(args[4]);
+        	            		int pricebuy = Integer.parseInt(args[5]);
+        	            		int pricesell = Integer.parseInt(args[6]);
+        	            		
+        	            		myMerchant_entry pge = new myMerchant_entry(pg, dmerchantid,itemid,amount,pricebuy,pricesell);
+        	            		dbg(1,"npcx : + cached new merchant entry("+ args[3] + ")");
+        	            		
+        	            		// add new merchant entry object to the merchants entry list
+        	            		pg.merchantentries.add(pge);
+        	            		
+        	            	}
+        	            }
+        	            
+        	            
+        	            
+            			
+            			// close db
+        	            s2.close();
+        	            
+            		}
+        			
+        		}
+            	
+            	if (args[1].equals("create")) {
+            		if (args.length < 3) {
+            			player.sendMessage("Insufficient arguments /npcx merchant create name");
+                    	
+            		} else {
+            			
+            			
+            			PreparedStatement statementPCreate = this.universe.conn.prepareStatement("INSERT INTO merchant (name) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
+            			statementPCreate.setString(1, args[2]);
+            			statementPCreate.executeUpdate();
+        	            
+        	            ResultSet keyset = statementPCreate.getGeneratedKeys();
+        	            
+            			int key = 0;
+            			if ( keyset.next() ) {
+            			    // Retrieve the auto generated key(s).
+	            			key = keyset.getInt(1);
+	            			
+            			}
+            			
+            			myMerchant merchant = new myMerchant(this,key,args[2]);
+            			merchant.id = key;
+            			merchant.name = args[2];
+
+            			this.universe.merchants.add(merchant);
+            			
+            			
+            			statementPCreate.close();
+        	            player.sendMessage("Created merchant ["+key+"]: " + args[2]);
+        	            
+            		}
+        			
+        		}
+            	
+            	if (args[1].equals("list")) {
+            		
+            		player.sendMessage("merchants:");
+          		   PreparedStatement sglist;
+       		       
+          		   
+          		   if (args.length < 3)
+          		   {
+          			   sglist = this.universe.conn.prepareStatement("SELECT id, name FROM merchant ORDER BY ID DESC LIMIT 10");
+          		   } else {
+
+              		   sglist = this.universe.conn.prepareStatement("SELECT id, name FROM merchant WHERE name LIKE '%"+args[2]+"%'");
+          		   }
+          		   sglist.executeQuery ();
+          		   ResultSet rs = sglist.getResultSet ();
+          		   
+          		   int count = 0;
+          		   while (rs.next ())
+          		   {
+          			  int idVal = rs.getInt ("id");
+ 	       		       String nameVal = rs.getString ("name");
+ 	       		       player.sendMessage(
+ 	       		               "id = " + idVal
+ 	       		               + ", name = " + nameVal);
+ 	       		       ++count;
+          		   }
+          		   rs.close ();
+          		   sglist.close ();
+          		   player.sendMessage (count + " rows were retrieved");
+          		
+            		
+        			
+        		}
+            }
             
         
             

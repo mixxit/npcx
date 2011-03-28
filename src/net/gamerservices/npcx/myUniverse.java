@@ -56,6 +56,7 @@ public class myUniverse {
 	public List< myFaction > factions = new CopyOnWriteArrayList< myFaction >();
 	public List< myLoottable > loottables = new CopyOnWriteArrayList< myLoottable >();
 	public List< myPathgroup > pathgroups = new CopyOnWriteArrayList< myPathgroup >();
+	public List< myMerchant > merchants = new CopyOnWriteArrayList< myMerchant >();
 	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
 	public HashMap<String, myPlayer> players = new HashMap<String, myPlayer>();
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
@@ -182,6 +183,15 @@ public class myUniverse {
 			return false;
 		}
 		
+		if (updateDB() != true)
+		{
+			System.out.println("**********************************************");
+			System.out.println("* Your DB is currently out of sync with your *");
+			System.out.println("*           version of NPCX                  *");
+			System.out.println("**********************************************");			
+			return false;
+		}
+		
 		
 		// TODO i need to handle this instead
 		for (World w : parent.getServer().getWorlds())
@@ -200,6 +210,81 @@ public class myUniverse {
 		return false;
 	}
 	
+	private boolean updateDB() {
+		// TODO Auto-generated method stub
+		String targetdbversion = "1.01";
+		System.out.println("npcx : Checking for DB Updates from DBVersion:"+this.dbversion);
+		if(this.dbversion.matches(targetdbversion))
+		{
+			return true;
+		}
+		
+		if (this.dbversion.matches("1"))
+		{
+			// Fix autonumber on npcx.merchant_entries
+			Statement sqlCreatestmt;
+			try {
+				sqlCreatestmt = conn.createStatement();
+				
+				String sqlcreate = "ALTER TABLE npcx.merchant_entries CHANGE COLUMN id id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT";
+	            sqlCreatestmt.executeUpdate(sqlcreate);
+	            sqlCreatestmt.close();
+	            Properties config = new Properties();
+				BufferedInputStream stream;
+				try
+				{
+					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
+					config.load(stream);
+			
+					config.setProperty(PROP_DBHOST,dbhost);
+					config.setProperty(PROP_DBUSER,dbuser);
+					config.setProperty(PROP_DBPASS,dbpass);
+					config.setProperty(PROP_DBNAME,dbname);
+					config.setProperty(PROP_DBPORT,dbport);
+		            config.setProperty(PROP_DBVERSION,dbversion);
+					config.setProperty(PROP_WORLD,defaultworld);
+		            config.setProperty(PROP_UPDATE,"false");
+		            config.setProperty(PROP_DBVERSION, "1.01");
+		            
+		            File propfolder = parent.getDataFolder();
+		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		            propfile.createNewFile();
+		            
+		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+					config.store(stream1, "Default generated settings, please ensure mysqld matches");
+		            
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+					System.out.println("**********************************************");
+					System.out.println("*   Problem during update to version 1.01    *");
+					System.out.println("*     Can you access your config file?       *");
+					System.out.println("**********************************************");
+					return false;
+				}
+				
+				
+				System.out.println("**********************************************");
+				System.out.println("* Congratulations! Your NPCX database is now *");
+				System.out.println("*       updated to version 1.01              *");
+				System.out.println("**********************************************");
+				return true;
+			} catch (SQLException e) {
+				System.out.println("**********************************************");
+				System.out.println("*   Problem during update to version 1.01    *");
+				System.out.println("*  Do you have entries in merchant_entries?  *");
+				System.out.println("**********************************************");
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+        	
+			
+		}
+		
+		return false;
+	}
+
 	public void checkSetup() {
 		// TODO Auto-generated method stub
 		propfolder = parent.getDataFolder();
@@ -753,7 +838,64 @@ public class myUniverse {
             System.out.println("npcx : Loaded " + countpg + " pathgroup.");
             
         } catch (NullPointerException e) { 
-	 		System.out.println("npcx : ERROR - faction loading cancelled!");
+	 		System.out.println("npcx : ERROR - pathgroup loading cancelled!");
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadMerchants() {
+		// TODO Auto-generated method stub
+		try 
+        {
+            // Load Merchants
+            Statement spg = this.conn.createStatement ();
+            spg.executeQuery ("SELECT * FROM Merchant");
+            ResultSet rspg = spg.getResultSet ();
+            int countpg = 0;
+            System.out.println("npcx : loading Merchants");
+            while (rspg.next ())
+            {
+            	myMerchant Merchant = new myMerchant(this.parent,rspg.getInt ("id"),rspg.getString ("name"));
+            	Merchant.id = rspg.getInt ("id");
+            	Merchant.name = rspg.getString ("name");
+            	
+
+            	Statement sFindEntries = conn.createStatement();
+            	sFindEntries.executeQuery("SELECT * FROM merchant_entries WHERE merchantid = " + Merchant.id);
+            	ResultSet rsEntries = sFindEntries.getResultSet ();
+            	int countentries = 0;
+            	while (rsEntries.next ())
+	            {
+            		
+            		Location pgloc = new Location(parent.getServer().getWorld(this.defaultworld),rsEntries.getInt("x"),rsEntries.getInt("y"),rsEntries.getInt("z"),rsEntries.getFloat("yaw"),rsEntries.getFloat("pitch"));
+            		
+            		myMerchant_entry entry = new myMerchant_entry(Merchant, Merchant.id, rsEntries.getInt("itemid"), rsEntries.getInt("amount"), rsEntries.getInt("pricebuy"), rsEntries.getInt("pricesell"));
+            		
+            		entry.id = rsEntries.getInt("id");
+            		entry.itemid = rsEntries.getInt("itemid");
+            		entry.amount = rsEntries.getInt("amount");
+            		entry.pricebuy = rsEntries.getInt("pricebuy");
+            		entry.pricesell = rsEntries.getInt("pricesell");
+            		
+            		countentries++;
+            		Merchant.merchantentries.add(entry);
+	            }
+            	rsEntries.close();
+            	sFindEntries.close();
+            	
+            	countpg++;
+            	merchants.add(Merchant);
+            	
+            	
+            }
+            rspg.close();
+            spg.close();
+            System.out.println("npcx : Loaded " + countpg + " Merchant.");
+            
+        } catch (NullPointerException e) { 
+	 		System.out.println("npcx : ERROR - Merchant loading cancelled!");
         } catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
