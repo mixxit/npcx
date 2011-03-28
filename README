@@ -303,6 +303,10 @@ Code:
 
 FAQ
 
+Q Any chance of sqlite in the near future?
+
+A No sorry, no plans to implement this at all
+
 Q I get error .... [SEVERE] com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure ......
 
 A Did you create the user npcx + password and database npcx and assign permissions in MySQL?

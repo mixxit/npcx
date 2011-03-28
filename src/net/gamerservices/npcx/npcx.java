@@ -125,204 +125,210 @@ public class npcx extends JavaPlugin {
 		
 		// check npc logic
 		
-		
-		for (myNPC npc : universe.npcs.values())
+		try
 		{
-			if (npc.npc != null)
+			for (myNPC npc : universe.npcs.values())
 			{
-				npc.npc.doThinkGreater();
-				
-				//always do pathgroups after think()
-				
-				npc.npc.doThinkLesser();
-				
-				if (this.universe.players.size() > 0)
+				if (npc.npc != null)
 				{
-					try
+					npc.npc.doThinkGreater();
+					
+					//always do pathgroups after think()
+					
+					npc.npc.doThinkLesser();
+					
+					if (this.universe.players.size() > 0)
 					{
-						for (myPlayer player : this.universe.players.values())
+						try
 						{
-							if (player.player != null)
+							for (myPlayer player : this.universe.players.values())
 							{
-								if (player.player.getHealth() > 0)
-						    	{
-									double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), player.player.getLocation().getX());
-								    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), player.player.getLocation().getY());
-								    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), player.player.getLocation().getZ());
-								    
-								    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
-								    {
-								    		if (npc.parent != null)
-								    		{
-								    			if (npc.npc.parent.faction != null)
-								    			{
-								    				if (npc.npc.parent.faction.base <= -1000)
-								    				{
-								    					npc.npc.aggro = player.player;
-								    					npc.npc.follow = player.player;
-								    				}
-								    			} else {
-								    				//System.out.println("npcx : i have no faction so ill be be neutral");
-								    			}
-								    		}
-								    	
-									}
-								    
-									
-						    	}
+								if (player.player != null)
+								{
+									if (player.player.getHealth() > 0)
+							    	{
+										double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), player.player.getLocation().getX());
+									    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), player.player.getLocation().getY());
+									    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), player.player.getLocation().getZ());
+									    
+									    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+									    {
+									    		if (npc.parent != null)
+									    		{
+									    			if (npc.npc.parent.faction != null)
+									    			{
+									    				if (npc.npc.parent.faction.base <= -1000)
+									    				{
+									    					npc.npc.aggro = player.player;
+									    					npc.npc.follow = player.player;
+									    				}
+									    			} else {
+									    				//System.out.println("npcx : i have no faction so ill be be neutral");
+									    			}
+									    		}
+									    	
+										}
+									    
+										
+							    	}
+								}
 							}
 						}
-					}
-						catch (Exception e)
-					{
-						// Concurrent modification occured
-						e.printStackTrace();
+							catch (Exception e)
+						{
+							// Concurrent modification occured
+							e.printStackTrace();
+						}
+						
 					}
 					
-				}
-				
-				// VS MONSTERS
-				
-				if (this.universe.monsters.size() > 0)
-				{
-					try
+					// VS MONSTERS
+					
+					if (this.universe.monsters.size() > 0)
 					{
-						
-						for (LivingEntity e : this.universe.monsters)
+						try
 						{
-							if (e.getHealth() > 0)
-					    	{
-								double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
-							    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
-							    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
-						
-							    if (e instanceof Monster)
-							    {
-							    	// mosnter in range?
-								    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+							
+							for (LivingEntity e : this.universe.monsters)
+							{
+								if (e.getHealth() > 0)
+						    	{
+									double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
+								    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
+								    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
+							
+								    if (e instanceof Monster)
 								    {
-									    // monster in range but is it worth chasing?
-								    	
-								    	// face direction
-	
-								    	// line of site
-	
-								    	boolean foundresult = false;
-								    	for (Block blockinsight : e.getLineOfSight(null, 5))
-								    	{
-								    		// Entities seem to be Y + 1
-								    		Location eloc = e.getLocation();
-								    		eloc.setY(eloc.getY()+1);
-								    		
-								    		if (blockinsight == eloc.getBlock())
-								    		{
-								    			foundresult = true;
-									    		npc.npc.aggro =  e;
-									    		npc.npc.follow =   e;
-								    		}
-								    	}
-								    	if (foundresult == false)
-								    	{
-								    		//System.out.println("I can hear one but can't see it");
-								    		npc.npc.faceLocation(e.getLocation());
-								    		npc.npc.aggro = null;
-								    		npc.npc.follow = null;
-								    		
-								    	}
-	
-								    	
-									}
-							    }
-					    	}
-						}
-					} 
-						catch (Exception e)
-					{
-						// Concurrent modification occured
-						e.printStackTrace();
-					}
-				}
-			}
-			
-		}
+								    	// mosnter in range?
+									    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+									    {
+										    // monster in range but is it worth chasing?
+									    	
+									    	// face direction
 		
-			
-			
+									    	// line of site
 		
-		// check spawngroups
+									    	boolean foundresult = false;
+									    	for (Block blockinsight : e.getLineOfSight(null, 5))
+									    	{
+									    		// Entities seem to be Y + 1
+									    		Location eloc = e.getLocation();
+									    		eloc.setY(eloc.getY()+1);
+									    		
+									    		if (blockinsight == eloc.getBlock())
+									    		{
+									    			foundresult = true;
+										    		npc.npc.aggro =  e;
+										    		npc.npc.follow =   e;
+									    		}
+									    	}
+									    	if (foundresult == false)
+									    	{
+									    		//System.out.println("I can hear one but can't see it");
+									    		npc.npc.faceLocation(e.getLocation());
+									    		npc.npc.aggro = null;
+									    		npc.npc.follow = null;
+									    		
+									    	}
 		
-		for (mySpawngroup spawngroup : universe.spawngroups.values())
-		{
-			
-			if (spawngroup.activecountdown > 0)
-			{
-				spawngroup.activecountdown--;
-				
-				if (spawngroup.activecountdown == 1)
-				{
-					spawngroup.active = false;					
-				}
-				
-			}
-
-			
-			if (!spawngroup.active)
-			{
-					
-				//System.out.println("npcx : found inactive spawngroup ("+ spawngroup.id +") with :[" + spawngroup.npcs.size() + "]");
-				int count = 0;
-				Random generator = new Random();
-				Object[] values = spawngroup.npcs.values().toArray();
-				
-				if (values.length > 0)
-				{
-				
-				myNPC npc = (myNPC) values[generator.nextInt(values.length)];
-				
-					try
-					{
-				
-					// is there at least one player in game?
-					if (this.getServer().getOnlinePlayers().length > 0)
-					{
-						if (!spawngroup.active)
+									    	
+										}
+								    }
+						    	}
+							}
+						} 
+							catch (Exception e)
 						{
-							npc.spawngroup = spawngroup;
-							
-							//System.out.println("npcx : made spawngroup active");
-							Double  pitch = new Double(spawngroup.pitch);
-							Double yaw = new Double(spawngroup.yaw);
-							BasicHumanNpc hnpc = npc.Spawn(npc.id, npc.name, this.getServer().getWorld(this.universe.defaultworld), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
-							
-							npc.npc = hnpc;
-							
-							ItemStack iprimary = new ItemStack(npc.weapon);
-							ItemStack ihelmet = new ItemStack(npc.helmet);
-							ItemStack ichest = new ItemStack(npc.chest);
-							ItemStack ilegs = new ItemStack(npc.legs);
-							ItemStack iboots = new ItemStack(npc.boots);
-							
-			                npc.npc.getBukkitEntity().getInventory().setItemInHand(iprimary);
-			                npc.npc.getBukkitEntity().getInventory().setHelmet(ihelmet);
-			                npc.npc.getBukkitEntity().getInventory().setChestplate(ichest);
-			                npc.npc.getBukkitEntity().getInventory().setLeggings(ilegs);
-							npc.npc.getBukkitEntity().getInventory().setBoots(iboots);
-			                hnpc.parent = npc;
-			                
-							this.npclist.put(spawngroup.id + "-" + npc.id, hnpc);
-							this.universe.npcs.put(spawngroup.id+"-"+npc.id,npc);
-							spawngroup.active = true;
+							// Concurrent modification occured
+							e.printStackTrace();
 						}
-					}
-					} catch (Exception e)
-					{
-						e.printStackTrace();
 					}
 				}
 				
 			}
+			
+				
+				
+			
+			// check spawngroups
+			
+			for (mySpawngroup spawngroup : universe.spawngroups.values())
+			{
+				
+				if (spawngroup.activecountdown > 0)
+				{
+					spawngroup.activecountdown--;
+					
+					if (spawngroup.activecountdown == 1)
+					{
+						spawngroup.active = false;					
+					}
+					
+				}
+	
+				
+				if (!spawngroup.active)
+				{
+						
+					//System.out.println("npcx : found inactive spawngroup ("+ spawngroup.id +") with :[" + spawngroup.npcs.size() + "]");
+					int count = 0;
+					Random generator = new Random();
+					Object[] values = spawngroup.npcs.values().toArray();
+					
+					if (values.length > 0)
+					{
+					
+					myNPC npc = (myNPC) values[generator.nextInt(values.length)];
+					
+						try
+						{
+					
+						// is there at least one player in game?
+						if (this.getServer().getOnlinePlayers().length > 0)
+						{
+							if (!spawngroup.active)
+							{
+								npc.spawngroup = spawngroup;
+								
+								//System.out.println("npcx : made spawngroup active");
+								Double  pitch = new Double(spawngroup.pitch);
+								Double yaw = new Double(spawngroup.yaw);
+								BasicHumanNpc hnpc = npc.Spawn(npc.id, npc.name, this.getServer().getWorld(this.universe.defaultworld), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
+								
+								npc.npc = hnpc;
+								
+								ItemStack iprimary = new ItemStack(npc.weapon);
+								ItemStack ihelmet = new ItemStack(npc.helmet);
+								ItemStack ichest = new ItemStack(npc.chest);
+								ItemStack ilegs = new ItemStack(npc.legs);
+								ItemStack iboots = new ItemStack(npc.boots);
+								
+				                npc.npc.getBukkitEntity().getInventory().setItemInHand(iprimary);
+				                npc.npc.getBukkitEntity().getInventory().setHelmet(ihelmet);
+				                npc.npc.getBukkitEntity().getInventory().setChestplate(ichest);
+				                npc.npc.getBukkitEntity().getInventory().setLeggings(ilegs);
+								npc.npc.getBukkitEntity().getInventory().setBoots(iboots);
+				                hnpc.parent = npc;
+				                
+								this.npclist.put(spawngroup.id + "-" + npc.id, hnpc);
+								this.universe.npcs.put(spawngroup.id+"-"+npc.id,npc);
+								spawngroup.active = true;
+							}
+						}
+						} catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					}
+					
+				}
+			}
+		} catch (ConcurrentModificationException e)
+		{
+			// its locked being written to atm, try again on next loop
+			
+			
 		}
-		
 		
 	
 	}
