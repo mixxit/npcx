@@ -77,15 +77,9 @@ public class myNPC {
 		// TODO Auto-generated method stub
 		myplayer.player.sendMessage(npc.getName()+" says to you, '"+string+"'");
 	}
-
-	public void onPlayerChat(myPlayer myplayer, String message, String category)
+	
+	public void parseChat(myPlayer myplayer, String message)
 	{
-		if (category.matches("shop"))
-		{
-			parseShop(myplayer, "Hello!");
-		
-		}
-			
 		int count = 0;
 		int size = 0;
 		//myplayer.player.sendMessage("Parsing:" + message + ":" + Integer.toString(this.triggerwords.size()));
@@ -182,7 +176,21 @@ public class myNPC {
 				}
 				
 		}
+	}
+
+	public void onPlayerChat(myPlayer myplayer, String message, String category)
+	{
+		if (category.matches("shop"))
+		{
+			parseShop(myplayer, "Hello!");
 		
+		} else {
+			parseChat(myplayer,"");
+		}
+		
+		
+			
+				
 	}
 
 
