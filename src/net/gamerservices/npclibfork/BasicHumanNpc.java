@@ -654,7 +654,7 @@ public class BasicHumanNpc extends BasicNpc {
         try {
         	
             
-            if ((ent.getHealth() - dmg) < 0)
+            if ((ent.getHealth() - dmg) <= 0)
             {
             	ent.setHealth(0);
             	follow = null;
