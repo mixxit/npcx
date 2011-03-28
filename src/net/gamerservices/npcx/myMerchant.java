@@ -1,5 +1,6 @@
 package net.gamerservices.npcx;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -7,7 +8,7 @@ public class myMerchant {
 	public int id;
 	public String name;
 	npcx parent;
-	public List< myMerchant_entry > merchantentries = new CopyOnWriteArrayList< myMerchant_entry >();
+	public List< myMerchant_entry > merchantentries = new ArrayList< myMerchant_entry >();
 	
 	public myMerchant(npcx parent, int id, String name)
 	{

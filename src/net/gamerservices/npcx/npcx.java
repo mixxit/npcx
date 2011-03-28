@@ -1420,10 +1420,9 @@ public class npcx extends JavaPlugin {
             	
             	if (args[1].equals("add")) {
             		if (args.length < 4) {
-            			player.sendMessage("Insufficient arguments /npcx merchant add merchantid item amount pricebuyat pricesellat");
+            			player.sendMessage("Insufficient arguments /npcx merchant add merchantid itemid amount pricebuyat pricesellat");
                     	
             		} else {
-            			player.sendMessage("Added to merchant " + args[2] + "<"+ args[3]+ "x"+args[4]+"@"+args[5]+".");
             			
             			// add to database
             		
@@ -1451,10 +1450,11 @@ public class npcx extends JavaPlugin {
         	            		int pricesell = Integer.parseInt(args[6]);
         	            		
         	            		myMerchant_entry pge = new myMerchant_entry(pg, dmerchantid,itemid,amount,pricebuy,pricesell);
-        	            		dbg(1,"npcx : + cached new merchant entry("+ args[3] + ")");
+        	            		dbg("npcx : + cached new merchant entry("+ args[3] + ")");
         	            		
         	            		// add new merchant entry object to the merchants entry list
         	            		pg.merchantentries.add(pge);
+        	            		player.sendMessage("Added to merchant " + args[2] + "<"+ args[3]+ "x"+args[4]+"@"+args[5]+".");
         	            		
         	            	}
         	            }
@@ -1465,6 +1465,7 @@ public class npcx extends JavaPlugin {
             			// close db
         	            s2.close();
         	            
+            			
             		}
         			
         		}
@@ -1587,11 +1588,9 @@ public class npcx extends JavaPlugin {
             	if (args[1].equals("merchant")) {
             		if (args.length < 4) {
             			player.sendMessage("Insufficient arguments /npcx npc merchant npcid merchantid");
-            			
-            			
-            			
+            			return false;
             		} else {
-            			if (Integer.parseInt(args[2]) == 0)
+            			if (Integer.parseInt(args[3]) == 0)
             			{
             			
 	        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE npc SET merchantid = null WHERE id = ?;");
