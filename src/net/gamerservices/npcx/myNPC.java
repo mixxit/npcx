@@ -182,10 +182,11 @@ public class myNPC {
 	{
 		if (category.matches("shop"))
 		{
-			parseShop(myplayer, "Hello!");
+			parseChat(myplayer,message);
+			parseShop(myplayer, message);
 		
 		} else {
-			parseChat(myplayer,"");
+			parseChat(myplayer,message);
 		}
 		
 		
@@ -486,7 +487,7 @@ public class myNPC {
 						}
 						
 					} else {
-						say(player," says to you, 'Sorry, totally out of stock!");
+						say(player,"Sorry, totally out of stock!");
 						return;
 					}
 				
