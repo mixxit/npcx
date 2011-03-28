@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -633,8 +634,6 @@ public class myNPC {
 				count2++;
 				
 			}
-			
-			
 		}
 		if (count2 == 0)
 		{
@@ -643,5 +642,42 @@ public class myNPC {
 		}
 		
 		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation(),true));
+	}
+
+	public void onDeath(LivingEntity p) {
+		// TODO Auto-generated method stub
+		if (p instanceof Player)
+		{
+			int count2 = 0;
+			for (myTriggerword tw : triggerwords.values())
+			{
+				//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
+				if (tw.word.toLowerCase().contains("EVENT_DEATH"))
+				{
+					String send = variablise(tw.response,(Player)p);
+					
+					for (myPlayer player : this.parent.universe.players.values())
+					{
+						if (p == player.player)
+						{
+							say(player,send + "'");
+						}
+					}
+					
+					count2++;
+					
+				}
+				
+				
+			}
+			if (count2 == 0)
+			{
+				// If i dont have a triggerword, respond with
+				((Player) p).sendMessage(npc.getName() + " says to you, 'Curse you!'");
+			}
+			
+			((Player) p).sendMessage("You have slain" + this.name + "!");
+		}
+
 	}
 }

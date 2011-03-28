@@ -85,6 +85,7 @@ public class npcxEListener extends EntityListener
 		            	{
 		            		
 		            		
+		            		npc.onDeath((LivingEntity)p);
 		            		parent.onNPCDeath(npc);
 		            		
 		            	}
@@ -126,6 +127,7 @@ public class npcxEListener extends EntityListener
 		{
 			
 			//System.out.println("npcx : deregistered monster");
+			
 			this.parent.universe.monsters.remove((Monster)event.getEntity());	
 
 		}

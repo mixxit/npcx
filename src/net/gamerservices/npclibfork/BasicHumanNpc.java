@@ -743,5 +743,11 @@ public class BasicHumanNpc extends BasicNpc {
 		this.parent.onClosestPlayer(p);
 	}
 
+	public void onDeath(LivingEntity p) {
+		// TODO Auto-generated method stub
+		this.parent.onDeath(p);
+		
+	}
+
 
 }
