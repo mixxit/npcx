@@ -198,31 +198,36 @@ Code:
 Note: An npc without any triggerwords will respond with 'Im sorry name im rather busy right now'
 Note: you cannot talk to temporary 'spawn' npcs as they have no responses configured
 
-Events in responses
-Syntax: /npcx npc response
-Added 'NPCSUMMONPLAYER' event to triggerword responses - If you setup a response for example:
-Added 'NPCSUMMONZOMBIE' event to triggerword responses - If you setup a response for example:
+Variables as Triggerwords
+-------------------------
+Added 'EVENT_DEATH' - Triggers when player kills an npc
+Added 'EVENT_KILLED' - Triggers when npc kills a player
+Added 'EVENT_DEATH' - Triggers when a player bounces an npc
+Added 'EVENT_CLOSE' - Triggers when a player becomes close to an npc
+Added 'ATTACK' - Triggers when a player becomes attacked by a player
 
-Added 'NPCATTACK' event to triggerword responses - If you setup a response for example:
+Events in responses
+-------------------
+Syntax: /npcx npc response
+Added 'NPCSUMMONPLAYER' event to triggerword responses <--- Summons player to npc
+Added 'NPCSUMMONZOMBIE' event to triggerword responses <--- Summons one zombie at npc
+Added 'NPCATTACK' event to triggerword responses - <--- Forces npc to attack player
+
 Code:
-/npcx npc triggerword add NPCID TRIGGERWORD NPCATTACK
-- then the npc will only attack when spoken to.
+/npcx npc triggerword add NPCID TRIGGERWORD NPCATTACK <--- attacks based on triggerword
+- then the npc will attack when spoken to.
 
 Or a scenario like this:
 Code:
-/npcx npc triggerword add 1 default Dont call me an idiot
+/npcx npc triggerword add 1 default Dont call me an idiot <--- when a player says anything it will return Dont call me an idiot
 Code:
-/npcx npc triggerword add 1 idiot NPCATTACK
-Chat Variables
+/npcx npc triggerword add 1 idiot NPCATTACK <--- when a player says idiot it will attack him
 
-bankbalance
-Placing the text bankbalance in a triggerword reply will have the NPC respond with the players iconomy bank balance
-
-playername
-Placing the text playername in a triggerword reply will have the NPC respond with the players name
-
-playerbalance
-Placing the text playerbalance in a triggerword reply will have the NPC respond with the players iconomy bank balance
+Chat Variables in responses
+--------------------------
+Added 'bankbalance' -Placing the text bankbalance in a triggerword reply will have the NPC respond with the players iconomy bank balance
+Added 'playername' - Placing the text playername in a triggerword reply will have the NPC respond with the players name
+Added 'playerbalance' - Placing the text playerbalance in a triggerword reply will have the NPC respond with the players iconomy bank balance
 
 
 NPC Shops
