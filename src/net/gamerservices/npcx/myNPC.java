@@ -78,8 +78,14 @@ public class myNPC {
 		myplayer.player.sendMessage(npc.getName()+" says to you, '"+string+"'");
 	}
 
-	public void onPlayerChat(myPlayer myplayer, String message)
+	public void onPlayerChat(myPlayer myplayer, String message, String category)
 	{
+		if (category.matches("shop"))
+		{
+			parseShop(myplayer, "Hello!");
+		
+		}
+			
 		int count = 0;
 		int size = 0;
 		//myplayer.player.sendMessage("Parsing:" + message + ":" + Integer.toString(this.triggerwords.size()));
@@ -176,6 +182,7 @@ public class myNPC {
 				}
 				
 		}
+		
 	}
 
 
@@ -480,7 +487,7 @@ public class myNPC {
 		}
 		
 		// Unknown command
-		onPlayerChat(player,message);
+		onPlayerChat(player,message,"shop");
 		say(player,"Sorry, can i [help] you?");
 		
 		return;
@@ -560,11 +567,16 @@ public class myNPC {
 					
 					p.sendMessage("**************************************************************");
 					p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+")");
-                    p.sendMessage("* Active chat target set as: " + name + ". Right Click to cancel.");
-                    p.sendMessage("* Anything you now type will be redirected to: " + name);
-                    p.sendMessage("* Words in [brackets] you should type. Type 'hello' to begin.");
+                    p.sendMessage("* You are now chatting to: " + name + ". Right Click to cancel.");
+                    p.sendMessage("* Words in [brackets] you should type! Type 'hello' to begin.");
                     p.sendMessage("**************************************************************");
-                    onPlayerChat(player, "Hello!");
+                    if (player.target.parent.category.matches("shop"))
+					{
+                        onPlayerChat(player, "Hello!","shop");
+	
+                    } else {
+                    	onPlayerChat(player, "Hello!","");
+                    }
                     
 				}
 				
@@ -577,6 +589,8 @@ public class myNPC {
 				
 			}
 		}
+		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation(),true));
+
 	}
 
 	public void onClosestPlayer(Player p) {
@@ -608,7 +622,8 @@ public class myNPC {
 			//p.sendMessage(npc.getName() + " says to you, 'Watch your back.'");
 		}
 		
-		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation(),true));
+		// face target
+		//this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation(),true));
 	}
 
 	public void onBounce(Player p) {
@@ -663,20 +678,21 @@ public class myNPC {
 							say(player,send + "'");
 						}
 					}
-					
 					count2++;
-					
 				}
-				
-				
 			}
 			if (count2 == 0)
 			{
 				// If i dont have a triggerword, respond with
-				((Player) p).sendMessage(npc.getName() + " says to you, 'Curse you!'");
+				((Player) p).sendMessage(npc.getName() + " says to you, 'I will be avenged for this!'");
 			}
 			
-			((Player) p).sendMessage("You have slain" + this.name + "!");
+			((Player) p).sendMessage("You have slain " + this.name + "!");
+			if (this.faction != null)
+			{
+				((Player) p).sendMessage("Your standing with " + this.faction.name + " has gotten worse!");
+			}
+			
 		}
 
 	}
