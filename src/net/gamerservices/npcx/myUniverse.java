@@ -856,7 +856,7 @@ public class myUniverse {
         {
             // Load Merchants
             Statement spg = this.conn.createStatement ();
-            spg.executeQuery ("SELECT * FROM Merchant");
+            spg.executeQuery ("SELECT * FROM merchant");
             ResultSet rspg = spg.getResultSet ();
             int countpg = 0;
             System.out.println("npcx : loading Merchants");
