@@ -570,13 +570,19 @@ public class myNPC {
                     p.sendMessage("* You are now chatting to: " + name + ". Right Click to cancel.");
                     p.sendMessage("* Words in [brackets] you should type! Type 'hello' to begin.");
                     p.sendMessage("**************************************************************");
-                    if (player.target.parent.category.matches("shop"))
-					{
-                        onPlayerChat(player, "Hello!","shop");
-	
+                    if (player.target != null && player.target.parent != null && player.target.parent.category != null)
+                    {
+                        if (player.target.parent.category.matches("shop"))
+    					{
+                            onPlayerChat(player, "Hello!","shop");
+    	
+                        } else {
+                        	onPlayerChat(player, "Hello!","");
+                        }
                     } else {
                     	onPlayerChat(player, "Hello!","");
                     }
+
                     
 				}
 				
