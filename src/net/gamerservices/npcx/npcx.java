@@ -1938,15 +1938,14 @@ public class npcx extends JavaPlugin {
 		
 		for (myNPC npc : this.universe.npcs.values())
 		{
-			if (npc.npc.aggro == player)
+			if (npc.npc != null && npc.npc.aggro != null)
 			{
-				dbg(1,"informNpcDeadPlayer:aggro:"+player.getName());
-				npc.npc.follow = null;
-			}
-			if (npc.npc.aggro == player)
-			{
-				dbg(1,"informNpcDeadPlayer:follow:"+player.getName());
-				npc.npc.aggro = null;
+				if (npc.npc.aggro == player)
+				{
+					dbg(1,"informNpcDeadPlayer:aggro:"+player.getName());
+					npc.npc.follow = null;
+				}
+				
 			}
 			
 		}
