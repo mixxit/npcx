@@ -614,7 +614,7 @@ public class myNPC {
 		for (myTriggerword tw : triggerwords.values())
 		{
 			//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
-			if (tw.word.toLowerCase().contains("EVENT_CLOSEST"))
+			if (tw.word.toLowerCase().contains("event_close"))
 			{
 				String send = variablise(tw.response,p);
 				
@@ -648,7 +648,7 @@ public class myNPC {
 		for (myTriggerword tw : triggerwords.values())
 		{
 			//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
-			if (tw.word.toLowerCase().contains("EVENT_BOUNCE"))
+			if (tw.word.toLowerCase().contains("event_bounce"))
 			{
 				String send = variablise(tw.response,p);
 				
@@ -681,7 +681,7 @@ public class myNPC {
 			for (myTriggerword tw : triggerwords.values())
 			{
 				//myplayer.player.sendMessage("Test:" + word + ":"+ tw.word);
-				if (tw.word.toLowerCase().contains("EVENT_DEATH"))
+				if (tw.word.toLowerCase().contains("event_death"))
 				{
 					String send = variablise(tw.response,(Player)p);
 					

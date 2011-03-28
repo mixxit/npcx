@@ -1439,7 +1439,7 @@ public class npcx extends JavaPlugin {
             			// add it to any spawned npcs
             			for (myNPC npc : universe.npcs.values())
             			{
-            				dbg("my id="+npc.id.toString());
+            				dbg(1,"my id="+npc.id.toString());
             				if (npc.id.equals(args[3]))
             				{
             					dbg(1,"npcx : adding reply because ("+ npc.id +") is ("+args[3]+")  ("+ reply + ") and trigger ("+ reply +") for [" + args[3] + "] npc to npc: " + npc.id);
