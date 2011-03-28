@@ -487,7 +487,6 @@ public class myNPC {
 		}
 		
 		// Unknown command
-		onPlayerChat(player,message,"shop");
 		say(player,"Sorry, can i [help] you?");
 		
 		return;
