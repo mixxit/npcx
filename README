@@ -230,14 +230,25 @@ Added 'playername' - Placing the text playername in a triggerword reply will hav
 Added 'playerbalance' - Placing the text playerbalance in a triggerword reply will have the NPC respond with the players iconomy bank balance
 
 
-NPC Shops
+NPC Merchants
 
-Similar to chat, npc shops can be accessed by right clicking the npc and taking to them.
+Similar to chat, npc merchants can be accessed by right clicking the npc and taking to them.
 
-To change an npc from a normal type into a shop type
+Merchants can also be configured with custom triggerwords, just like a normal NPC
+
+To change an npc from a normal type into a merchant type
 Code:
-/npcx npc category NPCID shop
+/npcx npc category NPCID mercahnt
 Begin talking to the npc to buy and sell from it
+
+To load it with items as an admin create a merchant list
+
+/npcx merchant create merchantlistname
+add stuff to it like goldingots (id 266)
+/npcx merchant add MERCHANTLISTID ITEMID AMOUNT PRICETOBUYAT PRICETOSELLAT
+
+Attach the merchant list to an npcID
+/npcx npc merchant NPCID MERCHANTLISTID
 
 NPC Combat
 
