@@ -60,7 +60,7 @@ public class myNPC {
 				if (tw.word.toLowerCase().contains("attack"))
 				{
 					String send = variablise(tw.response,myplayer.player);
-					myplayer.player.sendMessage(npc.getName() + " says to you, '" + send + "'");
+					say(myplayer, send);
 					count++;
 					return;
 				}
@@ -72,6 +72,11 @@ public class myNPC {
 	
 	
 	
+	private void say(myPlayer myplayer, String string) {
+		// TODO Auto-generated method stub
+		myplayer.player.sendMessage(npc.getName()+" says to you, '"+string+"'");
+	}
+
 	public void onPlayerChat(myPlayer myplayer, String message)
 	{
 		int count = 0;
@@ -96,7 +101,7 @@ public class myNPC {
 						// NPCATTACK variable
 						if (tw.response.toLowerCase().contains(npcattack.toLowerCase()))
 						{
-								myplayer.player.sendMessage(npc.getName() + " says to you, 'You will regret that!'");
+								say(myplayer,"You will regret that");
 								npc.aggro = myplayer.player;
 								npc.follow = myplayer.player;
 								return;
@@ -106,7 +111,7 @@ public class myNPC {
 						// NPCSUMMONPLAYER
 						if (tw.response.toLowerCase().contains(summonplayer.toLowerCase()))
 						{
-								myplayer.player.sendMessage(npc.getName() + " says to you, 'Come here!'");
+								say(myplayer,"Come here");
 								double x = npc.getBukkitEntity().getLocation().getX();
 								double y = npc.getBukkitEntity().getLocation().getY();
 								double z = npc.getBukkitEntity().getLocation().getZ();
@@ -128,13 +133,13 @@ public class myNPC {
 							
 							npc.getBukkitEntity().getWorld().spawnCreature(location,CreatureType.ZOMBIE);
 							
-							myplayer.player.sendMessage(npc.getName() + " says to you, 'Look out!'");
+							say(myplayer,"Look out");
 							return;
 						}
 
 						
 						String send = variablise(tw.response,myplayer.player);
-						myplayer.player.sendMessage(npc.getName() + " says to you, '"+ send +"'");
+						say(myplayer,send);
 						count++;
 						return;
 	
@@ -147,7 +152,7 @@ public class myNPC {
 		}
 		if (count == 0 && size == 0)
 		{
-			myplayer.player.sendMessage(npc.getName() + " says to you, 'I'm sorry. I'm rather busy right now.'");
+			say(myplayer,"I'm sorry. I'm rather busy right now.");
 		} else {
 				int count2 = 0;
 				for (myTriggerword tw : triggerwords.values())
@@ -157,7 +162,7 @@ public class myNPC {
 					{
 						String send = variablise(tw.response,myplayer.player);
 						
-						myplayer.player.sendMessage(npc.getName() + " says to you, '" + send + "'");
+						say(myplayer,send);
 						count2++;
 						return;
 					}
@@ -166,7 +171,7 @@ public class myNPC {
 				}
 				if (count2 == 0)
 				{
-					myplayer.player.sendMessage(npc.getName() + " says to you, 'I'm sorry. I'm rather busy right now.'");
+					say(myplayer,"I'm sorry. I'm rather busy right now.");
 				}
 				
 		}
@@ -237,7 +242,7 @@ public class myNPC {
 		if (aMsg[0].toLowerCase().matches("help"))
 		{
 						
-			player.player.sendMessage(npc.getName() + " says to you, 'What do you need? [list], [sell] or [buy]'");
+			say(player,"What do you need? [list], [sell] or [buy]");
 			return;
 		}
 		
@@ -259,13 +264,13 @@ public class myNPC {
 				{
 					if (item.item.getType().name().contains(aMsg[1]))
 					{
-						player.player.sendMessage(npc.getName() + " says to you, "+ item.item.getType().name() + " x " + item.item.getAmount() + " selling at " + (float)checkHints(item.item.getTypeId()) + " before commision");
+						say(player,item.item.getType().name() + " x " + item.item.getAmount() + " selling at " + (float)checkHints(item.item.getTypeId()) + " before commision");
 					}
 				} else {
-					player.player.sendMessage(npc.getName() + " says to you, "+ item.item.getType().name() + " x " + item.item.getAmount() + " selling at " + (float)checkHints(item.item.getTypeId()) + " before commision");
+					say(player,item.item.getType().name() + " x " + item.item.getAmount() + " selling at " + (float)checkHints(item.item.getTypeId()) + " before commision");
 				}
 			}
-			player.player.sendMessage(npc.getName() + " says to you, '" + count + " items in the shop.'");
+			say(player,count + " items in the shop.'");
 			
 			return;
 
@@ -275,7 +280,7 @@ public class myNPC {
 		{
 			if (aMsg.length < 3)
 			{		
-				player.player.sendMessage(npc.getName() + " says to you, 'sell [itemid] [amount]'");
+				say(player,"sell [itemid] [amount]");
 				return;
 			} else {
 				
@@ -292,14 +297,14 @@ public class myNPC {
 				{
 					// lol
 					this.parent.sendPlayerItemList(player.player);
-					player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
+					say(player,"Hmm try another item similar named to "+aMsg[1]+" and i might be interested.");
 					//e.printStackTrace();
 					return;
 				
 				} catch (Exception e)
 				{
 					this.parent.sendPlayerItemList(player.player);
-					player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
+					say(player,"Hmm try another item similar named to "+aMsg[1]+" and i might be interested.");
 					//e.printStackTrace();
 					return;
 					
@@ -320,7 +325,7 @@ public class myNPC {
 				if (count >= item.getAmount())
 				{
 					
-					player.player.sendMessage(npc.getName() + " says to you, 'Ok thats "+ item.getAmount() +" out of your "+count +".'");
+					say(player,"Ok thats "+ item.getAmount() +" out of your "+count +".");
 					double totalcoins = 0;
 					totalcoins = (float)(item.getAmount() * checkHints(shopitem.item.getTypeId()) * 0.80);
 					
@@ -328,16 +333,16 @@ public class myNPC {
 					{
 						player.player.getInventory().removeItem(item);
 						shop.add(shopitem);
-						player.player.sendMessage(npc.getName() + " says to you, 'Thanks! Heres your " + (float)totalcoins + " coins.'");
+						say(player,"Thanks! Heres your " + (float)totalcoins + " coins.");
 						Account account = iConomy.getBank().getAccount(player.name);
 						this.coin = (float)this.coin - (float)totalcoins;
 						account.add(totalcoins);
 					} else {
-						player.player.sendMessage(npc.getName() + " says to you, 'Sorry, I only have: "+(float)this.coin+" and thats worth "+(float)totalcoins+"!'");
+						say(player,"Sorry, I only have: "+(float)this.coin+" and thats worth "+(float)totalcoins+"!");
 					}
 				} else {
 					
-					player.player.sendMessage(npc.getName() + " says to you, 'Sorry, you only have: "+count+" !'");
+					say(player,"Sorry, you only have: "+count+" !");
 				}
 			}
 			return;
@@ -348,7 +353,7 @@ public class myNPC {
 		{
 			if (aMsg.length < 3)
 			{
-				player.player.sendMessage(npc.getName() + " says to you, 'buy [itemid] [amount]'");
+				say(player,"buy [itemid] [amount]");
 				return;
 			} else {
 				if (Integer.parseInt(aMsg[2]) > 0)
@@ -389,7 +394,7 @@ public class myNPC {
 													shop.remove(item);
 													basket.add(item);
 													
-													player.player.sendMessage(npc.getName() + " says to you, '" + (float)cost + " coins for this stack.'");
+													say(player,(float)cost + " coins for this stack.");
 												} else {
 													this.coin = (float)this.coin + (float)cost;
 													totalcost = (float)totalcost + (((float)cost/item.item.getAmount())*amount);
@@ -404,7 +409,7 @@ public class myNPC {
 													amount = 0;
 													basket.add(i);
 													item.item.setAmount(item.item.getAmount()-i.item.getAmount());
-													player.player.sendMessage(npc.getName() + " says to you, '" + (float)cost + " coins for this stack.'");
+													say(player,(float)cost + " coins for this stack.");
 													
 													
 												}
@@ -420,7 +425,7 @@ public class myNPC {
 							} catch (NullPointerException e)
 							{
 								this.parent.sendPlayerItemList(player.player);
-								player.player.sendMessage(npc.getName() + " says to you, 'Hmm try another item similar named to "+aMsg[1]+" and i might be interested'");
+								say(player,"Hmm try another item similar named to "+aMsg[1]+" and i might be interested");
 								return;
 							}
 						}
@@ -428,7 +433,7 @@ public class myNPC {
 						if (found < 1)
 						{
 							// nothing was ever placed in a basketm, can return
-							player.player.sendMessage(npc.getName() + " says to you, 'Sorry, out of stock in that item.");
+							say(player,"Sorry, out of stock in that item.");
 							return;
 						}
 						
@@ -444,7 +449,7 @@ public class myNPC {
 									basket.remove(i);
 								}
 								
-								player.player.sendMessage(npc.getName() + " says to you, 'Thanks, " + (float)totalcost + " coins.'");
+								say(player,"Thanks, " + (float)totalcost + " coins.");
 								
 								account.subtract((float)totalcost);
 								double each = totalcost / originalamount;
@@ -458,14 +463,14 @@ public class myNPC {
 									shop.add(i);
 									basket.remove(i);
 								}
-								player.player.sendMessage(npc.getName() + " says to you, 'Sorry, you don't have enough (" + (float)totalcost + " coins).'");
+								say(player,"Sorry, you don't have enough (" + (float)totalcost + " coins).");
 								return;
 
 							}
 						}
 						
 					} else {
-						player.player.sendMessage(npc.getName() + " says to you, 'Sorry, totally out of stock!'");
+						say(player," says to you, 'Sorry, totally out of stock!");
 						return;
 					}
 				
@@ -475,7 +480,7 @@ public class myNPC {
 		
 		// Unknown command
 		onPlayerChat(player,message);
-		player.player.sendMessage(npc.getName() + " says to you, 'Sorry, can i [help] you?'");
+		say(player,"Sorry, can i [help] you?");
 		
 		return;
 			
@@ -552,10 +557,13 @@ public class myNPC {
     						tLTID = this.loottable.id;
 					}
 					
-                    p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+")");
-                    p.sendMessage("* Active chat target set as: " + name + ". Click again to cancel.");
+					p.sendMessage("**************************************************************");
+					p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+")");
+                    p.sendMessage("* Active chat target set as: " + name + ". Right Click to cancel.");
                     p.sendMessage("* Anything you now type will be redirected to: " + name);
-                    p.sendMessage("* Words in [brackets] are commands. Type 'hello' to begin.");
+                    p.sendMessage("* Words in [brackets] you should type. Type 'hello' to begin.");
+                    p.sendMessage("**************************************************************");
+                    onPlayerChat(player, "Hello!");
                     
 				}
 				
@@ -581,12 +589,17 @@ public class myNPC {
 			{
 				String send = variablise(tw.response,p);
 				
-				p.sendMessage(npc.getName() + " says to you, '" + send + "'");
+				for (myPlayer player : this.parent.universe.players.values())
+				{
+					if (p == player.player)
+					{
+						say(player,send + "'");
+					}
+				}
+				
 				count2++;
-				return;
+				
 			}
-			
-			
 		}
 		if (count2 == 0)
 		{
@@ -609,9 +622,16 @@ public class myNPC {
 			{
 				String send = variablise(tw.response,p);
 				
-				p.sendMessage(npc.getName() + " says to you, '" + send + "'");
+				for (myPlayer player : this.parent.universe.players.values())
+				{
+					if (p == player.player)
+					{
+						say(player,send + "'");
+					}
+				}
+				
 				count2++;
-				return;
+				
 			}
 			
 			
@@ -621,5 +641,7 @@ public class myNPC {
 			// If i dont have a triggerword, dont respond
 			p.sendMessage(npc.getName() + " says to you, 'Hey! Watch where you are going!'");
 		}
+		
+		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation(),true));
 	}
 }

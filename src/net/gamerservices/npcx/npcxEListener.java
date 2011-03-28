@@ -32,7 +32,7 @@ public class npcxEListener extends EntityListener
 	@Override
 	public void onEntityDamage(EntityDamageEvent event) {
 		super.onEntityDamage(event);
-		
+		/*
 		if (event instanceof EntityDamageByEntityEvent )
 		{
 			if (event.getEntity() instanceof Monster)
@@ -47,7 +47,7 @@ public class npcxEListener extends EntityListener
 				
 		    }
 		}
-		
+		*/
 		if (event.getEntity() instanceof HumanEntity) 
 		{
 			BasicHumanNpc npc = parent.npclist.getBasicHumanNpc(event.getEntity());
