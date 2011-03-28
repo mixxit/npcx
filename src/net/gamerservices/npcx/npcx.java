@@ -1377,7 +1377,7 @@ public class npcx extends JavaPlugin {
             	// creates a new npc with name       
             	
             	
-            	if (args.length < 1) {
+            	if (args.length < 2) {
             		// todo: need to implement npc types here ie: 0 = default 1 = banker 2 = merchant
             		// todo: need to implement '/npcx npc edit' here
                 	player.sendMessage("Insufficient arguments /npcx npc create name");
@@ -1397,8 +1397,6 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx npc chest npcid itemid");
                 	player.sendMessage("Insufficient arguments /npcx npc legs npcid itemid");
                 	player.sendMessage("Insufficient arguments /npcx npc boots npcid itemid");
-                	
-        			
                     return false;
                 }
             	
