@@ -79,7 +79,13 @@ public class myNPC {
 	
 	private void say(myPlayer myplayer, String string) {
 		// TODO Auto-generated method stub
-		myplayer.player.sendMessage(npc.getName()+" says to you, '"+string+"'");
+		if (npc != null)
+		{
+			if (myplayer.player != null)
+			{
+				myplayer.player.sendMessage(npc.getName()+" says to you, '"+string+"'");
+			}
+		}
 	}
 	
 	public void parseChat(myPlayer myplayer, String message)

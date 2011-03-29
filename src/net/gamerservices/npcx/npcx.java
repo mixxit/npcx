@@ -119,6 +119,9 @@ public class npcx extends JavaPlugin {
 	
 	public void think()
 	{
+		
+		
+		
 		tick.schedule(new Tick(this), 1 * 500);
 		
 		fixDead();
@@ -273,54 +276,56 @@ public class npcx extends JavaPlugin {
 					//System.out.println("npcx : found inactive spawngroup ("+ spawngroup.id +") with :[" + spawngroup.npcs.size() + "]");
 					int count = 0;
 					Random generator = new Random();
-					Object[] values = spawngroup.npcs.values().toArray();
-					
-					if (values.length > 0)
+					if (spawngroup.npcs != null)
 					{
-					
-					myNPC npc = (myNPC) values[generator.nextInt(values.length)];
-					
-						try
+						Object[] values = spawngroup.npcs.values().toArray();
+						
+						if (values.length > 0)
 						{
-					
-						// is there at least one player in game?
-						if (this.getServer().getOnlinePlayers().length > 0)
-						{
-							if (!spawngroup.active)
+						
+						myNPC npc = (myNPC) values[generator.nextInt(values.length)];
+						
+							try
 							{
-								npc.spawngroup = spawngroup;
-								
-								//System.out.println("npcx : made spawngroup active");
-								Double  pitch = new Double(spawngroup.pitch);
-								Double yaw = new Double(spawngroup.yaw);
-								BasicHumanNpc hnpc = npc.Spawn(npc.id, npc.name, this.getServer().getWorld(this.universe.defaultworld), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
-								
-								npc.npc = hnpc;
-								
-								ItemStack iprimary = new ItemStack(npc.weapon);
-								ItemStack ihelmet = new ItemStack(npc.helmet);
-								ItemStack ichest = new ItemStack(npc.chest);
-								ItemStack ilegs = new ItemStack(npc.legs);
-								ItemStack iboots = new ItemStack(npc.boots);
-								
-				                npc.npc.getBukkitEntity().getInventory().setItemInHand(iprimary);
-				                npc.npc.getBukkitEntity().getInventory().setHelmet(ihelmet);
-				                npc.npc.getBukkitEntity().getInventory().setChestplate(ichest);
-				                npc.npc.getBukkitEntity().getInventory().setLeggings(ilegs);
-								npc.npc.getBukkitEntity().getInventory().setBoots(iboots);
-				                hnpc.parent = npc;
-				                
-								this.npclist.put(spawngroup.id + "-" + npc.id, hnpc);
-								this.universe.npcs.put(spawngroup.id+"-"+npc.id,npc);
-								spawngroup.active = true;
+						
+							// is there at least one player in game?
+							if (this.getServer().getOnlinePlayers().length > 0)
+							{
+								if (!spawngroup.active)
+								{
+									npc.spawngroup = spawngroup;
+									
+									//System.out.println("npcx : made spawngroup active");
+									Double  pitch = new Double(spawngroup.pitch);
+									Double yaw = new Double(spawngroup.yaw);
+									BasicHumanNpc hnpc = npc.Spawn(npc.id, npc.name, this.getServer().getWorld(this.universe.defaultworld), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
+									
+									npc.npc = hnpc;
+									
+									ItemStack iprimary = new ItemStack(npc.weapon);
+									ItemStack ihelmet = new ItemStack(npc.helmet);
+									ItemStack ichest = new ItemStack(npc.chest);
+									ItemStack ilegs = new ItemStack(npc.legs);
+									ItemStack iboots = new ItemStack(npc.boots);
+									
+					                npc.npc.getBukkitEntity().getInventory().setItemInHand(iprimary);
+					                npc.npc.getBukkitEntity().getInventory().setHelmet(ihelmet);
+					                npc.npc.getBukkitEntity().getInventory().setChestplate(ichest);
+					                npc.npc.getBukkitEntity().getInventory().setLeggings(ilegs);
+									npc.npc.getBukkitEntity().getInventory().setBoots(iboots);
+					                hnpc.parent = npc;
+					                
+									this.npclist.put(spawngroup.id + "-" + npc.id, hnpc);
+									this.universe.npcs.put(spawngroup.id+"-"+npc.id,npc);
+									spawngroup.active = true;
+								}
+							}
+							} catch (Exception e)
+							{
+								e.printStackTrace();
 							}
 						}
-						} catch (Exception e)
-						{
-							e.printStackTrace();
-						}
 					}
-					
 				}
 			}
 		} catch (ConcurrentModificationException e)
@@ -328,6 +333,9 @@ public class npcx extends JavaPlugin {
 			// its locked being written to atm, try again on next loop
 			
 			
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 		
 	
