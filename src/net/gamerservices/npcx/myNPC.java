@@ -169,7 +169,7 @@ public class myNPC {
 		{
 			// too spammy
 			//say(myplayer,"I'm sorry. I'm rather busy right now.");
-			parseChatGlobalCommands(myplayer, message);
+			
 			
 			
 		} else {
@@ -192,7 +192,7 @@ public class myNPC {
 				{
 					// too spammy
 					//say(myplayer,"I'm sorry. I'm rather busy right now.");
-					parseChatGlobalCommands(myplayer, message);
+					
 				}
 				
 		}
@@ -356,6 +356,7 @@ public class myNPC {
 
 	public void onPlayerChat(myPlayer myplayer, String message, String category)
 	{
+		parseChatGlobalCommands(myplayer, message);
 		if (category.matches("shop"))
 		{
 			parseChat(myplayer,message);
