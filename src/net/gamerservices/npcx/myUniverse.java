@@ -271,8 +271,6 @@ public class myUniverse {
 				e.printStackTrace();
 				return false;
 			}
-        	
-			
 		}
 		
 		return false;
@@ -868,22 +866,23 @@ public class myUniverse {
             ResultSet rspg = spg.getResultSet ();
             int countpg = 0;
             System.out.println("npcx : loading Merchants");
+            int countentries = 0;
             while (rspg.next ())
             {
-            	myMerchant Merchant = new myMerchant(this.parent,rspg.getInt ("id"),rspg.getString ("name"));
-            	Merchant.id = rspg.getInt ("id");
-            	Merchant.name = rspg.getString ("name");
+            	myMerchant merchant = new myMerchant(this.parent,rspg.getInt ("id"),rspg.getString ("name"));
+            	merchant.id = rspg.getInt ("id");
+            	merchant.name = rspg.getString ("name");
             	
 
             	Statement sFindEntries = conn.createStatement();
-            	sFindEntries.executeQuery("SELECT * FROM merchant_entries WHERE merchantid = " + Merchant.id);
+            	sFindEntries.executeQuery("SELECT * FROM merchant_entries WHERE merchantid = " + merchant.id);
             	ResultSet rsEntries = sFindEntries.getResultSet ();
-            	int countentries = 0;
+            	
             	while (rsEntries.next ())
 	            {
             		
             		
-            		myMerchant_entry entry = new myMerchant_entry(Merchant, Merchant.id, rsEntries.getInt("itemid"), rsEntries.getInt("amount"), rsEntries.getInt("pricebuy"), rsEntries.getInt("pricesell"));
+            		myMerchant_entry entry = new myMerchant_entry(merchant, merchant.id, rsEntries.getInt("itemid"), rsEntries.getInt("amount"), rsEntries.getInt("pricebuy"), rsEntries.getInt("pricesell"));
             		
             		entry.id = rsEntries.getInt("id");
             		entry.itemid = rsEntries.getInt("itemid");
@@ -892,19 +891,19 @@ public class myUniverse {
             		entry.pricesell = rsEntries.getInt("pricesell");
             		
             		countentries++;
-            		Merchant.merchantentries.add(entry);
+            		merchant.merchantentries.add(entry);
 	            }
             	rsEntries.close();
             	sFindEntries.close();
             	
             	countpg++;
-            	merchants.add(Merchant);
+            	merchants.add(merchant);
             	
             	
             }
             rspg.close();
             spg.close();
-            System.out.println("npcx : Loaded " + countpg + " Merchant.");
+            System.out.println("npcx : Loaded " + countpg + " Merchant with ("+countentries+") entries.");
             
         } catch (NullPointerException e) { 
 	 		System.out.println("npcx : ERROR - Merchant loading cancelled!");

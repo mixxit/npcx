@@ -238,8 +238,12 @@ public class myNPC {
 		
 		if (aMsg[0].toLowerCase().matches("list"))
 		{
+			
+			int mysize = this.merchant.merchantentries.size();
+			say(player,"Checking my list of: " + mysize);
 			boolean match = false;
 			
+
 			
 			if (size == 2)
  		    {
@@ -288,14 +292,22 @@ public class myNPC {
 				ItemStack item = new ItemStack(0);
 				Merchantitem.item = item;
 				// todo price
-				
-				int amount = Integer.parseInt(aMsg[2]);
+				int amount = 0;
+				try
+				{
+					 amount = Integer.parseInt(aMsg[2]);
+					
+				} catch (NumberFormatException e)
+				{
+					say(player,"That is not a valid amount.");
+					return;
+				}
 				if (amount < 1)
 				{
 					say(player,"Hmm that's not enough.");
 					//e.printStackTrace();
 					return;
-				}				
+				}			
 					
 				try 
 				{
@@ -316,7 +328,19 @@ public class myNPC {
 					return;
 					
 				}
-				item.setAmount(Integer.parseInt(aMsg[2]));
+				
+				try
+				{
+					item.setAmount(Integer.parseInt(aMsg[2]));
+					
+				} catch (NumberFormatException e)
+				{
+					say(player,"That is not a valid amount.");
+					return;
+				}
+				
+				
+				
 				int count = 0;
 				for (ItemStack curitem : player.player.getInventory().getContents())
 				{
@@ -385,6 +409,17 @@ public class myNPC {
 				say(player,"buy [itemid] [amount]");
 				return;
 			} else {
+				
+				try
+				{
+				int a = Integer.parseInt(aMsg[2]);
+				} catch (NumberFormatException e)
+				{
+					say(player,"That is not a valid amount.");
+					return;
+				}
+				
+				
 				if (Integer.parseInt(aMsg[2]) > 0)
 				{
 					int amount = Integer.parseInt(aMsg[2]);
@@ -663,7 +698,16 @@ public class myNPC {
 					return;
 					
 				}
+				try
+				{
+					
 				item.setAmount(Integer.parseInt(aMsg[2]));
+				} catch (NumberFormatException e) {
+					
+					say(player,"That is not a valid amount.");
+					//e.printStackTrace();
+					return;
+				}
 				int count = 0;
 				for (ItemStack curitem : player.player.getInventory().getContents())
 				{
@@ -710,6 +754,16 @@ public class myNPC {
 				say(player,"buy [itemid] [amount]");
 				return;
 			} else {
+				
+				try
+				{
+				int a = Integer.parseInt(aMsg[2]);
+				} catch (NumberFormatException e)
+				{
+					say(player,"That is not a valid amount.");
+					return;
+				}
+				
 				if (Integer.parseInt(aMsg[2]) > 0)
 				{
 					int amount = Integer.parseInt(aMsg[2]);
