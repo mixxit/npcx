@@ -638,7 +638,6 @@ public class myUniverse {
             String nameVal = rs1.getString ("name");
             String catVal = rs1.getString ("category");
             
-            //BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(args[2], args[2], player.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
             
             // Create a new spawngroup
             mySpawngroup spawngroup = new mySpawngroup(this.parent);

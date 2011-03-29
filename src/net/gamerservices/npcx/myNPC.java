@@ -1110,6 +1110,7 @@ public class myNPC {
 		// TODO Auto-generated method stub
 		BasicHumanNpc hnpc = NpcSpawner.SpawnBasicHumanNpc(this,id2, name2, world, x, y, z,yaw , pitch);
 		this.npc = hnpc;
+		this.npc.getBukkitEntity().setHealth(this.npc.hp);
         
 		return hnpc;
 	}

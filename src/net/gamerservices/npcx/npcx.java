@@ -632,6 +632,8 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx spawngroup list [name]");
                 	player.sendMessage("Insufficient arguments /npcx spawngroup updatepos spawngroupid");
                 	player.sendMessage("Insufficient arguments /npcx spawngroup delete spawngroupid");
+                	player.sendMessage("Insufficient arguments /npcx version");
+                	
                 	return false;
             		
             		
@@ -1550,7 +1552,12 @@ public class npcx extends JavaPlugin {
         		}
             }
             
-        
+            if (subCommand.equals("version"))
+            	
+            {
+            	PluginDescriptionFile pdfFile = this.getDescription();
+            	player.sendMessage("npcx version "+ pdfFile.getVersion());
+            }
             
             
             
