@@ -1395,27 +1395,27 @@ public class myNPC {
 			// SWORDS!
 			if (itemid == 268)
 			{
-				return 15;
+				return 5;
 			}
 			
 			if (itemid == 272)
 			{
-				return 25;
+				return 8;
 			}
 			
 			if (itemid == 267)
 			{
-				return 35;
+				return 12;
 			}
 			
 			if (itemid == 276)
 			{
-				return 45;
+				return 20;
 			}
 			
 			if (itemid == 283)
 			{
-				return 70;
+				return 30;
 			}
 						
 			return 1;

@@ -27,7 +27,7 @@ public class BasicHumanNpc extends BasicNpc {
 
 	public LivingEntity follow;
 	public LivingEntity aggro;
-	public int hp = 1000;
+	public int hp = 200;
 	public int dmg = 3;
 	public double spawnx;
 	public double spawny;
@@ -581,7 +581,7 @@ public class BasicHumanNpc extends BasicNpc {
 
 	private Location findPlatformDown(Location belowloc) {
 		// TODO Auto-generated method stub
-		int max = 1000;
+		int max = 200;
 		int current = 1;
 		while (current < max)
 		{
