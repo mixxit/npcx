@@ -96,7 +96,7 @@ public class myNPC {
 		String message2=message+" ";
 		for (String word : message2.split(" "))
 		{
-						
+			// this needs to be removed			
 			if(count == 0)
 			{
 				if (triggerwords != null)
@@ -169,6 +169,9 @@ public class myNPC {
 		{
 			// too spammy
 			//say(myplayer,"I'm sorry. I'm rather busy right now.");
+			parseChatGlobalCommands(myplayer, message);
+			
+			
 		} else {
 				int count2 = 0;
 				for (myTriggerword tw : triggerwords.values())
@@ -189,9 +192,166 @@ public class myNPC {
 				{
 					// too spammy
 					//say(myplayer,"I'm sorry. I'm rather busy right now.");
+					parseChatGlobalCommands(myplayer, message);
 				}
 				
 		}
+	}
+
+	private void parseChatGlobalCommands(myPlayer myplayer, String message) {
+		// TODO Auto-generated method stub
+		// Checks a message for any global commands
+		// These are commands all npcs can support
+		
+		//myplayer.player.sendMessage("Parsing:" + message + ":" + Integer.toString(this.triggerwords.size()));
+		String message2=message+" ";
+		String arg1 = "";
+		String arg2 = "";
+		String arg3 = "";
+		
+		int ocount = 0;
+		for (String word : message2.split(" "))
+		{
+			if (ocount == 0)
+			{
+				arg1 = word;
+			}
+			if (ocount == 1)
+			{
+				arg2 = word;
+			}
+			
+			if (ocount == 2)
+			{
+				arg3 = word;
+			}
+			ocount++;
+		}
+		
+		
+		
+		//
+		// Give command
+		// 
+		if (arg1.matches("give"))
+		{
+			
+			if (arg2.matches("") || arg3.matches(""))
+			{
+				say(myplayer,"give [itemid] [amount]");
+				return;	
+			}
+			
+			
+
+			int amount = 0;
+			try
+			{
+				 amount = Integer.parseInt(arg3);
+				
+			} catch (NumberFormatException e)
+			{
+				say(myplayer,"That is not a valid amount.");
+				return;
+			}
+			
+			if (amount < 1)
+			{
+				say(myplayer,"Hmm that's not enough.");
+				//e.printStackTrace();
+				return;
+			}	
+			
+			
+			ItemStack item = new ItemStack(0);
+			try 
+			{
+				item.setTypeId(Material.matchMaterial(arg2).getId());
+			} catch (NullPointerException e)
+			{
+				say(myplayer,"Hmm try another item similar named to "+arg2+" and i might be interested.");
+				//e.printStackTrace();
+				return;
+			
+			} catch (Exception e)
+			{
+				say(myplayer,"Hmm try another item similar named to "+arg2+" and i might be interested.");
+				//e.printStackTrace();
+				return;
+			}
+			
+			try
+			{
+				item.setAmount(Integer.parseInt(arg3));
+				
+			} catch (NumberFormatException e)
+			{
+				say(myplayer,"That is not a valid amount.");
+				return;
+			}
+			
+			int count = 0;
+			for (ItemStack curitem : myplayer.player.getInventory().getContents())
+			{
+				if (curitem.getTypeId() == item.getTypeId())
+				{
+					count = count + curitem.getAmount();
+					//player.player.sendMessage(npc.getName() + " says to you, '"+ curitem.getTypeId() +"/"+curitem.getAmount() +"'");
+				}
+				
+				
+			}
+					
+			if (count >= item.getAmount())
+			{		
+				say(myplayer,"Hmm! "+ item.getAmount() +" " + item.getType().name() + "! Thanks!");	
+				myplayer.player.getInventory().removeItem(item);
+				this.onReceiveItem(myplayer,item);
+				// Fire event
+				
+				return;
+			} else {
+				say(myplayer,"Sorry, you only have: "+count+" !");
+				return;
+			}
+			
+		} else {
+				// global help?
+		}
+		
+		//
+		// End Give command
+		// 
+		
+	}
+
+	private void onReceiveItem(myPlayer p, ItemStack item) {
+		// TODO Auto-generated method stub
+		
+		if (triggerwords != null)
+		{
+			int count2 = 0;
+			for (myTriggerword tw : triggerwords.values())
+			{
+				if (tw.word.toLowerCase().matches("event_receive"+item.getType().getId()))
+				{
+					String send = variablise(tw.response,p.player);
+					
+					say(p,send);
+					
+					count2++;
+					
+				}
+			}
+			if (count2 == 0)
+			{
+				// If i dont have a triggerword tell them thanks
+				p.player.sendMessage(npc.getName() + " says to you, 'Thanks! I'll find some use for that.'");
+			}
+		} else {
+			// Either a standard spawn or has no triggers!
+		}
+		
 	}
 
 	public void onPlayerChat(myPlayer myplayer, String message, String category)
@@ -323,7 +483,8 @@ public class myNPC {
 				} catch (NullPointerException e)
 				{
 					// lol
-					this.parent.sendPlayerItemList(player.player);
+					say(player,"Hmm try another item similar named to "+aMsg[1]+" and i might be interested.");
+
 					say(player,"Hmm try another item similar named to "+aMsg[1]+" and i might be interested.");
 					//e.printStackTrace();
 					return;
