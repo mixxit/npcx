@@ -80,6 +80,8 @@ public class npcxEListener extends EntityListener
 		            
 		            try
 		            {
+		            	
+		            	npc.parent.getDamageDone(npc,(LivingEntity)p);
 		            	npc.hp = npc.hp - 10;
 		            	if (npc.hp < 1)
 		            	{

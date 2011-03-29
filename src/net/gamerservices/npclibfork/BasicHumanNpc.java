@@ -27,7 +27,7 @@ public class BasicHumanNpc extends BasicNpc {
 
 	public LivingEntity follow;
 	public LivingEntity aggro;
-	public int hp = 100;
+	public int hp = 1000;
 	public int dmg = 3;
 	public double spawnx;
 	public double spawny;

@@ -1156,7 +1156,10 @@ public class myNPC {
 					}
 					
 					p.sendMessage("**************************************************************");
-					p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+"):M ("+tMID+")");
+					if (p.isOp())
+					{
+						p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+"):M ("+tMID+")");
+					}
                     p.sendMessage("* You are now chatting to: " + name + ". Right Click to cancel.");
                     p.sendMessage("* Words in [brackets] you should type! Type 'hello' to begin.");
                     p.sendMessage("**************************************************************");
@@ -1303,36 +1306,24 @@ public class myNPC {
 			
 			for (myPlayer pl : this.parent.universe.players.values())
 			{
-				if (pl == (Player)p)
+				if (pl.player == (Player)p)
 				{
 					pl.zomgcount++;
-					if (pl.zomgcount == 15)
+					if (pl.zomgcount == 10)
 					{
-						((Player) p).getServer().broadcastMessage(((Player) p).getName() + " is a known troublecauser! (Slayed 15)");
-						
-					}
-					
-					if (pl.zomgcount == 50)
-					{
-						((Player) p).getServer().broadcastMessage(((Player) p).getName() + " is a damn scoundral! (Slayed 50)");
-						
-					}
-					
-					if (pl.zomgcount == 100)
-					{
-						((Player) p).getServer().broadcastMessage(((Player) p).getName() + " has become a legend spoken of by people all over the world! (Slayed 100!)");
-						
-					}
-					
-					if (pl.zomgcount == 250)
-					{
-						((Player) p).getServer().broadcastMessage(((Player) p).getName() + " is an unstoppable juggernaught! All shall bow before "+((Player) p).getName()+"! (Slayed 250!!)");
+						((Player) p).getServer().broadcastMessage("&3"+((Player) p).getName() + " has become a legend spoken of by people all over the world! (Slayed 10)");
 						
 					}
 					
 					if (pl.zomgcount == 500)
 					{
-						((Player) p).getServer().broadcastMessage("The divine being " + ((Player) p).getName() + " walks among us! (Slayed 500!!!)");
+						((Player) p).getServer().broadcastMessage("&3"+((Player) p).getName() + " is an unstoppable juggernaught (Slayed 50)");
+						
+					}
+					
+					if (pl.zomgcount == 1000)
+					{
+						((Player) p).getServer().broadcastMessage("&3"+"The divine being " + ((Player) p).getName() + " walks among us (Slayed 100)");
 					}
 					
 				}
@@ -1390,5 +1381,46 @@ public class myNPC {
 		
 		BasicHumanNpc hnpc = Spawn(name,name,world,x,y,z,yaw,pitch);
 		return hnpc;
+	}
+
+	public int getDamageDone(BasicHumanNpc npc, LivingEntity player) {
+		// TODO Auto-generated method stub
+		// get weapon
+		if (player instanceof Player)
+		{
+			int itemid = ((Player) player).getInventory().getItemInHand().getTypeId();
+			int damage = 1;
+			
+			// SWORDS!
+			if (itemid == 268)
+			{
+				return 15;
+			}
+			
+			if (itemid == 272)
+			{
+				return 25;
+			}
+			
+			if (itemid == 267)
+			{
+				return 35;
+			}
+			
+			if (itemid == 276)
+			{
+				return 45;
+			}
+			
+			if (itemid == 283)
+			{
+				return 70;
+			}
+						
+			return 1;
+			
+		}
+		return 1;
+		
 	}
 }
