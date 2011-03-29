@@ -210,23 +210,30 @@ public class myNPC {
 		String arg3 = "";
 		
 		int ocount = 0;
+		String words2 = "";
 		for (String word : message2.split(" "))
 		{
 			if (ocount == 0)
 			{
 				arg1 = word;
+				words2+="["+word+"]";
 			}
 			if (ocount == 1)
 			{
 				arg2 = word;
+				words2+="["+word+"]";
+
 			}
 			
 			if (ocount == 2)
 			{
 				arg3 = word;
+				words2+="["+word+"]";
+
 			}
 			ocount++;
 		}
+		myplayer.player.sendMessage(words2);
 		
 		
 		
@@ -1293,6 +1300,44 @@ public class myNPC {
 			}
 			
 			((Player) p).sendMessage("You have slain " + this.name + "!");
+			
+			for (myPlayer pl : this.parent.universe.players.values())
+			{
+				if (pl == (Player)p)
+				{
+					pl.zomgcount++;
+					if (pl.zomgcount == 15)
+					{
+						((Player) p).getServer().broadcastMessage(((Player) p).getName() + " is a known troublecauser! (Slayed 15)");
+						
+					}
+					
+					if (pl.zomgcount == 50)
+					{
+						((Player) p).getServer().broadcastMessage(((Player) p).getName() + " is a damn scoundral! (Slayed 50)");
+						
+					}
+					
+					if (pl.zomgcount == 100)
+					{
+						((Player) p).getServer().broadcastMessage(((Player) p).getName() + " has become a legend spoken of by people all over the world! (Slayed 100!)");
+						
+					}
+					
+					if (pl.zomgcount == 250)
+					{
+						((Player) p).getServer().broadcastMessage(((Player) p).getName() + " is an unstoppable juggernaught! All shall bow before "+((Player) p).getName()+"! (Slayed 250!!)");
+						
+					}
+					
+					if (pl.zomgcount == 500)
+					{
+						((Player) p).getServer().broadcastMessage("The divine being " + ((Player) p).getName() + " walks among us! (Slayed 500!!!)");
+					}
+					
+				}
+			}
+			
 			if (this.faction != null)
 			{
 				((Player) p).sendMessage("Your standing with " + this.faction.name + " has gotten worse!");
