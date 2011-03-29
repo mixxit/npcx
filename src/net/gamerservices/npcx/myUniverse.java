@@ -219,7 +219,7 @@ public class myUniverse {
 			try {
 				sqlCreatestmt = conn.createStatement();
 				
-				String sqlcreate = "ALTER TABLE npcx.merchant_entries CHANGE COLUMN id id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT";
+				String sqlcreate = "ALTER TABLE merchant_entries CHANGE COLUMN id id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT";
 	            sqlCreatestmt.executeUpdate(sqlcreate);
 	            sqlCreatestmt.close();
 	            Properties config = new Properties();
