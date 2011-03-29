@@ -167,7 +167,8 @@ public class myNPC {
 		}
 		if (count == 0 && size == 0)
 		{
-			say(myplayer,"I'm sorry. I'm rather busy right now.");
+			// too spammy
+			//say(myplayer,"I'm sorry. I'm rather busy right now.");
 		} else {
 				int count2 = 0;
 				for (myTriggerword tw : triggerwords.values())
@@ -186,7 +187,8 @@ public class myNPC {
 				}
 				if (count2 == 0)
 				{
-					say(myplayer,"I'm sorry. I'm rather busy right now.");
+					// too spammy
+					//say(myplayer,"I'm sorry. I'm rather busy right now.");
 				}
 				
 		}
@@ -260,9 +262,15 @@ public class myNPC {
 						count++;
 						if (match == true)
 						{
-							if ( Material.matchMaterial(aMsg[1]).getId() == item.itemid)
+							try
 							{
-								say(player,Material.matchMaterial(aMsg[1]) + " x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+								if ( Material.matchMaterial(aMsg[1]).getId() == item.itemid)
+								{
+									say(player,Material.matchMaterial(aMsg[1]) + " x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+								}
+							} catch (NullPointerException e)
+							{
+								say(player,"Couldn't find any items matching the name you requested");
 							}
 						} else {
 							say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
@@ -431,7 +439,7 @@ public class myNPC {
 						{
 							if (entry.itemid == itemid)
 							{
-								ItemStack i = sellMerchantItem(entry.id,amount);
+								ItemStack i = sellMerchantItem(entry.itemid,amount);
 									
 								if (i != null)
 								{
@@ -485,10 +493,12 @@ public class myNPC {
 		{
 			if  (merchant.merchantentries != null)
 			{
+				System.out.println("Found entries!");
 				for (myMerchant_entry entry : merchant.merchantentries)
 				{
 					if (entry.itemid == itemid)
 					{
+						System.out.println("Item matched!");
 						if (entry.amount >= amount)
 						{
 							ItemStack i = new ItemStack(itemid);
@@ -498,11 +508,20 @@ public class myNPC {
 							System.out.println("About to sell: " + i.getType().name() + ":"+ entry.amount);
 							return i;
 						} else {
+							System.out.println("Not enough ["+entry.amount+"] compared to your ["+amount+"]!");
 							return null;				
 						}
 					}
 				}
+			} else {
+				System.out.println("This merchant has no entries");
+			
 			}
+			
+			
+			
+		} else {
+			System.out.println("This isnt a mechant");
 		}
 		
 		return null;
