@@ -11,8 +11,10 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.HumanEntity;
@@ -24,7 +26,7 @@ public class npcxPListener extends PlayerListener {
 	public npcxPListener(npcx parent) {
         this.parent = parent;
     }
-	public void onPlayerJoin(PlayerEvent event) 
+	public void onPlayerJoin(PlayerJoinEvent event) 
     {
 		myPlayer player = new myPlayer(event.getPlayer(),event.getPlayer().getName());
 		//System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
@@ -100,7 +102,7 @@ public class npcxPListener extends PlayerListener {
 		
 	}
 	
-	public void onPlayerQuit(PlayerEvent event)
+	public void onPlayerQuit(PlayerQuitEvent event)
     {
 		
 		for (myPlayer player : parent.universe.players.values()){

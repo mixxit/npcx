@@ -1,5 +1,6 @@
 package net.gamerservices.npcx;
 
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.PluginEvent;
 import org.bukkit.event.server.ServerListener;
 
@@ -16,7 +17,7 @@ public class PluginListener extends ServerListener {
 	
 
     @Override
-    public void onPluginEnabled(PluginEvent event) {
+    public void onPluginEnable(PluginEnableEvent event) {
         if(parent.getiConomy() == null) {
             Plugin iConomy = parent.getBukkitServer().getPluginManager().getPlugin("iConomy");
 

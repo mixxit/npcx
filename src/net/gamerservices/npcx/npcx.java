@@ -509,8 +509,10 @@ public class npcx extends JavaPlugin {
 	        return true;
 	 }
 
-	 public void EventsSetup()
+	 public boolean EventsSetup()
 	 {
+		 try 
+		 {
 		 System.out.println("npcx : registering monitored events");
 		 this.Server = getServer();
 	     this.PluginListener = new PluginListener(this);
@@ -521,11 +523,11 @@ public class npcx extends JavaPlugin {
          mPlayerListener = new npcxPListener(this);
          mWorldListener = new npcxWListener(this);
          
-         pm.registerEvent(Type.CHUNK_LOADED, mWorldListener, Priority.Normal, this);
-         pm.registerEvent(Type.CHUNK_UNLOADED, mWorldListener, Priority.Normal, this);
+         pm.registerEvent(Type.CHUNK_LOAD, mWorldListener, Priority.Normal, this);
+         pm.registerEvent(Type.CHUNK_UNLOAD, mWorldListener, Priority.Normal, this);
          
          pm.registerEvent(Type.ENTITY_TARGET, mEntityListener, Priority.Normal, this);
-         pm.registerEvent(Type.ENTITY_DAMAGED, mEntityListener, Priority.Normal, this);
+         pm.registerEvent(Type.ENTITY_DAMAGE, mEntityListener, Priority.Normal, this);
          pm.registerEvent(Type.ENTITY_EXPLODE, mEntityListener, Priority.Normal, this);
          
          pm.registerEvent(Type.ENTITY_DEATH, mEntityListener, Priority.Normal, this);
@@ -536,6 +538,17 @@ public class npcx extends JavaPlugin {
          pm.registerEvent(Type.PLAYER_JOIN, mPlayerListener, Priority.Normal, this);
          pm.registerEvent(Type.PLAYER_QUIT, mPlayerListener, Priority.Normal, this);
          pm.registerEvent(Type.PLAYER_CHAT, mPlayerListener, Priority.Normal, this); 
+         
+         return true;
+		 } catch (NoSuchFieldError e)
+		 {
+			 System.out.println("npcx : *****************************************************");
+			 System.out.println("npcx : *            FAILED TO LOAD NPCX !                  *");
+			 System.out.println("npcx : * This version of NPCX is built for Bukkit RB 602   *");
+			 System.out.println("npcx : *            FAILED TO LOAD NPCX !                  *");
+			 System.out.println("npcx : *****************************************************");
+			 return false;
+		 }
 		 
 	 }
 	
@@ -551,7 +564,10 @@ public class npcx extends JavaPlugin {
 			return;
 		
 		// TODO Auto-generated method stub
-        EventsSetup();
+        if (EventsSetup() == false)
+        {
+        	return;
+        }
         
         universe.checkDbSetup();
         universe.checkUpdates();

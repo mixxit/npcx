@@ -16,7 +16,7 @@ public class npcxWListener extends WorldListener {
 	}
 
 	@Override
-	public void onChunkUnloaded(ChunkUnloadEvent e) {
+	public void onChunkUnload(ChunkUnloadEvent e) {
 		try
 		{
 			for (myNPC npc : plugin.universe.npcs.values())			
@@ -33,7 +33,7 @@ public class npcxWListener extends WorldListener {
 		}
 	}
 
-	public void onChunkLoaded(ChunkLoadEvent e) {
+	public void onChunkLoad(ChunkLoadEvent e) {
 		try
 		{
 			for (myNPC npc : plugin.universe.npcs.values())
