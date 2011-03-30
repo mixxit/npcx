@@ -755,5 +755,26 @@ public class BasicHumanNpc extends BasicNpc {
 		
 	}
 
+	public void chunkactive(Location location) {
+		// TODO Auto-generated method stub
+		if (this.parent.spawngroup != null)
+		{
+			System.out.println("ncpx : Chunkactive for spawngroup:"+this.parent.spawngroup.name);
+			this.parent.spawngroup.chunkactive = true;
+		}
+		
+	}
+
+	public void chunkinactive(Location location) {
+		// TODO Auto-generated method stub
+		if (this.parent.spawngroup != null)
+		{
+			System.out.println("npcx : ChunkInactive for spawngroup:"+this.parent.spawngroup.name);
+			this.parent.spawngroup.chunkactive = false;
+		}
+		
+		
+	}
+
 
 }

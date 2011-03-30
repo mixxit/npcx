@@ -25,13 +25,14 @@ public class mySpawngroup {
 	public double pitch;
 	public double yaw;
 	public myPathgroup pathgroup;
+	public boolean chunkactive = true;
 	
 	public mySpawngroup(npcx parent)
 	{
 		this.parent = parent;
 	}
 	
-	public boolean Delete() {
+	public boolean DBDelete() {
 		// Go through my children
 		
 		try 

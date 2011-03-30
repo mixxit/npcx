@@ -17,35 +17,39 @@ public class npcxWListener extends WorldListener {
 
 	@Override
 	public void onChunkUnload(ChunkUnloadEvent e) {
-		try
+		//System.out.println("debug : closing chunk " + e.getChunk());
+		for (myNPC npc : plugin.universe.npcs.values())
 		{
-			for (myNPC npc : plugin.universe.npcs.values())			
+			if (plugin.universe.npcs != null)
 			{
-				if (e.getChunk().getWorld()
-						.getChunkAt(npc.npc.getBukkitEntity().getLocation())
-						.equals(e.getChunk())) {
-					npc.npc.forceMove(npc.npc.getBukkitEntity().getLocation());
-
+				if (npc.npc != null)
+				{
+					if (e.getChunk().getWorld()
+							.getChunkAt(npc.npc.getBukkitEntity().getLocation())
+							.equals(e.getChunk())) {
+						npc.npc.chunkinactive(npc.npc.getBukkitEntity().getLocation());
+					}
 				}
 			}
-		} catch (Exception e2) {
-			
 		}
 	}
-
+	
+	@Override
 	public void onChunkLoad(ChunkLoadEvent e) {
-		try
+		//System.out.println("debug : loading chunk " + e.getChunk());
+		for (myNPC npc : plugin.universe.npcs.values())
 		{
-			for (myNPC npc : plugin.universe.npcs.values())
+			if (plugin.universe.npcs != null)
 			{
-				if (e.getChunk().getWorld()
-						.getChunkAt(npc.npc.getBukkitEntity().getLocation())
-						.equals(e.getChunk())) {
-					npc.npc.forceMove(npc.npc.getBukkitEntity().getLocation());
+				if (npc.npc != null)
+				{
+					if (e.getChunk().getWorld()
+							.getChunkAt(npc.npc.getBukkitEntity().getLocation())
+							.equals(e.getChunk())) {
+						npc.npc.chunkactive(npc.npc.getBukkitEntity().getLocation());
+					}
 				}
 			}
-		} catch (Exception e2) {
-			
 		}
 	}
 }

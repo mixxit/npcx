@@ -120,17 +120,15 @@ public class npcx extends JavaPlugin {
 	
 	public void think()
 	{
-		
-		
-		
 		tick.schedule(new Tick(this), 1 * 500);
-		
 		fixDead();
-		
 		// check npc logic
-		
 		try
 		{
+			//
+			// NPC THINK
+			//
+			
 			for (myNPC npc : universe.npcs.values())
 			{
 				if (npc.npc != null)
@@ -170,10 +168,7 @@ public class npcx extends JavaPlugin {
 									    				//System.out.println("npcx : i have no faction so ill be be neutral");
 									    			}
 									    		}
-									    	
 										}
-									    
-										
 							    	}
 								}
 							}
@@ -185,14 +180,11 @@ public class npcx extends JavaPlugin {
 						}
 						
 					}
-					
 					// VS MONSTERS
-					
 					if (this.universe.monsters.size() > 0)
 					{
 						try
 						{
-							
 							for (LivingEntity e : this.universe.monsters)
 							{
 								if (e.getHealth() > 0)
@@ -248,87 +240,94 @@ public class npcx extends JavaPlugin {
 						}
 					}
 				}
-				
 			}
 			
-				
-				
-			
-			// check spawngroups
+			//
+			// SPAWN FROM ACTIVE SPAWNGROUPS
+			//
 			
 			for (mySpawngroup spawngroup : universe.spawngroups.values())
 			{
 				
+				// Check if any spawngroups have finished their cooldown period
 				if (spawngroup.activecountdown > 0)
 				{
 					spawngroup.activecountdown--;
-					
 					if (spawngroup.activecountdown == 1)
 					{
 						spawngroup.active = false;					
 					}
-					
 				}
-	
-				
-				if (!spawngroup.active)
+				if (spawngroup.chunkactive)
 				{
-						
-					//System.out.println("npcx : found inactive spawngroup ("+ spawngroup.id +") with :[" + spawngroup.npcs.size() + "]");
-					int count = 0;
-					Random generator = new Random();
-					if (spawngroup.npcs != null)
+					if (!spawngroup.active)
 					{
-						Object[] values = spawngroup.npcs.values().toArray();
-						
-						if (values.length > 0)
+						//System.out.println("npcx : found inactive spawngroup ("+ spawngroup.id +") with :[" + spawngroup.npcs.size() + "]");
+						int count = 0;
+						Random generator = new Random();
+						if (spawngroup.npcs != null)
 						{
-						
-						myNPC npc = (myNPC) values[generator.nextInt(values.length)];
-						
-							try
+							Object[] values = spawngroup.npcs.values().toArray();
+							
+							if (values.length > 0)
 							{
-						
-							// is there at least one player in game?
-							if (this.getServer().getOnlinePlayers().length > 0)
-							{
-								if (!spawngroup.active)
+							myNPC npc = (myNPC) values[generator.nextInt(values.length)];
+								try
 								{
-									npc.spawngroup = spawngroup;
-									
-									//System.out.println("npcx : made spawngroup active");
-									Double  pitch = new Double(spawngroup.pitch);
-									Double yaw = new Double(spawngroup.yaw);
-									BasicHumanNpc hnpc = npc.Spawn(npc.id, npc.name, this.getServer().getWorld(this.universe.defaultworld), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
-									
-									npc.npc = hnpc;
-									
-									ItemStack iprimary = new ItemStack(npc.weapon);
-									ItemStack ihelmet = new ItemStack(npc.helmet);
-									ItemStack ichest = new ItemStack(npc.chest);
-									ItemStack ilegs = new ItemStack(npc.legs);
-									ItemStack iboots = new ItemStack(npc.boots);
-									
-					                npc.npc.getBukkitEntity().getInventory().setItemInHand(iprimary);
-					                npc.npc.getBukkitEntity().getInventory().setHelmet(ihelmet);
-					                npc.npc.getBukkitEntity().getInventory().setChestplate(ichest);
-					                npc.npc.getBukkitEntity().getInventory().setLeggings(ilegs);
-									npc.npc.getBukkitEntity().getInventory().setBoots(iboots);
-					                hnpc.parent = npc;
-					                
-									this.npclist.put(spawngroup.id + "-" + npc.id, hnpc);
-									this.universe.npcs.put(spawngroup.id+"-"+npc.id,npc);
-									spawngroup.active = true;
+									// is there at least one player in game?
+									if (this.getServer().getOnlinePlayers().length > 0)
+									{
+										if (!spawngroup.active)
+										{
+											
+												npc.spawngroup = spawngroup;
+												//System.out.println("npcx : made spawngroup active");
+												Double  pitch = new Double(spawngroup.pitch);
+												Double yaw = new Double(spawngroup.yaw);
+												BasicHumanNpc hnpc = npc.Spawn(npc.id, npc.name, this.getServer().getWorld(this.universe.defaultworld), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
+												npc.npc = hnpc;
+												ItemStack iprimary = new ItemStack(npc.weapon);
+												ItemStack ihelmet = new ItemStack(npc.helmet);
+												ItemStack ichest = new ItemStack(npc.chest);
+												ItemStack ilegs = new ItemStack(npc.legs);
+												ItemStack iboots = new ItemStack(npc.boots);
+								                npc.npc.getBukkitEntity().getInventory().setItemInHand(iprimary);
+								                npc.npc.getBukkitEntity().getInventory().setHelmet(ihelmet);
+								                npc.npc.getBukkitEntity().getInventory().setChestplate(ichest);
+								                npc.npc.getBukkitEntity().getInventory().setLeggings(ilegs);
+												npc.npc.getBukkitEntity().getInventory().setBoots(iboots);
+								                hnpc.parent = npc;
+												this.npclist.put(spawngroup.id + "-" + npc.id, hnpc);
+												this.universe.npcs.put(spawngroup.id+"-"+npc.id,npc);
+												spawngroup.active = true;
+											
+										}
+									}
+								} catch (Exception e)
+								{
+									e.printStackTrace();
 								}
-							}
-							} catch (Exception e)
-							{
-								e.printStackTrace();
 							}
 						}
 					}
+				} else {
+					// dont spawn, the chunk isnt up atm
+					if (spawngroup.npcs != null)
+					{
+						for (myNPC npc : spawngroup.npcs.values())
+						{
+							if (npc.npc != null)
+							{
+								this.onNPCDeath(npc.npc);
+							}
+							
+						}
+					}
+					
+					
 				}
 			}
+			
 		} catch (ConcurrentModificationException e)
 		{
 			// its locked being written to atm, try again on next loop
@@ -724,7 +723,7 @@ public class npcx extends JavaPlugin {
          		    	{
          		    		if (spawngroup.id == Integer.parseInt(args[2]))
          		    		{
-         		    			spawngroup.Delete();
+         		    			spawngroup.DBDelete();
          		    			count++;
          		    		}
          		    	}
