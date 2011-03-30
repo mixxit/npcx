@@ -1578,7 +1578,7 @@ public class npcx extends JavaPlugin {
             	
             {
             	PluginDescriptionFile pdfFile = this.getDescription();
-            	player.sendMessage("npcx version "+ pdfFile.getVersion());
+            	player.sendMessage("npcx version "+ pdfFile.getVersion() + " db version: " + this.universe.dbversion);
             }
             
             

@@ -31,7 +31,7 @@ public class myNPC {
 	public myLoottable loottable;
 	public List< myShopItem > shop = new CopyOnWriteArrayList< myShopItem >();
 	myMerchant merchant;
-	public double coin = 250000;
+	public int coin = 250000;
 	public HashMap<String, myTriggerword> triggerwords = new HashMap<String, myTriggerword>();
 	public int chest = 0;
 	public int legs = 0;
@@ -536,14 +536,14 @@ public class myNPC {
 				{
 					
 					say(player,"Ok thats "+ item.getAmount() +" out of your "+count +".");
-					double totalcoins = 0;
+					int totalcoins = 0;
 					int buysat = getMerchantPriceBuyAt(Merchantitem.item.getTypeId());
 					if (buysat == 0)
 					{
 						say(player,"Sorry, I am just not interested in that!");
 						return;
 					}
-					totalcoins = (float)(item.getAmount() * buysat);
+					totalcoins = (item.getAmount() * buysat);
 					
 					if (this.coin >= totalcoins)
 					{
@@ -554,10 +554,10 @@ public class myNPC {
 							{
 								player.player.getInventory().removeItem(item);
 								entry.amount = entry.amount + item.getAmount();
-								say(player,"Thanks! Heres your " + (float)totalcoins + " coins.");
-								Account account = iConomy.getBank().getAccount(player.name);
-								this.coin = (float)this.coin - (float)totalcoins;
-								account.add(totalcoins);
+								say(player,"Thanks! Heres your " + totalcoins + " coins.");
+								
+								this.coin = this.coin - totalcoins;
+								this.parent.universe.addPlayerBalance(player.player,totalcoins);
 								return;
 							}
 						}
@@ -567,7 +567,7 @@ public class myNPC {
 
 						
 					} else {
-						say(player,"Sorry, I only have: "+(float)this.coin+" and thats worth "+(float)totalcoins+"!");
+						say(player,"Sorry, I only have: "+this.coin+" and thats worth "+totalcoins+"!");
 						return;
 					}
 				} else {
@@ -614,13 +614,13 @@ public class myNPC {
 									
 								if (i != null)
 								{
-									Account account = iConomy.getBank().getAccount(player.name);
+									
 									int cost = entry.pricesell * amount;
-									if (cost <= account.getBalance())
+									if (cost <= this.parent.universe.getPlayerBalance(player.player))
 									{
 										player.player.getInventory().addItem(i);
 										say(player,"Thanks! That's " + cost + " total coins!");
-										account.subtract(cost);		
+										this.parent.universe.subtractPlayerBalance(player.player,cost);		
 										return;
 									} else {
 										say(player,"You don't have enough!!");
@@ -760,19 +760,23 @@ public class myNPC {
 
 	private String variablise(String response, Player player) {
 		// TODO Auto-generated method stub
+		
+		int balance = this.parent.universe.getPlayerBalance(player);
+		
+		
 		String newresponse = response;
 		if (response.contains("bankbalance"))
 		{
 			//System.out.println("Replacing bankbalance variable");
-			Account account = iConomy.getBank().getAccount(player.getName());
-			newresponse = response.replaceAll("bankbalance", Float.toString((float)account.getBalance()));
+			
+			newresponse = response.replaceAll("bankbalance", Integer.toString(balance));
 		}
 		
 		if (response.contains("playerbalance"))
 		{
 			//System.out.println("Replacing bankbalance variable");
-			Account account = iConomy.getBank().getAccount(player.getName());
-			newresponse = response.replaceAll("playerbalance", Float.toString((float)account.getBalance()));
+			
+			newresponse = response.replaceAll("playerbalance", Integer.toString(balance));
 		}
 		
 		if (response.contains("playerhealth"))
@@ -784,7 +788,7 @@ public class myNPC {
 		if (response.contains("playername"))
 		{
 			//System.out.println("Replacing bankbalance variable");
-			Account account = iConomy.getBank().getAccount(player.getName());
+			
 			newresponse = response.replaceAll("playername", player.getName());
 		}
 
@@ -792,14 +796,14 @@ public class myNPC {
 		return newresponse;
 	}
 	
-	public double checkHints(int id)
+	public int checkHints(int id)
 	{
 		for (myHint hint : hints)
 		{
 			if (hint.id == id)
 			{
 				hint.age++;
-				return (float)hint.price;
+				return hint.price;
 				
 			}
 		}
@@ -914,19 +918,19 @@ public class myNPC {
 				{
 					
 					say(player,"Ok thats "+ item.getAmount() +" out of your "+count +".");
-					double totalcoins = 0;
-					totalcoins = (float)(item.getAmount() * checkHints(shopitem.item.getTypeId()) * 0.80);
+					int totalcoins = 0;
+					totalcoins = (int) (item.getAmount() * checkHints(shopitem.item.getTypeId()) * 1);
 					
 					if (this.coin >= totalcoins)
 					{
 						player.player.getInventory().removeItem(item);
 						shop.add(shopitem);
-						say(player,"Thanks! Heres your " + (float)totalcoins + " coins.");
-						Account account = iConomy.getBank().getAccount(player.name);
-						this.coin = (float)this.coin - (float)totalcoins;
-						account.add(totalcoins);
+						say(player,"Thanks! Heres your " + totalcoins + " coins.");
+						
+						this.coin = this.coin - totalcoins;
+						this.parent.universe.addPlayerBalance(player.player,totalcoins);
 					} else {
-						say(player,"Sorry, I only have: "+(float)this.coin+" and thats worth "+(float)totalcoins+"!");
+						say(player,"Sorry, I only have: "+this.coin+" and thats worth "+totalcoins+"!");
 					}
 				} else {
 					
@@ -959,7 +963,7 @@ public class myNPC {
 					int amount = Integer.parseInt(aMsg[2]);
 					int originalamount = Integer.parseInt(aMsg[2]);
 					int found = 0;
-					double totalcost = 0;
+					int totalcost = 0;
 					List< myShopItem > basket = new CopyOnWriteArrayList< myShopItem >();
 					if (shop.size() > 0)
 					{
@@ -977,7 +981,7 @@ public class myNPC {
 										found++;
 										
 										
-										double cost = ((checkHints(item.item.getTypeId()) * 1.10) * item.item.getAmount());
+										int cost = (int) ((checkHints(item.item.getTypeId()) * 1.6) * item.item.getAmount());
 										if (cost > 0)
 										{
 											if (amount != 0)
@@ -985,20 +989,20 @@ public class myNPC {
 											
 												if (item.item.getAmount() <= amount)
 												{
-													this.coin = (float)this.coin + (float)cost;
-													totalcost = (float)totalcost + (float)cost;
+													this.coin = this.coin + cost;
+													totalcost = totalcost + cost;
 													amount = amount - item.item.getAmount();
 													
 													shop.remove(item);
 													basket.add(item);
 													
-													say(player,(float)cost + " coins for this stack.");
+													say(player,cost + " coins for this stack.");
 												} else {
-													this.coin = (float)this.coin + (float)cost;
-													totalcost = (float)totalcost + (((float)cost/item.item.getAmount())*amount);
+													this.coin = this.coin + cost;
+													totalcost = totalcost + ((cost/item.item.getAmount())*amount);
 													
 													myShopItem i = new myShopItem();
-													i.price = (((float)cost/item.item.getAmount())*amount);
+													i.price = ((cost/item.item.getAmount())*amount);
 													ItemStack is = new ItemStack(item.item.getType());
 													i.item = is;
 													is.setAmount(amount);
@@ -1007,7 +1011,7 @@ public class myNPC {
 													amount = 0;
 													basket.add(i);
 													item.item.setAmount(item.item.getAmount()-i.item.getAmount());
-													say(player,(float)cost + " coins for this stack.");
+													say(player,cost + " coins for this stack.");
 													
 													
 												}
@@ -1037,9 +1041,8 @@ public class myNPC {
 						
 						if (totalcost > 0)
 						{
-							Account account = iConomy.getBank().getAccount(player.name);
 							
-							if (account.hasEnough((float)totalcost))
+							if (this.parent.universe.hasPlayerEnoughPlayerBalance(player.player,totalcost))
 							{
 								for (myShopItem i : basket)
 								{
@@ -1047,10 +1050,9 @@ public class myNPC {
 									basket.remove(i);
 								}
 								
-								say(player,"Thanks, " + (float)totalcost + " coins.");
-								
-								account.subtract((float)totalcost);
-								double each = totalcost / originalamount;
+								say(player,"Thanks, " + totalcost + " coins.");
+								this.parent.universe.subtractPlayerBalance(player.player,totalcost);
+								int each = totalcost / originalamount;
 															
 								// update hints
 								updateHints(Material.matchMaterial(aMsg[1]).getId(),each);
@@ -1061,7 +1063,7 @@ public class myNPC {
 									shop.add(i);
 									basket.remove(i);
 								}
-								say(player,"Sorry, you don't have enough (" + (float)totalcost + " coins).");
+								say(player,"Sorry, you don't have enough (" + totalcost + " coins).");
 								return;
 
 							}
@@ -1085,7 +1087,7 @@ public class myNPC {
 
 
 
-	private void updateHints(int parseInt, double each) {
+	private void updateHints(int parseInt, int each) {
 		// TODO Auto-generated method stub
 		
 		// is it old?
@@ -1102,7 +1104,7 @@ public class myNPC {
 		
 			myHint h = new myHint();
 			h.id = parseInt;
-			h.price = (float)each;
+			h.price = each;
 			h.age = 0;
 			this.hints.add(h);
 	}

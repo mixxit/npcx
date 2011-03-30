@@ -16,7 +16,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
+
+import com.nijiko.coelho.iConomy.iConomy;
+import com.nijiko.coelho.iConomy.system.Account;
 
 public class myUniverse {
 	npcx parent;
@@ -205,7 +209,7 @@ public class myUniverse {
 	
 	private boolean updateDB() {
 		// TODO Auto-generated method stub
-		String targetdbversion = "1.01";
+		String targetdbversion = "1.02";
 		System.out.println("npcx : Checking for DB Updates from DBVersion:"+this.dbversion);
 		if(this.dbversion.matches(targetdbversion))
 		{
@@ -256,16 +260,84 @@ public class myUniverse {
 					return false;
 				}
 				
-				
+				this.dbversion = "1.01";
 				System.out.println("**********************************************");
 				System.out.println("* Congratulations! Your NPCX database is now *");
 				System.out.println("*       updated to version 1.01              *");
 				System.out.println("**********************************************");
-				return true;
+				// continue on till we get the right version 
+				//return true;
 			} catch (SQLException e) {
 				System.out.println("**********************************************");
 				System.out.println("*   Problem during update to version 1.01    *");
 				System.out.println("*  Do you have entries in merchant_entries?  *");
+				System.out.println("**********************************************");
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		if (this.dbversion.matches("1.01"))
+		{
+			// Create Player table
+			// Update size of triggerword response
+			Statement sqlCreatestmt;
+			try {
+				sqlCreatestmt = conn.createStatement();
+				
+			     
+				String sqldrop = "DROP TABLE IF EXISTS player";
+	            sqlCreatestmt.executeUpdate(sqldrop);
+				String sqlcreate = "CREATE TABLE player (  id int(10) unsigned NOT NULL AUTO_INCREMENT,  name varchar(45) DEFAULT NULL,  coin int(10) unsigned DEFAULT NULL,  flags int(10) unsigned DEFAULT NULL,  petid int(11) DEFAULT NULL,  PRIMARY KEY (id),  UNIQUE KEY name_UNIQUE (name)) ";
+				sqlCreatestmt.executeUpdate(sqlcreate);
+				String sqlalter = "ALTER TABLE npc_triggerwords CHANGE COLUMN reply reply VARCHAR(512) NULL DEFAULT NULL;";
+				sqlCreatestmt.executeUpdate(sqlalter);
+				sqlCreatestmt.close();
+	            Properties config = new Properties();
+				BufferedInputStream stream;
+				try
+				{
+					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
+					config.load(stream);
+			
+					config.setProperty(PROP_DBHOST,dbhost);
+					config.setProperty(PROP_DBUSER,dbuser);
+					config.setProperty(PROP_DBPASS,dbpass);
+					config.setProperty(PROP_DBNAME,dbname);
+					config.setProperty(PROP_DBPORT,dbport);
+		            config.setProperty(PROP_DBVERSION,dbversion);
+					config.setProperty(PROP_WORLD,defaultworld);
+		            config.setProperty(PROP_UPDATE,"false");
+		            config.setProperty(PROP_DBVERSION, "1.02");
+		            this.dbversion = "1.02";
+		            File propfolder = parent.getDataFolder();
+		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		            propfile.createNewFile();
+		            
+		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+					config.store(stream1, "Default generated settings, please ensure mysqld matches");
+		            
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+					System.out.println("**********************************************");
+					System.out.println("*   Problem during update to version 1.02    *");
+					System.out.println("*     Can you access your config file?       *");
+					System.out.println("**********************************************");
+					return false;
+				}
+				
+				
+				System.out.println("**********************************************");
+				System.out.println("* Congratulations! Your NPCX database is now *");
+				System.out.println("*       updated to version 1.02              *");
+				System.out.println("**********************************************");
+				return true;
+			} catch (SQLException e) {
+				System.out.println("**********************************************");
+				System.out.println("*   Problem during update to version 1.02    *");
+				System.out.println("* Please provide stacktrace below to devs    *");
 				System.out.println("**********************************************");
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -364,7 +436,7 @@ public class myUniverse {
 			
 			if (update.matches("true"))
             {
-            	System.out.println("npcx : DB WIPE");
+            	
             	
 	            /*
 	             * One time Database creation / TODO: Auto Upgrades
@@ -407,6 +479,7 @@ public class myUniverse {
 		            
 		            sqldrop = "DROP TABLE IF EXISTS merchant";
 		            sqlDropstmt.executeUpdate(sqldrop);
+		       
 		            
 		            sqldrop = "DROP TABLE IF EXISTS player_faction";
 		            sqlDropstmt.executeUpdate(sqldrop);
@@ -944,5 +1017,88 @@ public class myUniverse {
 			e.printStackTrace();
 		}
 	}
+
+	public int getPlayerBalance(Player player) {
+		// TODO Auto-generated method stub
+		try
+		{
+			Account account = iConomy.getBank().getAccount(player.getName());
+			return (int)account.getBalance();
+		} catch (NoClassDefFoundError e)
+		{
+			for (myPlayer p : this.players.values())
+			{
+				if (p.player == player)
+					return p.getNPCXBalance();
+			}
+			e.printStackTrace();
+			// We don't have iConomy
+			return 0;
+		}
+	}
+
+	public void subtractPlayerBalance(Player player, int totalcost) {
+		// TODO Auto-generated method stub
+		try
+		{
+			Account account = iConomy.getBank().getAccount(player.getName());
+			account.subtract(totalcost);
+		} catch (NoClassDefFoundError e)
+		{
+			
+			for (myPlayer p : this.players.values())
+			{
+				if (p.player == player)
+					p.setNPCXBalance(p.getNPCXBalance()-totalcost);
+			}
+			// We don't have iConomy
+			
+			
+		}
+	}
 	
+
+	public void addPlayerBalance(Player player, int totalcost) {
+		// TODO Auto-generated method stub
+		try
+		{
+			Account account = iConomy.getBank().getAccount(player.getName());
+			account.add(totalcost);
+		} catch (NoClassDefFoundError e)
+		{
+			// We don't have iConomy
+			for (myPlayer p : this.players.values())
+			{
+				if (p.player == player)
+					p.setNPCXBalance(p.getNPCXBalance()+totalcost);
+			}
+		}
+	}
+
+	public boolean hasPlayerEnoughPlayerBalance(Player player, float totalcost) {
+		// TODO Auto-generated method stub
+		
+		try
+		{
+			Account account = iConomy.getBank().getAccount(player.getName());
+			return account.hasEnough(totalcost);
+		} catch (NoClassDefFoundError e)
+		{
+			for (myPlayer p : this.players.values())
+			{
+				if (p.player == player)
+				{
+					if (p.getNPCXBalance() >= totalcost)
+					{
+						
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+			return false;
+			
+		}
+	}
 }

@@ -28,7 +28,7 @@ public class npcxPListener extends PlayerListener {
     }
 	public void onPlayerJoin(PlayerJoinEvent event) 
     {
-		myPlayer player = new myPlayer(event.getPlayer(),event.getPlayer().getName());
+		myPlayer player = new myPlayer(this.parent,event.getPlayer(),event.getPlayer().getName());
 		//System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
 		parent.universe.players.put(player.player.getName(), player);
 		

@@ -21,7 +21,7 @@ public class mySpawngroup {
 	public boolean active = false;
 	public World world;
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
-	int activecountdown = 0;
+	public int activecountdown = 0;
 	public double pitch;
 	public double yaw;
 	public myPathgroup pathgroup;
