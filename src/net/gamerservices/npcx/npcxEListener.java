@@ -131,8 +131,14 @@ public class npcxEListener extends EntityListener
 			//System.out.println("npcx : deregistered monster");
 			
 			this.parent.universe.monsters.remove((Monster)event.getEntity());	
-
+			
 		}
+		if (this.parent.universe.nocreeper.matches("true"))
+		{
+			// creeper events are bad
+			event.setCancelled(true);
+		}
+		
 	}
 	
 	@Override

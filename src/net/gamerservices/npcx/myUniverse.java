@@ -16,6 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -28,6 +29,8 @@ public class myUniverse {
 	
 	// config variable names
 	public final String FILE_PROPERTIES = "npcx.properties";
+	public final String PROP_NOWILD = "nowild";
+	public final String PROP_NOCREEPER = "nocreeper";
 	public final String PROP_DBHOST = "db-host";
 	public final String PROP_DBUSER = "db-user";
 	public final String PROP_DBPASS = "db-pass";
@@ -41,6 +44,8 @@ public class myUniverse {
 	// db
 	public String dsn;
 	public Connection conn = null;
+	public String nowild;
+	public String nocreeper;
 	public String dbhost;
 	public String update;
 	public String dbuser;
@@ -78,6 +83,8 @@ public class myUniverse {
 	{
 		if (dbhost == null)
 	 	{
+		 	this.nowild = "false";
+			this.nocreeper = "false";
 		 	this.dbhost = "localhost";
 			this.dbuser = "npcx";
 			this.dbname = "npcx";
@@ -143,6 +150,8 @@ public class myUniverse {
 				
 				// Load the configuration
 				config.load(stream);
+				nowild = config.getProperty("nowild");
+				nocreeper = config.getProperty("nocreeper");
 				dbhost = config.getProperty("db-host");
 				dbuser = config.getProperty("db-user");
 				dbpass = config.getProperty("db-pass");
@@ -235,6 +244,8 @@ public class myUniverse {
 					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
 					config.load(stream);
 			
+					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOCREEPER,nocreeper);
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
 					config.setProperty(PROP_DBPASS,dbpass);
@@ -303,6 +314,8 @@ public class myUniverse {
 					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
 					config.load(stream);
 			
+					config.setProperty(PROP_NOCREEPER,nocreeper);
+					config.setProperty(PROP_NOWILD,nowild);
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
 					config.setProperty(PROP_DBPASS,dbpass);
@@ -373,6 +386,8 @@ public class myUniverse {
 					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
 					config.load(stream);
 			
+					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOCREEPER,nocreeper);
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
 					config.setProperty(PROP_DBPASS,dbpass);
@@ -443,6 +458,8 @@ public class myUniverse {
 			{
 				propfile.createNewFile();
 				prop = new Properties();
+				prop.setProperty(PROP_NOWILD, "false");
+				prop.setProperty(PROP_NOCREEPER, "false");
 				prop.setProperty(PROP_DBHOST, "localhost");
 				prop.setProperty(PROP_DBUSER, "npcx");
 				prop.setProperty(PROP_DBPASS, "p4ssw0rd!");
@@ -451,6 +468,8 @@ public class myUniverse {
 				prop.setProperty(PROP_DBVERSION, "1");
 				
 				prop.setProperty(PROP_UPDATE, "true");
+				this.nocreeper = "false";
+				this.nowild = "false";
 				this.dbhost = "localhost";
 				this.dbuser = "npcx";
 				this.dbname = "npcx";
@@ -654,6 +673,8 @@ public class myUniverse {
 		            
 		            System.out.println("npcx : finished table configuration");
 
+		            nocreeper = config.getProperty("nocreeper");
+		            nowild = config.getProperty("nowild");
 		            dbhost = config.getProperty("db-host");
 		            dbuser = config.getProperty("db-user");
 		            dbpass = config.getProperty("db-pass");
@@ -663,7 +684,10 @@ public class myUniverse {
 		            
 		            dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
 		            defaultworld = config.getProperty("world");
-					config.setProperty(PROP_DBHOST,dbhost);
+		            
+					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOCREEPER,nocreeper);
+		            config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
 					config.setProperty(PROP_DBPASS,dbpass);
 					config.setProperty(PROP_DBNAME,dbname);
@@ -1211,5 +1235,15 @@ public class myUniverse {
 			return false;
 		}
 		
+	}
+
+	public myPlayer findmyPlayerByPlayer(Player p) {
+		// TODO Auto-generated method stub
+		for (myPlayer player : this.players.values())
+		{
+			if (p == player.player)
+				return player;
+		}
+		return null;
 	}
 }

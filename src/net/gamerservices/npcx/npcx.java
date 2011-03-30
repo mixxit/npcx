@@ -178,6 +178,10 @@ public class npcx extends JavaPlugin {
 									    				{
 									    					npc.npc.aggro = player.player;
 									    					npc.npc.follow = player.player;
+									    				} else {
+									    					// Add the players faction standing onto this base
+									    					int newfactvalue = npc.npc.parent.faction.base + player.getPlayerFactionStanding(npc.npc.parent.faction);
+									    					
 									    				}
 									    			} else {
 									    				//System.out.println("npcx : i have no faction so ill be be neutral");
@@ -549,6 +553,7 @@ public class npcx extends JavaPlugin {
          pm.registerEvent(Type.CREATURE_SPAWN, mEntityListener, Priority.Normal, this);
          
          pm.registerEvent(Type.PLAYER_RESPAWN, mPlayerListener, Priority.Normal, this);
+         pm.registerEvent(Type.PLAYER_INTERACT, mPlayerListener, Priority.Normal, this);
          
          pm.registerEvent(Type.PLAYER_JOIN, mPlayerListener, Priority.Normal, this);
          pm.registerEvent(Type.PLAYER_QUIT, mPlayerListener, Priority.Normal, this);

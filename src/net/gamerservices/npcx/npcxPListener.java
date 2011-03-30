@@ -11,6 +11,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -26,6 +27,37 @@ public class npcxPListener extends PlayerListener {
 	public npcxPListener(npcx parent) {
         this.parent = parent;
     }
+	public void onPlayerInteract(PlayerInteractEvent event)
+	{
+		if (!event.getPlayer().isOp())
+		{
+			
+			if (this.parent.universe.nowild.matches("true"))
+			{
+				try
+				{
+				for (myPlayer player : parent.universe.players.values())
+				{
+					if (player.player == event.getPlayer())
+					{
+						event.getPlayer().sendMessage("You are not in the wild or in an area you own!");
+						event.setCancelled(true);
+					}
+				}
+				} catch (Exception e)
+				{
+					// locked table
+					event.setCancelled(true);
+				}
+			
+			}
+		} else {
+			return;
+		}
+		event.setCancelled(true);
+		
+	}
+	
 	public void onPlayerJoin(PlayerJoinEvent event) 
     {
 		myPlayer player = new myPlayer(this.parent,event.getPlayer(),event.getPlayer().getName());

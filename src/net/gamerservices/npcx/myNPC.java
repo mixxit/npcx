@@ -1308,11 +1308,12 @@ public class myNPC {
 			}
 			
 			((Player) p).sendMessage("You have slain " + this.name + "!");
-			
+			/*
 			for (myPlayer pl : this.parent.universe.players.values())
 			{
 				if (pl.player == (Player)p)
 				{
+					
 					pl.zomgcount++;
 					if (pl.zomgcount == 10)
 					{
@@ -1332,10 +1333,13 @@ public class myNPC {
 					}
 					
 				}
+				
 			}
-			
+			*/
 			if (this.faction != null)
 			{
+				myPlayer player = this.parent.universe.findmyPlayerByPlayer((Player)p);
+				player.updateFactionNegative(this.faction);
 				((Player) p).sendMessage("Your standing with " + this.faction.name + " has gotten worse!");
 			}
 			
