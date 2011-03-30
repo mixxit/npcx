@@ -347,7 +347,7 @@ public class myUniverse {
 			}
 		}
 		
-		if (this.dbversion.matches("1.03"))
+		if (this.dbversion.matches("1.02"))
 		{
 			// Create Player table
 			// Update size of triggerword response
