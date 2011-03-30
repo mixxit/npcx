@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Monster;
@@ -58,6 +59,7 @@ public class myUniverse {
 
 	// Lists of objects that are universal
 	public List< myFaction > factions = new CopyOnWriteArrayList< myFaction >();
+	public List< Chunk > chunks = new CopyOnWriteArrayList< Chunk >();
 	public List< myLoottable > loottables = new CopyOnWriteArrayList< myLoottable >();
 	public List< myPathgroup > pathgroups = new CopyOnWriteArrayList< myPathgroup >();
 	public List< myMerchant > merchants = new CopyOnWriteArrayList< myMerchant >();
@@ -1100,5 +1102,44 @@ public class myUniverse {
 			return false;
 			
 		}
+	}
+
+	public boolean checkChunks() {
+		// TODO Auto-generated method stub
+		
+		try
+		{
+			int count = 0;
+			for (myNPC npc : parent.universe.npcs.values())
+			{
+				if (parent.universe.npcs != null)
+				{
+					if (npc.npc != null)
+					{
+						for (Chunk chunk : this.chunks)
+						{
+							if (chunk.getWorld()
+									.getChunkAt(npc.npc.getBukkitEntity().getLocation())
+									.equals(chunk)) {
+								count++;
+								npc.npc.chunkinactive(npc.npc.getBukkitEntity().getLocation());
+							}
+						}
+					}
+				}
+			}
+			if (count != 0)
+			{
+				return true;
+			}
+			
+			return false;
+			
+		} catch (Exception e)
+		{
+			// looks like a table was locked, we need to mark this to try again
+			return false;
+		}
+		
 	}
 }

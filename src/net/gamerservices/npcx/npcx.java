@@ -20,6 +20,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -64,6 +65,9 @@ public class npcx extends JavaPlugin {
     // end iconomy
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
 	private Timer tick = new Timer();
+
+
+	public boolean checkchunks = false;
 	public void onNPCDeath(BasicHumanNpc npc)
 	{
 		for (myPlayer player : universe.players.values()){
@@ -120,6 +124,17 @@ public class npcx extends JavaPlugin {
 	
 	public void think()
 	{
+		// check fhunks
+		if (this.checkchunks == true)
+		{
+			if (this.universe.checkChunks())
+			{
+				this.checkchunks = false;
+			} else {
+				this.checkchunks = true;
+			}
+		}
+		
 		tick.schedule(new Tick(this), 1 * 500);
 		fixDead();
 		// check npc logic
@@ -480,7 +495,8 @@ public class npcx extends JavaPlugin {
 					
 				} catch (ConcurrentModificationException e)
 				{
-					System.out.println("npcx : FAILED establishing dead player");
+					//we loop soon anyway
+					//System.out.println("npcx : FAILED establishing dead player");
 				}
 			}
 		}
@@ -2202,6 +2218,18 @@ public class npcx extends JavaPlugin {
 		// TODO Auto-generated method stub
 		String list = "Examples are: STONE GRASS DIRT IRON_SPADE LOG LEAVES GLASS LAPIS_ORE LAPIS_BLOCK IRON_INGOT";
 		player.sendMessage(list);
+		
+	}
+
+	public void registerChunk(Chunk chunk) {
+		// TODO Auto-generated method stub
+		this.universe.chunks.remove(chunk);
+		
+	}
+
+	public void deregisterChunk(Chunk chunk) {
+		// TODO Auto-generated method stub
+		this.universe.chunks.remove(chunk);
 		
 	}
 }
