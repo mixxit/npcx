@@ -25,6 +25,7 @@ public class npcxWListener extends WorldListener {
 						.getChunkAt(npc.npc.getBukkitEntity().getLocation())
 						.equals(e.getChunk())) {
 					npc.npc.forceMove(npc.npc.getBukkitEntity().getLocation());
+
 				}
 			}
 		} catch (Exception e2) {

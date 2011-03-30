@@ -54,6 +54,7 @@ public class npcx extends JavaPlugin {
 	
 	private npcxEListener mEntityListener;
 	private npcxPListener mPlayerListener;
+	private npcxWListener mWorldListener;
 	public myUniverse universe;
 	
 	// iconomy
@@ -518,6 +519,11 @@ public class npcx extends JavaPlugin {
 
          mEntityListener = new npcxEListener(this);
          mPlayerListener = new npcxPListener(this);
+         mWorldListener = new npcxWListener(this);
+         
+         pm.registerEvent(Type.CHUNK_LOADED, mWorldListener, Priority.Normal, this);
+         pm.registerEvent(Type.CHUNK_UNLOADED, mWorldListener, Priority.Normal, this);
+         
          pm.registerEvent(Type.ENTITY_TARGET, mEntityListener, Priority.Normal, this);
          pm.registerEvent(Type.ENTITY_DAMAGED, mEntityListener, Priority.Normal, this);
          pm.registerEvent(Type.ENTITY_EXPLODE, mEntityListener, Priority.Normal, this);
