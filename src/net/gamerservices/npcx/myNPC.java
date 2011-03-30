@@ -408,48 +408,50 @@ public class myNPC {
 		
 		if (aMsg[0].toLowerCase().matches("list"))
 		{
-			
-			int mysize = this.merchant.merchantentries.size();
-			say(player,"Checking my list of: " + mysize);
-			boolean match = false;
-			
-
-			
-			if (size == 2)
- 		    {
-				match = true;
- 		    }
-				
-			int count = 0;
 			if (this.merchant != null)
 			{
-				if (this.merchant.merchantentries != null)
-				{
-					for (myMerchant_entry item : this.merchant.merchantentries)
-					{
-						count++;
-						if (match == true)
-						{
-							try
-							{
-								if ( Material.matchMaterial(aMsg[1]).getId() == item.itemid)
-								{
-									say(player,Material.matchMaterial(aMsg[1]) + " x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
-								}
-							} catch (NullPointerException e)
-							{
-								say(player,"Couldn't find any items matching the name you requested");
-							}
-						} else {
-							say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
-						}
-					}
+				int mysize = this.merchant.merchantentries.size();
+				say(player,"Checking my list of: " + mysize);
+				boolean match = false;
+				
+	
+				
+				if (size == 2)
+	 		    {
+					match = true;
+	 		    }
 					
+				int count = 0;
+				if (this.merchant != null)
+				{
+					if (this.merchant.merchantentries != null)
+					{
+						for (myMerchant_entry item : this.merchant.merchantentries)
+						{
+							count++;
+							if (match == true)
+							{
+								try
+								{
+									if ( Material.matchMaterial(aMsg[1]).getId() == item.itemid)
+									{
+										say(player,Material.matchMaterial(aMsg[1]) + " x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+									}
+								} catch (NullPointerException e)
+								{
+									say(player,"Couldn't find any items matching the name you requested");
+								}
+							} else {
+								say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+							}
+						}
+						
+					}
 				}
+				say(player,count + " items in the Merchant.'");
+				
+				return;
 			}
-			say(player,count + " items in the Merchant.'");
-			
-			return;
 
 			
 		}
