@@ -759,7 +759,7 @@ public class BasicHumanNpc extends BasicNpc {
 		// TODO Auto-generated method stub
 		if (this.parent.spawngroup != null)
 		{
-			System.out.println("ncpx : Chunkactive for spawngroup:"+this.parent.spawngroup.name);
+			//System.out.println("ncpx : Chunkactive for spawngroup:"+this.parent.spawngroup.name);
 			this.parent.spawngroup.chunkactive = true;
 		}
 		
@@ -769,7 +769,7 @@ public class BasicHumanNpc extends BasicNpc {
 		// TODO Auto-generated method stub
 		if (this.parent.spawngroup != null)
 		{
-			System.out.println("npcx : ChunkInactive for spawngroup:"+this.parent.spawngroup.name);
+			System.out.println("npcx : DBG : ChunkInactive for spawngroup:"+this.parent.spawngroup.name);
 			this.parent.spawngroup.chunkactive = false;
 		}
 		
