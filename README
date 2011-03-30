@@ -37,11 +37,8 @@ EG: /npcx npc triggerword add 1 default My default response!
 # Installation Steps
 #
 
-Step 1 - Install iConomy
-========================
-http://forums.bukkit.org/threads/econ-iconomy-4-5-5-elektra-493-556.40/
 
-Step2a - Install MySQL and the MySQL Connector
+Step1 - Install MySQL
 =============================================
 
 - > Install MySQL Server on Windows or via your repo manager on linux
@@ -80,8 +77,8 @@ CREATE USER 'npcx'@'localhost' IDENTIFIED BY 'p4ssw0rd!';
 GRANT ALL PRIVILEGES ON npcx.* TO 'npcx'@'localhost' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 
-Step2b
-=====
+Step2
+=============================================
 Install the mysql connector for npcx
 
 Create a bukkit/lib folder if you dont have it
@@ -89,22 +86,22 @@ Extract the mysql connect jar file from the following zip file): http://mysql.eu
 Copy the JAR file (mysql-connector-java-5.1.6-bin.jar) from inside the zip into your bukkit/lib folder.
 
 Step3
-=====
+=============================================
 
 Add npcx.jar to your bukkit/plugins folder
 
 Step4
-=====
+=============================================
 
 If your world name is different to 'world' you will need to now close bukkit, edit your npcx.properties file and change world to the correct worldname
 
 Step5
-=====
+=============================================
 
 Launch bukkit and login as an OP
 
 Step 6
-======
+=============================================
 Begin creating your first spawn group at your location with
 
 Code:
@@ -124,10 +121,11 @@ To have him respond to words or change his default response, see the sections be
 
 
 Using NPCX
-===========
+=============================================
 
 
 Creating Spawngroups
+=============================================
 
 Spawngroups are placed at any X Y Z co-ordinate and contain a group of npcs. Any one of them could spawn. Spawngroups can also be empty. They are the basis for static npc spawning.
 
@@ -152,6 +150,7 @@ move spawngroup spawn at your location
 assigns a path to the spawngroup
 
 Creating NPCs
+=============================================
 
 Code:
 /npcx npc spawn name - Temporarily spawns an npc at your spot
@@ -173,13 +172,17 @@ todo: functionality
 creates a new npc with name
 
 Adding NPCs to containers
+=============================================
 
 Code:
 /npcx spawngroup add groupid npcid
 
 get these from spawngroup list and npc list
 
+
 Quest System / Chat to NPCs
+
+=============================================
 
 Right clicking an npc sets it as your chat target. You can say anything to the npc using the usual (T) chat command.
 
@@ -204,7 +207,7 @@ Added 'EVENT_DEATH' - Triggers when player kills an npc
 Added 'EVENT_KILLED' - Triggers when npc kills a player
 Added 'EVENT_DEATH' - Triggers when a player bounces an npc
 Added 'EVENT_CLOSE' - Triggers when a player becomes close to an npc
-Added 'ATTACK' - Triggers when a player becomes attacked by a player
+Added 'ATTACK' - Triggers when an npc becomes attacked by a player
 
 Events in responses
 -------------------
@@ -225,12 +228,13 @@ Code:
 
 Chat Variables in responses
 --------------------------
-Added 'bankbalance' -Placing the text bankbalance in a triggerword reply will have the NPC respond with the players iconomy bank balance
+Added 'bankbalance' -Placing the text bankbalance in a triggerword reply will have the NPC respond with the players bank balance
 Added 'playername' - Placing the text playername in a triggerword reply will have the NPC respond with the players name
-Added 'playerbalance' - Placing the text playerbalance in a triggerword reply will have the NPC respond with the players iconomy bank balance
+Added 'playerbalance' - Placing the text playerbalance in a triggerword reply will have the NPC respond with the players bank balance
 
 
 NPC Merchants
+=============================================
 
 Similar to chat, npc merchants can be accessed by right clicking the npc and taking to them.
 
@@ -251,6 +255,7 @@ Attach the merchant list to an npcID
 /npcx npc merchant NPCID MERCHANTLISTID
 
 NPC Combat
+=============================================
 
 Npcs will currently engage in combat and chase anyone that attacks them. When they die, they will be gone forever unless a spawngroup respawns them.
 Npcs will also attack nearby monsters
@@ -258,6 +263,7 @@ Need to add loottables to onnpcdeath and perhaps an area of effect 'panic' that 
 Also need to implement factions to cause a permanent faction hit for a player when murdering an npc
 
 Making NPCs attack players
+=============================================
 
 First create a faction with a baseamount of anything lower than -1000
 Code:
@@ -282,9 +288,10 @@ Code:
 Now assign the loottable to the npc
 Code:
 /npcx npc loottable LOOTTABLEID
-Path Groups - (WIP)
 
-NOT IMPLEMENTED YET
+Path Groups - (WIP)
+=============================================
+
 Overview:
 
 Path groups are containers of path locations assigned to SpawnGroups. They are used to determine the route of an npc after it spawns
@@ -313,6 +320,7 @@ Code:
 
 
 FAQ
+=============================================
 
 Q Any chance of sqlite in the near future?
 
