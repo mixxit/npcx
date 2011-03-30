@@ -31,27 +31,39 @@ public class npcxPListener extends PlayerListener {
 	{
 		if (!event.getPlayer().isOp())
 		{
-			
-			if (this.parent.universe.nowild.matches("true"))
+			if (this.parent.universe.nowild != null)
 			{
-				try
+				if (this.parent.universe.nowild.matches("true"))
 				{
-				for (myPlayer player : parent.universe.players.values())
-				{
-					if (player.player == event.getPlayer())
+					try
 					{
-						event.getPlayer().sendMessage("You are not in the wild or in an area you own!");
+						for (myPlayer player : parent.universe.players.values())
+						{
+							if (player.player == event.getPlayer())
+							{
+								event.getPlayer().sendMessage("You are not in the wild or in an area you own!");
+								event.setCancelled(true);
+							}
+						}
+					} catch (Exception e)
+					{
+						// locked table
 						event.setCancelled(true);
 					}
+				
+				} else {
+					// False -  we dont want to protect or are using some other system
+					return;
+					
 				}
-				} catch (Exception e)
-				{
-					// locked table
-					event.setCancelled(true);
-				}
-			
+				
+				
+			} else {
+				// No setting, assume we dont want to protect or are using some other system
+				return;
 			}
 		} else {
+			// Is an Operator
 			return;
 		}
 		event.setCancelled(true);

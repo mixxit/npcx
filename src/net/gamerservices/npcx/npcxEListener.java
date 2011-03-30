@@ -133,10 +133,14 @@ public class npcxEListener extends EntityListener
 			this.parent.universe.monsters.remove((Monster)event.getEntity());	
 			
 		}
-		if (this.parent.universe.nocreeper.matches("true"))
+		if (this.parent.universe.nocreeper != null)
 		{
-			// creeper events are bad
-			event.setCancelled(true);
+			// creeper protection is on
+			if (this.parent.universe.nocreeper.matches("true"))
+			{
+				// creeper events are bad
+				event.setCancelled(true);
+			}
 		}
 		
 	}

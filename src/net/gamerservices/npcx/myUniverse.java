@@ -166,6 +166,42 @@ public class myUniverse {
 				dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
 				System.out.println(dsn);
 				
+				if (nocreeper == null || nowild == null)
+				{
+					config.setProperty(PROP_NOCREEPER,"nocreeper");
+					
+
+					if (nowild == null)
+					{
+						config.setProperty(PROP_NOWILD,"false");
+					}
+					
+					if (nocreeper == null)
+					{
+						config.setProperty(PROP_NOCREEPER,"false");
+					}
+					
+					config.setProperty(PROP_DBHOST,dbhost);
+					config.setProperty(PROP_DBUSER,dbuser);
+					config.setProperty(PROP_DBPASS,dbpass);
+					config.setProperty(PROP_DBNAME,dbname);
+					config.setProperty(PROP_DBPORT,dbport);
+		            config.setProperty(PROP_DBVERSION,dbversion);
+					config.setProperty(PROP_WORLD,defaultworld);
+		            config.setProperty(PROP_UPDATE,update);
+		            config.setProperty(PROP_DBVERSION,dbversion);
+		            
+		            File propfolder = parent.getDataFolder();
+		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		            propfile.createNewFile();
+		            
+		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+					config.store(stream1, "Default generated settings, please ensure mysqld matches");
+					
+				}
+				
+				
+				
 				if (dbversion == null)
 				{
 					System.out.println("************************************************");
