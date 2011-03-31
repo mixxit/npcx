@@ -149,8 +149,8 @@ public class npcxPListener extends PlayerListener {
     {
 		
 		myPlayer player = new myPlayer(this.parent,event.getPlayer(),event.getPlayer().getName());
-		event.getPlayer().sendMessage("This server runs NPCX with Civilizations enabled!");
-		event.getPlayer().sendMessage("To claim your own piece of paradise use /civ buy!");
+		event.getPlayer().sendMessage("&eThis server runs NPCX with Civilizations enabled!&f");
+		event.getPlayer().sendMessage("&eTo claim your own piece of paradise use /civ buy!&f");
 		
 		//System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
 		parent.universe.players.put(player.player.getName(), player);
