@@ -110,7 +110,7 @@ public class myPlayer {
 	public int getPlayerFactionStanding(myFaction faction) {
 		// TODO Auto-generated method stub
 		try {
-			PreparedStatement stmtNPC = this.parent.universe.conn.prepareStatement("SELECT amount FROM player_faction WHERE name = ? AND faction_id = ? LIMIT 1;");
+			PreparedStatement stmtNPC = this.parent.universe.conn.prepareStatement("SELECT amount FROM player_faction WHERE playername = ? AND faction_id = ? LIMIT 1;");
 			stmtNPC.setString(1,this.player.getName());
 			stmtNPC.setInt(2,faction.id);
 			
