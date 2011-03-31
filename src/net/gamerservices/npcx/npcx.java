@@ -521,7 +521,7 @@ public class npcx extends JavaPlugin {
 		}
 		if (count > 0)
 		{
-			System.out.println("npcx : reestablished " + count + " dead players.");
+			//System.out.println("npcx : reestablished " + count + " dead players.");
 		}
 		
 	}
