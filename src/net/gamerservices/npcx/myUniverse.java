@@ -2204,16 +2204,15 @@ public class myUniverse {
 		return "";
 	}
 
-	public String getZoneOwnerName(Chunk chunkAt) {
+	public String getZoneOwnerName(int zoneid) {
 		// TODO Auto-generated method stub
-		for(myZone zone : zones)
+		for (myZone zm : this.zones)
 		{
-			if (zone.chunk == chunkAt)
+			if (zm.id == zoneid)
 			{
-				
-				
-				return zone.ownername;
-				
+				return zm.ownername;
+			} else {
+				return "";
 			}
 		}
 		return "";

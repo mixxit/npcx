@@ -762,7 +762,7 @@ public class npcx extends JavaPlugin {
 										return true;
 									}
 								} else {
-									player.sendMessage("You cannot add someone to this civilization as you are not the owner ("+this.universe.getZoneOwnerName(player.getWorld().getChunkAt(player.getLocation()))+")!");
+									player.sendMessage("You cannot add someone to this civilization as you are not the owner ("+this.universe.getZoneOwnerName(z.id)+")!");
 								}
 							}
 						}
