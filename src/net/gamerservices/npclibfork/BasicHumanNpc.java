@@ -709,9 +709,9 @@ public class BasicHumanNpc extends BasicNpc {
             		
 		            	//System.out.println("Gahh! ");
 		            	this.mcEntity.animateArmSwing();
-		            	ent.damage(0);
+		            	
 		            	ent.setHealth(ent.getHealth()-dmg);
-			            //ent.damage(dmg);
+			            ent.damage(0);
 		            
             		}
 	            	
@@ -736,7 +736,7 @@ public class BasicHumanNpc extends BasicNpc {
 	            		{
 	            			//System.out.println("Processed this as a player "+ent.getClass().toString());
 			            	this.mcEntity.animateArmSwing();
-			            	ent.damage(dmg);
+			            	ent.damage(0);
 			            	
 	            		}
 		            }
