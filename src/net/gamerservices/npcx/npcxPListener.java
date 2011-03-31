@@ -56,14 +56,14 @@ public class npcxPListener extends PlayerListener {
 					{
 						if (lastname != null)
 						{
-							if (zone.name.matches(lastname))
+							if (!zone.name.matches(lastname))
 							{
 								if (zone.ownername.matches(""))
 								{
-									event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+" - for sale");
+									event.getPlayer().sendMessage("Zone: [&a"+xchunkloc+":"+zchunkloc+"&f] - &efor sale&f");
 									
 								} else {
-									event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+"] "+zone.name + " Owner: "+zone.ownername);
+									event.getPlayer().sendMessage("[&a"+xchunkloc+":"+zchunkloc+"&f] &a"+zone.name + "&f Owner: &a"+zone.ownername);
 								}
 								event.getPlayer().sendMessage(this.parent.universe.getZoneNameByLocation(xchunkloc, zchunkloc, event.getPlayer().getWorld()));
 								
@@ -71,6 +71,8 @@ public class npcxPListener extends PlayerListener {
 								this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
 								this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
 							
+							} else {
+								// skip we've been here recently
 							}
 						} else {
 							// dont provide them info, just update them
@@ -112,7 +114,7 @@ public class npcxPListener extends PlayerListener {
 								{
 									return;
 								} else {
-									event.getPlayer().sendMessage("You are not in the wild or in an area you own!");
+									event.getPlayer().sendMessage("&cYou are not in the wild or in an area you own!");
 									event.setCancelled(true);
 								}
 							}
