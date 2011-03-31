@@ -813,10 +813,7 @@ public class npcx extends JavaPlugin {
             	player.sendMessage("Insufficient arguments /npcx npc");
             	player.sendMessage("Insufficient arguments /npcx pathgroup");
             	player.sendMessage("Insufficient arguments /npcx merchant");
-            	if (this.universe.nations.equals("true"))
-        		{
-            		player.sendMessage("Insufficient arguments /npcx civ");
-        		}
+            	player.sendMessage("Insufficient arguments /npcx civ");
             	
             	return false;
             }
@@ -1197,11 +1194,10 @@ public class npcx extends JavaPlugin {
             			player.sendMessage("Insufficient arguments /npcx civ givemoney playername amount");
             			player.sendMessage("Insufficient arguments /npcx civ money playername");
             			player.sendMessage("Insufficient arguments /npcx civ unclaim");
-            			
             			return false;
             		}
             		
-            		if (args[1].equals("money")) {
+            		if (args[1].matches("money")) {
                 		if (args.length < 3) {
                 			player.sendMessage("Insufficient arguments /npcx civ money playername");
                 			return false;
@@ -1220,7 +1216,7 @@ public class npcx extends JavaPlugin {
                 			
             		}
             		
-            		if (args[1].equals("givemoney")) {
+            		if (args[1].matches("givemoney")) {
                 		if (args.length < 4) {
                 			player.sendMessage("Insufficient arguments /npcx civ givemoney playername amount");
                 			return false;
