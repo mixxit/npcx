@@ -757,6 +757,8 @@ public class npcx extends JavaPlugin {
 								}
 							} else {
 								// zone not in list
+								player.sendMessage("This area has not been settled by a civilization");
+								return true;
 							}
 						}
 					} else {
