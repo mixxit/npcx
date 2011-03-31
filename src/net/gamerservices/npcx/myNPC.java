@@ -780,6 +780,7 @@ public class myNPC {
 							ItemStack i = new ItemStack(itemid);
 							i.setAmount(amount);
 							// Update cache
+							if (!merchant.category.equals("nolimit"))
 							entry.amount = entry.amount - amount;
 							System.out.println("About to sell: " + i.getType().name() + ":"+ entry.amount);
 							return i;
