@@ -1034,7 +1034,7 @@ public class myUniverse {
 				stmt.close();
 			}
 			
-            System.out.println("npcx : finished " + countfaction + " factions commit.");
+            //System.out.println("npcx : finished " + countfaction + " factions commit.");
             
         } catch (NullPointerException e) { 
 	 		System.out.println("npcx : ERROR - player factions commit cancelled!");
