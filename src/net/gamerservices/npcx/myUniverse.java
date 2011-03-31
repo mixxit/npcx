@@ -936,7 +936,6 @@ public class myUniverse {
 				stmt.setString(1,e.playername);
 				stmt.setInt(2,e.factionid);
 				stmt.setInt(3,e.amount);
-				stmt.setString(4,"");
 				
 				stmt.executeUpdate();
 				ResultSet keyset = stmt.getGeneratedKeys();
