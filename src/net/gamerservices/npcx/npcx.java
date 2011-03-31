@@ -128,7 +128,7 @@ public class npcx extends JavaPlugin {
 	public void longCheck()
 	{
 		this.universe.commitPlayerFactions();
-		longtick.schedule(new LongTick(this), 1 * 2000);
+		longtick.schedule(new LongTick(this), 1 * 20000);
 		
 	}
 	
