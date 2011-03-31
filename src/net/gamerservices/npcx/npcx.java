@@ -377,6 +377,7 @@ public class npcx extends JavaPlugin {
 	public void onDisable() {
 		// TODO Auto-generated method stub
 		 try {
+			 	this.universe.commitPlayerFactions();
 	            PluginDescriptionFile pdfFile = this.getDescription();
 	            logger.log(Level.INFO, pdfFile.getName() + " version " + pdfFile.getVersion() + " disabled.");
 	        } catch (Exception e) {
