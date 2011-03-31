@@ -761,6 +761,8 @@ public class npcx extends JavaPlugin {
 										player.sendMessage("Player added to civilization!!");
 										return true;
 									}
+								} else {
+									player.sendMessage("You cannot add someone to this civilization as you are not the owner ("+this.universe.getZoneOwnerName(player.getWorld().getChunkAt(player.getLocation()))+")!");
 								}
 							}
 						}
