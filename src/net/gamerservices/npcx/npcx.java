@@ -20,6 +20,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -633,6 +634,9 @@ public class npcx extends JavaPlugin {
 				Player player = (Player) sender;
 				if (args.length < 1) {
 	            	player.sendMessage("Insufficient arguments /civ buy");
+	            	player.sendMessage("Insufficient arguments /civ here");
+	            	player.sendMessage("Insufficient arguments /civ gift playername");
+	            	
 	            	return false;
 	            }
 				String subCommand = args[0].toLowerCase();
@@ -651,9 +655,9 @@ public class npcx extends JavaPlugin {
 							{
 								z.setOwner(player.getName());
 								z.name = player.getName()+"s land";
-								player.sendMessage("Thanks! That's " + cost + " total coins!");
+								player.sendMessage("Thanks! That's " +ChatColor.YELLOW+ cost + ChatColor.WHITE+" total coins!");
 								this.universe.subtractPlayerBalance(player,cost);		
-								player.sendMessage("You just bought "+z.name+" : "+z.x+","+z.z);
+								player.sendMessage("You just bought region: ["+ChatColor.LIGHT_PURPLE+z.x+","+z.z+""+ChatColor.WHITE+"]!");
 								
 								this.universe.setPlayerLastChunkX(player,z.x);
 								this.universe.setPlayerLastChunkZ(player,z.z);
@@ -661,7 +665,7 @@ public class npcx extends JavaPlugin {
 								
 							} else {
 								
-								player.sendMessage("Sorry this zone has already been purchased by another civilization");
+								player.sendMessage("Sorry this zone has already been purchased by another Civ");
 							}
 							
 						} else {
