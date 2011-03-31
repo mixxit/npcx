@@ -1306,14 +1306,14 @@ public class npcx extends JavaPlugin {
             	if (args.length < 2) {
             		player.sendMessage("Insufficient arguments /npcx faction create baseamount factionname");
                 	player.sendMessage("Insufficient arguments /npcx faction list");
-                	player.sendMessage("Insufficient arguments /npcx faction npc add factionid amount");
+                	player.sendMessage("Insufficient arguments /npcx faction npc npcid factionid amount");
                 	return false;
             		
             		
             		
                 }
             	
-            	if (args[1].equals("add")) {
+            	if (args[1].equals("npc")) {
             		if (args.length < 5) {
             			player.sendMessage("Insufficient arguments /npcx faction npc add npcid factionid amount");
                     	
