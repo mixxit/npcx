@@ -1710,7 +1710,7 @@ public class npcx extends JavaPlugin {
         		}
             	
             	if (args[1].equals("add")) {
-            		if (args.length < 5) {
+            		if (args.length < 6) {
             			player.sendMessage("Insufficient arguments /npcx merchant add merchantid itemid amount pricebuyat pricesellat");
                     	
             		} else {
