@@ -924,7 +924,7 @@ public class myUniverse {
 		loadSpawngroups();
 	}
 	
-	private void commitPlayerFactions() {
+	public void commitPlayerFactions() {
 		// TODO Auto-generated method stub
 		try 
         {

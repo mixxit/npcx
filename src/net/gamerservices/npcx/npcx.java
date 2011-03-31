@@ -122,6 +122,13 @@ public class npcx extends JavaPlugin {
 		return d-e;
 	}
 	
+	public void longCheck()
+	{
+		tick.schedule(new Tick(this), 1 * 20000);
+		this.universe.commitPlayerFactions();
+	}
+	
+	
 	public void think()
 	{
 		// check fhunks
@@ -135,7 +142,10 @@ public class npcx extends JavaPlugin {
 			}
 		}
 		
+		
+		
 		tick.schedule(new Tick(this), 1 * 500);
+		
 		fixDead();
 		// check npc logic
 		try
@@ -599,6 +609,8 @@ public class npcx extends JavaPlugin {
         logger.log(Level.INFO, pdfFile.getName() + " version " + pdfFile.getVersion() + " enabled.");
         
         think();
+        longCheck();
+        
         
 	}
 	
