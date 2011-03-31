@@ -6,7 +6,10 @@ import net.gamerservices.npclibfork.NpcEntityTargetEvent;
 import net.gamerservices.npclibfork.NpcSpawner;
 import net.gamerservices.npclibfork.NpcEntityTargetEvent.NpcTargetReason;
 
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerChatEvent;
@@ -15,6 +18,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.entity.Player;
@@ -27,6 +31,49 @@ public class npcxPListener extends PlayerListener {
 	public npcxPListener(npcx parent) {
         this.parent = parent;
     }
+	public void onPlayerMove(PlayerMoveEvent event)
+	{
+		if (this.parent.universe.nations.matches("true"))
+		{
+			
+			// natiosn chunk checking
+			// Area Coordinate = round down ( ( position / areasize ) + 0.9375 )
+			int xchunkloc = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
+			int zchunkloc = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
+			//event.getPlayer().sendMessage(xchunkloc+":"+zchunkloc);
+			
+			int lastx = this.parent.universe.getPlayerLastChunkX(event.getPlayer());
+			int lastz = this.parent.universe.getPlayerLastChunkZ(event.getPlayer());
+			//event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+" - from:"+ lastx + ":" + lastz);
+				if (lastx != xchunkloc ||  lastz != zchunkloc) 
+				{
+					// new position!
+					int x = xchunkloc;
+					int z = zchunkloc;
+					myZone zone = this.parent.universe.getZoneFromLoc(x,z,event.getPlayer().getWorld());
+					if (zone != null)
+					{
+						if (zone.ownername.matches(""))
+						{
+							event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+" - for sale");
+							
+						} else {
+							event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+"] "+zone.name + " Owner: "+zone.ownername);
+						}
+						event.getPlayer().sendMessage(this.parent.universe.getZoneNameByLocation(xchunkloc, zchunkloc, event.getPlayer().getWorld()));
+						
+						this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
+						this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
+					}
+				} else {
+					
+				}
+		}
+		
+		
+	}
+	 
+	
 	public void onPlayerInteract(PlayerInteractEvent event)
 	{
 		if (!event.getPlayer().isOp())
@@ -41,8 +88,21 @@ public class npcxPListener extends PlayerListener {
 						{
 							if (player.player == event.getPlayer())
 							{
-								event.getPlayer().sendMessage("You are not in the wild or in an area you own!");
-								event.setCancelled(true);
+								
+								
+								Location loc = event.getClickedBlock().getLocation();
+								Chunk chunk = loc.getWorld().getChunkAt(loc);
+								int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
+								int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
+								
+								String owner = this.parent.universe.getZoneOwnerNameFromChunkAndLoc(chunk,x,z,event.getPlayer().getWorld());
+								if (player.player.getName().matches(owner))
+								{
+									return;
+								} else {
+									event.getPlayer().sendMessage("You are not in the wild or in an area you own!");
+									event.setCancelled(true);
+								}
 							}
 						}
 					} catch (Exception e)
@@ -66,7 +126,8 @@ public class npcxPListener extends PlayerListener {
 			// Is an Operator
 			return;
 		}
-		event.setCancelled(true);
+		// is not running Nations
+		//event.setCancelled(true);
 		
 	}
 	

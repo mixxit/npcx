@@ -544,7 +544,7 @@ public class npcx extends JavaPlugin {
          
          pm.registerEvent(Type.CHUNK_LOAD, mWorldListener, Priority.Normal, this);
          pm.registerEvent(Type.CHUNK_UNLOAD, mWorldListener, Priority.Normal, this);
-         
+         pm.registerEvent(Type.PLAYER_MOVE, mPlayerListener, Priority.Normal, this);
          pm.registerEvent(Type.ENTITY_TARGET, mEntityListener, Priority.Normal, this);
          pm.registerEvent(Type.ENTITY_DAMAGE, mEntityListener, Priority.Normal, this);
          pm.registerEvent(Type.ENTITY_EXPLODE, mEntityListener, Priority.Normal, this);
@@ -605,6 +605,64 @@ public class npcx extends JavaPlugin {
 	@Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 
+		// any player
+		if (this.universe.nations.equals("true"))
+		{
+			if (command.getName().toLowerCase().equals("civ")) {
+				if (!(sender instanceof Player)) {
+	
+	                return false;
+				}
+				Player player = (Player) sender;
+				if (args.length < 1) {
+	            	player.sendMessage("Insufficient arguments /civ buy");
+	            	return false;
+	            }
+				String subCommand = args[0].toLowerCase();
+				if (subCommand.equals("buy"))
+	            {
+					int cost = 25000;
+					if (cost <= this.universe.getPlayerBalance(player))
+					{
+						
+						Chunk c = player.getLocation().getWorld().getChunkAt(player.getLocation());
+						
+						myZone z = this.universe.getZoneFromChunkAndLoc(this.universe.getZoneCoord(player.getLocation().getX()),this.universe.getZoneCoord(player.getLocation().getZ()), player.getLocation().getWorld());
+						if (z != null)
+						{
+							if (z.ownername.equals(""))
+							{
+								z.setOwner(player.getName());
+								player.sendMessage("Thanks! That's " + cost + " total coins!");
+								this.universe.subtractPlayerBalance(player,cost);		
+								player.sendMessage("You just bought "+z.name+" : "+z.x+","+z.z);
+							} else {
+								
+								player.sendMessage("Sorry this zone has already been purchased by another civilization");
+							}
+							
+						} else {
+							player.sendMessage("Failed to buy zone at your location - target zone does not exist");
+						
+						}
+						
+						
+						
+					} else {
+						player.sendMessage("You don't have enough to buy this plot (25000)!");
+						
+						
+					}
+					
+					
+	            }
+	        }
+		}
+		
+
+		
+		// ops only
+		
         try {
 	           
             if (!command.getName().toLowerCase().equals("npcx")) {
@@ -2228,13 +2286,32 @@ public class npcx extends JavaPlugin {
 
 	public void registerChunk(Chunk chunk) {
 		// TODO Auto-generated method stub
-		this.universe.chunks.remove(chunk);
+		
+		// get a location in the chunk
+		Location loc = chunk.getBlock(0, 0, 0).getLocation();
+		
+		myZone m = this.universe.getZoneFromChunk(chunk,loc);
+		if (m != null)
+		{
+			myZone mc = new myZone(this.universe, m.id, chunk, m.x, m.z);
+			this.universe.zones.add(mc);
+		}
 		
 	}
 
 	public void deregisterChunk(Chunk chunk) {
 		// TODO Auto-generated method stub
-		this.universe.chunks.remove(chunk);
+		Location loc = chunk.getBlock(0, 0, 0).getLocation();
+		myZone m = this.universe.getZoneFromChunk(chunk,loc);
+		if (m != null)
+		{
+			myZone mc = new myZone(this.universe, m.id, chunk, m.x, m.z);
+			this.universe.zones.remove(mc);
+		} else {
+			// doesn't exist anyway
+		}
 		
 	}
+
+
 }

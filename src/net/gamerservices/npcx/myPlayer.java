@@ -18,6 +18,10 @@ public class myPlayer {
 	public boolean dead = false;
 	public String name;
 	public int zomgcount = 0;
+	public myZone lastmyzone;
+	public int lastchunkx;
+	public int lastchunkz;
+	
 	
 	myPlayer(npcx parent,Player player, String name)
 	{

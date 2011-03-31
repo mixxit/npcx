@@ -39,13 +39,14 @@ public class myUniverse {
 	public final String PROP_WORLD = "world";
 	public final String PROP_UPDATE = "update";
 	public final String PROP_DBVERSION = "db-version";
-	
+	public final String PROP_NATIONS = "nations";
 	
 	// db
 	public String dsn;
 	public Connection conn = null;
 	public String nowild;
 	public String nocreeper;
+	public String nations;
 	public String dbhost;
 	public String update;
 	public String dbuser;
@@ -64,10 +65,11 @@ public class myUniverse {
 
 	// Lists of objects that are universal
 	public List< myFaction > factions = new CopyOnWriteArrayList< myFaction >();
-	public List< Chunk > chunks = new CopyOnWriteArrayList< Chunk >();
 	public List< myLoottable > loottables = new CopyOnWriteArrayList< myLoottable >();
 	public List< myPathgroup > pathgroups = new CopyOnWriteArrayList< myPathgroup >();
 	public List< myMerchant > merchants = new CopyOnWriteArrayList< myMerchant >();
+	public List< myZone > zones = new CopyOnWriteArrayList< myZone >();
+	
 	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
 	public HashMap<String, myPlayer> players = new HashMap<String, myPlayer>();
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
@@ -92,6 +94,7 @@ public class myUniverse {
 			this.dbport = "3306";
 			this.update = "true";
 			this.dbversion = "1";
+			this.nations = "false";
 			
 			dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
 	 	}
@@ -158,6 +161,7 @@ public class myUniverse {
 				dbname = config.getProperty("db-name");
 				dbport = config.getProperty("db-port");
 				dbversion = config.getProperty("db-version");
+				nations = config.getProperty("nations");
 				
 				this.defaultworld = config.getProperty("world");
 				
@@ -166,30 +170,38 @@ public class myUniverse {
 				dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
 				System.out.println(dsn);
 				
-				if (nocreeper == null || nowild == null)
+				if (nocreeper == null || nowild == null || nations == null)
 				{
-					config.setProperty(PROP_NOCREEPER,"nocreeper");
-					
-
 					if (nowild == null)
 					{
 						config.setProperty(PROP_NOWILD,"false");
+						nowild = "false";
+
 					}
 					
 					if (nocreeper == null)
 					{
 						config.setProperty(PROP_NOCREEPER,"false");
+						nocreeper = "false";
+
 					}
+					
+					if (nations == null)
+					{
+						config.setProperty(PROP_NATIONS,"false");
+						nations = "false";
+					}
+					
 					
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
 					config.setProperty(PROP_DBPASS,dbpass);
 					config.setProperty(PROP_DBNAME,dbname);
 					config.setProperty(PROP_DBPORT,dbport);
+		            config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
 					config.setProperty(PROP_WORLD,defaultworld);
 		            config.setProperty(PROP_UPDATE,update);
-		            config.setProperty(PROP_DBVERSION,dbversion);
 		            
 		            File propfolder = parent.getDataFolder();
 		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
@@ -256,7 +268,7 @@ public class myUniverse {
 	
 	private boolean updateDB() {
 		// TODO Auto-generated method stub
-		String targetdbversion = "1.03";
+		String targetdbversion = "1.04";
 		System.out.println("npcx : Checking for DB Updates from DBVersion:"+this.dbversion);
 		if(this.dbversion.matches(targetdbversion))
 		{
@@ -287,6 +299,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPASS,dbpass);
 					config.setProperty(PROP_DBNAME,dbname);
 					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
 					config.setProperty(PROP_WORLD,defaultworld);
 		            config.setProperty(PROP_UPDATE,"false");
@@ -357,6 +370,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPASS,dbpass);
 					config.setProperty(PROP_DBNAME,dbname);
 					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
 					config.setProperty(PROP_WORLD,defaultworld);
 		            config.setProperty(PROP_UPDATE,"false");
@@ -405,13 +419,14 @@ public class myUniverse {
 				sqlCreatestmt = conn.createStatement();
 				
 			     
-				String sqldrop = "DROP TABLE IF EXISTS quests";
+				String sqldrop = "DROP TABLE IF EXISTS player_quests";
 	            sqlCreatestmt.executeUpdate(sqldrop);
-				String sqlcreate = "CREATE TABLE quests (  id int(11) unsigned NOT NULL AUTO_INCREMENT,  name varchar(45) DEFAULT 'DefaultQuest',  reward int(10) unsigned DEFAULT '0',  rewardcoin int(10) unsigned DEFAULT '0',  rewardtext varchar(512) DEFAULT 'Well done!',  step int(11) DEFAULT '1',  category varchar(45) DEFAULT 'default',  PRIMARY KEY (id)) ";
+	            String sqlcreate = "CREATE  TABLE player_quests (  idnew_table INT NOT NULL ,  questid INT(11) UNSIGNED NULL ,  playername VARCHAR(45) NULL ,  status INT UNSIGNED NULL DEFAULT 1 ,  step INT UNSIGNED NULL DEFAULT 1 ,  INDEX fk_questid (questid ASC) ,  PRIMARY KEY (idnew_table) ,  CONSTRAINT fk_questid    FOREIGN KEY (questid )REFERENCES quests (id )    ON DELETE NO ACTION    ON UPDATE NO ACTION);";
 				sqlCreatestmt.executeUpdate(sqlcreate);
-				sqldrop = "DROP TABLE IF EXISTS player_quests";
+
+				sqldrop = "DROP TABLE IF EXISTS quests";
 	            sqlCreatestmt.executeUpdate(sqldrop);
-				sqlcreate = "CREATE  TABLE player_quests (  idnew_table INT NOT NULL ,  questid INT(11) UNSIGNED NULL ,  playername VARCHAR(45) NULL ,  status INT UNSIGNED NULL DEFAULT 1 ,  step INT UNSIGNED NULL DEFAULT 1 ,  INDEX fk_questid (questid ASC) ,  PRIMARY KEY (idnew_table) ,  CONSTRAINT fk_questid    FOREIGN KEY (questid )REFERENCES quests (id )    ON DELETE NO ACTION    ON UPDATE NO ACTION);";
+				sqlcreate = "CREATE TABLE quests (  id int(11) unsigned NOT NULL AUTO_INCREMENT,  name varchar(45) DEFAULT 'DefaultQuest',  reward int(10) unsigned DEFAULT '0',  rewardcoin int(10) unsigned DEFAULT '0',  rewardtext varchar(512) DEFAULT 'Well done!',  step int(11) DEFAULT '1',  category varchar(45) DEFAULT 'default',  PRIMARY KEY (id)) ";
 				sqlCreatestmt.executeUpdate(sqlcreate);
 
 				sqlCreatestmt.close();
@@ -429,6 +444,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPASS,dbpass);
 					config.setProperty(PROP_DBNAME,dbname);
 					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
 					config.setProperty(PROP_WORLD,defaultworld);
 		            config.setProperty(PROP_UPDATE,"false");
@@ -455,6 +471,78 @@ public class myUniverse {
 				System.out.println("**********************************************");
 				System.out.println("* Congratulations! Your NPCX database is now *");
 				System.out.println("*       updated to version 1.03              *");
+				System.out.println("**********************************************");
+				return true;
+			} catch (SQLException e) {
+				System.out.println("**********************************************");
+				System.out.println("*   Problem during update to version 1.03    *");
+				System.out.println("*  Please provide stacktrace below to devs   *");
+				System.out.println("**********************************************");
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		if (this.dbversion.matches("1.03"))
+		{
+			// Create Player table
+			// Update size of triggerword response
+			Statement sqlCreatestmt;
+			try {
+				sqlCreatestmt = conn.createStatement();
+				String sqldrop = "DROP TABLE IF EXISTS zone_members";
+	            sqlCreatestmt.executeUpdate(sqldrop);
+				sqldrop = "DROP TABLE IF EXISTS zone";
+	            sqlCreatestmt.executeUpdate(sqldrop);
+				String sqlcreate = "CREATE TABLE zone (  id int(10) unsigned NOT NULL AUTO_INCREMENT,  name varchar(45) DEFAULT 'The Wild',  x int(11) DEFAULT NULL,  z int(11) DEFAULT NULL,  ownername varchar(45) DEFAULT '',  PRIMARY KEY (id),  UNIQUE KEY loc (x,z))";
+				sqlCreatestmt.executeUpdate(sqlcreate);
+				
+				sqlcreate = "CREATE  TABLE zone_members (  id INT UNSIGNED NOT NULL AUTO_INCREMENT ,  playername VARCHAR(45) NULL ,  zoneid INT UNSIGNED NULL ,  PRIMARY KEY (id) ,  INDEX fk_zoneid (id ASC) ,CONSTRAINT fk_zoneid    FOREIGN KEY (id )    REFERENCES zone (id )    ON DELETE NO ACTION    ON UPDATE NO ACTION);";
+				sqlCreatestmt.executeUpdate(sqlcreate);
+
+				sqlCreatestmt.close();
+	            Properties config = new Properties();
+				BufferedInputStream stream;
+				try
+				{
+					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
+					config.load(stream);
+			
+					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOCREEPER,nocreeper);
+					config.setProperty(PROP_DBHOST,dbhost);
+					config.setProperty(PROP_DBUSER,dbuser);
+					config.setProperty(PROP_DBPASS,dbpass);
+					config.setProperty(PROP_DBNAME,dbname);
+					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_NATIONS,nations);
+		            config.setProperty(PROP_DBVERSION,dbversion);
+					config.setProperty(PROP_WORLD,defaultworld);
+		            config.setProperty(PROP_UPDATE,"false");
+		            config.setProperty(PROP_DBVERSION, "1.04");
+		            this.dbversion = "1.04";
+		            File propfolder = parent.getDataFolder();
+		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		            propfile.createNewFile();
+		            
+		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+					config.store(stream1, "Default generated settings, please ensure mysqld matches");
+		            
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+					System.out.println("**********************************************");
+					System.out.println("*   Problem during update to version 1.04    *");
+					System.out.println("*     Can you access your config file?       *");
+					System.out.println("**********************************************");
+					return false;
+				}
+				
+				
+				System.out.println("**********************************************");
+				System.out.println("* Congratulations! Your NPCX database is now *");
+				System.out.println("*       updated to version 1.04              *");
 				System.out.println("**********************************************");
 				return true;
 			} catch (SQLException e) {
@@ -501,8 +589,8 @@ public class myUniverse {
 				prop.setProperty(PROP_DBPASS, "p4ssw0rd!");
 				prop.setProperty(PROP_DBNAME, "npcx");
 				prop.setProperty(PROP_DBPORT, "3306");
+				prop.setProperty(PROP_NATIONS, "false");
 				prop.setProperty(PROP_DBVERSION, "1");
-				
 				prop.setProperty(PROP_UPDATE, "true");
 				this.nocreeper = "false";
 				this.nowild = "false";
@@ -511,6 +599,7 @@ public class myUniverse {
 				this.dbname = "npcx";
 				this.dbpass = "p4ssw0rd!";
 				this.dbport = "3306";
+				this.nations = "false";
 				this.dbversion = "1";
 				this.update = "true";
 				
@@ -716,6 +805,7 @@ public class myUniverse {
 		            dbpass = config.getProperty("db-pass");
 		            dbname = config.getProperty("db-name");
 		            dbport = config.getProperty("db-port");
+		            nations = config.getProperty("nations");
 		            dbversion = config.getProperty("db-version");
 		            
 		            dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
@@ -728,6 +818,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPASS,dbpass);
 					config.setProperty(PROP_DBNAME,dbname);
 					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
 					config.setProperty(PROP_WORLD,defaultworld);
 		            config.setProperty(PROP_UPDATE,"false");
@@ -758,6 +849,7 @@ public class myUniverse {
 
 	public void loadData() {
 		// TODO Auto-generated method stub
+		loadZones();
 		loadMerchants();
 		loadFactions();
 		loadPathgroups();
@@ -1117,6 +1209,40 @@ public class myUniverse {
 		}
 	}
 
+	private void loadZones() {
+		// TODO Auto-generated method stub
+		try 
+        {
+            // Load faction_list
+            Statement s1 = conn.createStatement ();
+            s1.executeQuery ("SELECT * FROM zone");
+            ResultSet rs1 = s1.getResultSet ();
+            int countzone = 0;
+            System.out.println("npcx : loading zones");
+            while (rs1.next ())
+            {
+            	myZone z = new myZone(this,rs1.getInt ("id"),null,rs1.getInt ("x"),rs1.getInt ("z"));
+            	z.name = rs1.getString ("name");
+            	z.ownername = rs1.getString ("ownername");
+
+
+            	countzone++;
+            	zones.add(z);
+            	
+            	
+            }
+            rs1.close();
+            s1.close();
+            System.out.println("npcx : Loaded " + countzone + " zones.");
+            
+        } catch (NullPointerException e) { 
+	 		System.out.println("npcx : ERROR - zone loading cancelled!");
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	private void loadFactions() {
 		// TODO Auto-generated method stub
 		try 
@@ -1246,11 +1372,12 @@ public class myUniverse {
 				{
 					if (npc.npc != null)
 					{
-						for (Chunk chunk : this.chunks)
+						for (myZone zone : this.zones)
 						{
-							if (chunk.getWorld()
+							
+							if (zone.chunk.getWorld()
 									.getChunkAt(npc.npc.getBukkitEntity().getLocation())
-									.equals(chunk)) {
+									.equals(zone)) {
 								count++;
 								npc.npc.chunkinactive(npc.npc.getBukkitEntity().getLocation());
 							}
@@ -1282,4 +1409,266 @@ public class myUniverse {
 		}
 		return null;
 	}
+
+	public myZone getmyChunk(Chunk chunk) {
+		// TODO Auto-generated method stub
+		for (myZone zone : this.zones)
+		{
+			if (zone.chunk != null)
+			{				
+				if (chunk == zone.chunk)
+				{
+					return zone;
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	public void setPlayerLastmyChunk(Player player, myZone myzone) {
+		// TODO Auto-generated method stub
+		for (myPlayer p : players.values())
+		{
+			if (p.player.getName() == player.getName())
+			{
+				p.lastmyzone = myzone;
+			}
+		}
+	}
+
+	public myZone getPlayerLastmyChunk(Player player) {
+		// TODO Auto-generated method stub
+		for (myPlayer p : players.values())
+		{
+			if (p.player.getName() == player.getName())
+			{
+				return p.lastmyzone;
+			}
+		}
+		return null;
+	}
+
+	public int getPlayerLastChunkX(Player player) {
+		// TODO Auto-generated method stub
+		for (myPlayer p : players.values())
+		{
+			if (p.player.getName() == player.getName())
+			{
+				return p.lastchunkx;
+			}
+		}
+		System.out.println("Did not find player!");
+		return 0;
+	}
+	
+	public int setPlayerLastChunkX(Player player,int x) {
+		// TODO Auto-generated method stub
+		for (myPlayer p : players.values())
+		{
+			if (p.player.getName() == player.getName())
+			{
+				p.lastchunkx = x;
+			}
+		}
+		return 0;
+	}
+	
+	public int getPlayerLastChunkZ(Player player) {
+		// TODO Auto-generated method stub
+		for (myPlayer p : players.values())
+		{
+			if (p.player.getName() == player.getName())
+			{
+				return p.lastchunkz;
+			}
+		}
+		return 0;
+	}
+	
+	public int setPlayerLastChunkZ(Player player,int z) {
+		// TODO Auto-generated method stub
+		for (myPlayer p : players.values())
+		{
+			if (p.player.getName() == player.getName())
+			{
+				p.lastchunkz = z;
+			}
+		}
+		return 0;
+	}
+
+	public String getZoneNameByLocation(int x, int z,World world) {
+		// TODO Auto-generated method stub
+	
+		for(myZone zone : zones)
+		{
+			if (zone.x == x && zone.z == z)
+			{
+				return zone.name;
+			}
+		}
+		
+		// doesnt exist, create it
+		myZone c = createBlankZone(x,z,world);
+		
+		return c.name;
+	}
+	
+	public int getZoneCoord(double x)
+	{
+		
+		return (int) Math.floor(( x / 16 ) + 0.9375 );
+	}
+	public double getZoneLocPos(int x)
+	{
+		
+		return (x-0.9375)*16;
+	}
+	
+	
+	public Location getLocationAtZoneLoc(int x, int z, World world)
+	{
+		double xloc = getZoneLocPos(x);
+		double yloc = 0;
+		double zloc = getZoneLocPos(z);
+		Location loc = new Location(world, xloc,yloc,zloc);
+		return loc;
+		
+	}
+
+	private myZone createBlankZone(int x, int z, World world) {
+		// TODO Auto-generated method stub
+		try {
+			PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO zone (name,x,z,ownername) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE ownername=VALUES(ownername) ",Statement.RETURN_GENERATED_KEYS);
+			stmt.setString(1,"The Wild");
+			stmt.setInt(2,x);
+			stmt.setInt(3,z);
+			stmt.setString(4,"");
+			
+			stmt.executeUpdate();
+			ResultSet keyset = stmt.getGeneratedKeys();
+			int key = 0;
+			if ( keyset.next() ) {
+			    // Retrieve the auto generated key(s).
+			    key = keyset.getInt(1);
+			    
+			}
+			stmt.close();
+			
+			myZone c = new myZone(this,key, world.getChunkAt(getLocationAtZoneLoc(x,z,world)),x,z);
+			this.zones.add(c);
+			return c;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+
+	public String getZoneOwnerNameFromChunkAndLoc(Chunk chunkAt, int x, int z, World world) {
+		// TODO Auto-generated method stub
+		for(myZone chunk : zones)
+		{
+			if (chunk.chunk == chunkAt)
+			{
+				return chunk.ownername;
+			}
+		}
+		// Does not exist - create it!
+		myZone zn = createBlankZone(x,z,world);
+		return "";
+	}
+	
+	public myZone getZoneFromChunkAndLoc(int x, int z, World world) {
+		// TODO Auto-generated method stub
+		for(myZone chunk : zones)
+		{
+			if (chunk.x == x && chunk.z == z)
+			{
+				return chunk;
+			}
+		}
+		// Does not exist - create it!
+		return createBlankZone(x,z,world);
+	}
+	
+	public myZone getZoneFromChunk(Chunk chunkAt, Location loc) {
+		// TODO Auto-generated method stub
+		for(myZone chunk : zones)
+		{
+			if (chunk.chunk == chunkAt)
+			{
+				return chunk;
+			}
+		}
+		// Does not exist - return null
+		double xm = loc.getX();
+		double zm = loc.getZ();
+		
+		int x = this.getZoneCoord(xm);
+		int z = this.getZoneCoord(zm);
+		return createBlankZone(x,z,loc.getWorld());
+	}
+	
+	public String setZoneOwnerName(Chunk chunkAt, String owner) {
+		// TODO Auto-generated method stub
+		for(myZone zone : zones)
+		{
+			if (zone.chunk == chunkAt)
+			{
+				
+				
+				try {
+					PreparedStatement stmt = this.parent.universe.conn.prepareStatement("UPDATE zone set name=?,ownername=? WHERE id = ?");
+					stmt.setString(1,owner+"s land");
+					stmt.setString(2,owner);
+					stmt.setInt(3,zone.id);
+					
+					stmt.executeUpdate();
+					stmt.close();
+					System.out.println("npcx :myUniverse:setZoneOwnerName:"+owner);
+					zone.ownername = owner;
+					
+					
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				
+			}
+		}
+		return "";
+	}
+
+	public String getZoneOwnerName(Chunk chunkAt) {
+		// TODO Auto-generated method stub
+		for(myZone zone : zones)
+		{
+			if (zone.chunk == chunkAt)
+			{
+				
+				
+				return zone.ownername;
+				
+			}
+		}
+		return "";
+	}
+
+	public myZone getZoneFromLoc(int x, int z, World world) {
+		// TODO Auto-generated method stub
+		for(myZone zone : zones)
+		{
+			if (zone.x == x && zone.z == z)
+			{
+				return zone;
+				
+			}
+		}
+		return createBlankZone(x,z,world);
+	}
+
+	
 }
