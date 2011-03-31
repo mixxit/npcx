@@ -677,7 +677,7 @@ public class BasicHumanNpc extends BasicNpc {
             
             if ((ent.getHealth() - dmg) <= 0)
             {
-            	ent.setHealth(0);
+            	ent.damage(dmg);
             	follow = null;
             	aggro = null;
             	if (ent instanceof Player)
@@ -709,9 +709,7 @@ public class BasicHumanNpc extends BasicNpc {
             		
 		            	//System.out.println("Gahh! ");
 		            	this.mcEntity.animateArmSwing();
-		            	
-		            	ent.setHealth(ent.getHealth()-dmg);
-			            ent.damage(0);
+		            	ent.damage(dmg);
 		            
             		}
 	            	
@@ -736,7 +734,7 @@ public class BasicHumanNpc extends BasicNpc {
 	            		{
 	            			//System.out.println("Processed this as a player "+ent.getClass().toString());
 			            	this.mcEntity.animateArmSwing();
-			            	ent.damage(0);
+			            	ent.damage(dmg);
 			            	
 	            		}
 		            }
