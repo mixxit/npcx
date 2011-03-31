@@ -2060,46 +2060,53 @@ public class myUniverse {
 		return "";
 	}
 
-	public boolean getNpcVsNpcFactionAggroState(myNPC npc, LivingEntity e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
-	public boolean getNpcVsHumanEntityFactionAggroState(myNPC npc, HumanEntity e) {
+
+	public myNPC tryFactionVSNPCAttack(myNPC npc, HumanEntity e) {
 		// TODO Auto-generated method stub
 		
 		// Check the npc has a primary faction
 		if (npc.faction != null)
 		{
+			
 			int myfactionid = npc.faction.id;
 			int targetfactionid = 0;
-			
+			myNPC target = null;
 			for (myNPC n : this.npcs.values())
 			{
 				if (n.npc != null)
-					if (n.npc == e)
+				{
+					if (n.npc.getBukkitEntity() == e)
+					{
 						if (n.faction != null)
 						{
-							targetfactionid = n.faction.id;
+								targetfactionid = n.faction.id;
+								target = n;
 						}
+					}
+				}
 			}
-			
-			for (myNpc_faction n : this.npcfactions.values())
+			if (target != null)
 			{
-				if (n.factionid == targetfactionid && n.npcid == Integer.parseInt(npc.id) && n.amount < -1000)
+				for (myNpc_faction n : this.npcfactions.values())
 				{
-					npc.npc.aggro = e;
-					npc.npc.follow = e;
-					
-					return true;
-				}				
+					if (target != null && n.factionid == targetfactionid && n.npcid == Integer.parseInt(npc.id) && n.amount < -1000)
+					{
+						npc.npc.aggro = e;
+						npc.npc.follow = e;
+						target.npc.aggro = npc.npc.getBukkitEntity();
+						target.npc.follow = npc.npc.getBukkitEntity();
+						
+						return target;
+					}				
+				}
 			}
 			
-			return false;
+			return null;
 
 			
 		}
-		return false;
+		return null;
 	}
 
 	

@@ -31,78 +31,18 @@ public class npcxEListener extends EntityListener
 	
 	@Override
 	public void onEntityDamage(EntityDamageEvent event) {
-		super.onEntityDamage(event);
-		/*
-		if (event instanceof EntityDamageByEntityEvent )
-		{
-			if (event.getEntity() instanceof Monster)
-			{
-				EntityDamageByEntityEvent edee1 = (EntityDamageByEntityEvent)event;
-				if (edee1.getDamager() instanceof HumanEntity) 
-				{
-					
-					//System.out.println("npcx : monster go ow");
-				}
-					
-				
-		    }
-		}
-		*/
+	
 		if (event.getEntity() instanceof HumanEntity) 
 		{
+			
 			BasicHumanNpc npc = parent.npclist.getBasicHumanNpc(event.getEntity());
-			if (event instanceof EntityDamageByEntityEvent)
-		    {
-				EntityDamageByEntityEvent edee = (EntityDamageByEntityEvent) event;
-
-				
-		        if (npc != null && edee.getDamager() instanceof LivingEntity) 
-		        {
-	
-		        	Entity p = edee.getDamager();
-		        	if (npc.parent != null)
-		        	{
-		        		for (myPlayer player : parent.universe.players.values())
-		        		{
-		        			if (player.player == edee.getDamager())
-		        			{
-		        				if (npc.aggro == null)
-		        				{
-		        					// First time sent an event
-			        				npc.parent.onPlayerAggroChange(player);
-		        					
-		        				} 
-		        			}
-		        		}
-		        	}
-		            npc.follow = (LivingEntity)p;
-		            npc.aggro = (LivingEntity)p;
-		            
-		            try
-		            {
-		            	
-		            	npc.parent.getDamageDone(npc,(LivingEntity)p);
-		            	npc.hp = npc.hp - 10;
-		            	if (npc.hp < 1)
-		            	{
-		            		
-		            		
-		            		npc.onDeath((LivingEntity)p);
-		            		parent.onNPCDeath(npc);
-		            		
-		            	}
-		            } 
-		            catch (Exception e)
-		            {
-		            	npc.follow = null;
-						npc.aggro = null;
-						//System.out.println("npcx : forgot about target");
-		            	// do not modify mobs health
-		            }
-		            
-	
-		        }
-		    }
+			
+			if (npc != null)
+			{
+				npc.onDamage(event);
+			}
+			
+		    
 		}
 	}
 	@Override

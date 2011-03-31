@@ -1,14 +1,17 @@
 package net.gamerservices.npcx;
+import java.awt.PageAttributes.ColorType;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.gamerservices.npclibfork.BasicHumanNpc;
 import net.gamerservices.npclibfork.NpcSpawner;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -1462,9 +1465,14 @@ public class myNPC {
 			*/
 			if (this.faction != null)
 			{
-				myPlayer player = this.parent.universe.findmyPlayerByPlayer((Player)p);
-				player.updateFactionNegative(this.faction);
-				((Player) p).sendMessage("Your standing with " + this.faction.name + " has gotten worse!");
+				try
+				{
+					myPlayer player = this.parent.universe.findmyPlayerByPlayer((Player)p);
+					player.updateFactionNegative(this.faction);
+					((Player) p).sendMessage("Your standing with " + this.faction.name + " has gotten worse!");
+				} catch (NullPointerException e)
+				{
+				}
 			}
 			
 		}
@@ -1516,44 +1524,62 @@ public class myNPC {
 		return hnpc;
 	}
 
-	public int getDamageDone(BasicHumanNpc npc, LivingEntity player) {
+	public int getDamageDone(BasicHumanNpc npc, Player player) {
 		// TODO Auto-generated method stub
 		// get weapon
+		int damage = 1;
 		if (player instanceof Player)
 		{
 			int itemid = ((Player) player).getInventory().getItemInHand().getTypeId();
-			int damage = 1;
+			
 			
 			// SWORDS!
 			if (itemid == 268)
 			{
-				return 5;
+				damage=damage+ 5;
 			}
 			
 			if (itemid == 272)
 			{
-				return 8;
+				damage=damage+ 8;
 			}
 			
 			if (itemid == 267)
 			{
-				return 12;
+				damage=damage+ 12;
 			}
 			
 			if (itemid == 276)
 			{
-				return 20;
+				damage=damage+ 20;
 			}
 			
 			if (itemid == 283)
 			{
-				return 30;
+				damage=damage+ 30;
 			}
-						
-			return 1;
+			
+			Random rn = new Random();
+			int n = damage - (damage/2) + 1;
+			int i = rn.nextInt() % n;
+			int randomNum =  (damage/2) + i;
+
+			Random rn2 = new Random();
+			int n2 = 1000 - 1 + 1;
+			int i2 = rn.nextInt() % n;
+			int randomNum2 =  1 + i2;
+			
+			if (randomNum2 > 950)
+			{
+				player.getServer().broadcastMessage(ChatColor.YELLOW + player.getName() + " did critical damage against "+npc.getName()+" for "+ (randomNum2 + randomNum) +"!");
+				return randomNum2+randomNum;
+			}
+			
+			
+			return randomNum;
 			
 		}
-		return 1;
+		return damage;
 		
 	}
 }

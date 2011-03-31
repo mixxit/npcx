@@ -14,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
@@ -21,6 +22,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Spider;
 import org.bukkit.entity.Zombie;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
 
 public class BasicHumanNpc extends BasicNpc {
@@ -713,8 +716,10 @@ public class BasicHumanNpc extends BasicNpc {
 	            		
 	            		if (diffx < 2 && diffx > -2 && diffy < 2 && diffy > -2 && diffz < 2 && diffz > -2)
 	            		{
+	            			//System.out.println("Processed this as a player "+ent.getClass().toString());
 			            	this.mcEntity.animateArmSwing();
 			            	ent.damage(dmg);
+			            	
 	            		}
 		            }
 	            }
@@ -773,6 +778,94 @@ public class BasicHumanNpc extends BasicNpc {
 			this.parent.spawngroup.chunkactive = false;
 		}
 		
+		
+	}
+	
+	public void onDamage(myNPC anpc) {
+		
+    	
+    	this.follow = anpc.npc.getBukkitEntity();
+    	this.aggro = anpc.npc.getBukkitEntity();
+        
+        try
+        {
+        	// default npcvsnpc dmg
+        	int dmgdone = 30;
+        	this.hp = this.hp - dmgdone;
+
+        	if (this.hp < 1)
+        	{
+        		anpc.npc.follow = null;
+        		anpc.npc.aggro = null;
+        		
+        		System.out.println("I just died!!");		            		
+        		this.onDeath(anpc.npc.getBukkitEntity());
+        		this.parent.parent.onNPCDeath(this);
+        		
+        	}
+        } 
+        catch (Exception e)
+        {
+        	this.follow = null;
+        	this.aggro = null;
+        	e.printStackTrace();
+        }
+	}
+
+	public void onDamage(EntityDamageEvent event) {
+		// TODO Auto-generated method stub
+		if (event instanceof EntityDamageByEntityEvent)
+	    {
+			EntityDamageByEntityEvent edee = (EntityDamageByEntityEvent) event;
+
+			
+	        if (this != null && edee.getDamager() instanceof LivingEntity) 
+	        {
+
+	        	Entity p = edee.getDamager();
+	        	if (this.parent != null)
+	        	{
+	        		for (myPlayer player : this.parent.parent.universe.players.values())
+	        		{
+	        			if (player.player == edee.getDamager())
+	        			{
+	        				if (this.aggro == null)
+	        				{
+	        					// First time sent an event
+	        					this.parent.onPlayerAggroChange(player);
+	        					
+	        				} 
+	        			}
+	        		}
+	        	}
+	        	this.follow = (LivingEntity)p;
+	        	this.aggro = (LivingEntity)p;
+	            
+	            try
+	            {
+	            	
+	            	int dmgdone = this.parent.getDamageDone(this,(Player)p);
+	            	this.hp = this.hp - dmgdone;
+
+	            	if (this.hp < 1)
+	            	{
+	            		System.out.println("I just died!!");		            		
+	            		this.onDeath((LivingEntity)p);
+	            		this.parent.parent.onNPCDeath(this);
+	            		
+	            	}
+	            } 
+	            catch (Exception e)
+	            {
+	            	this.follow = null;
+	            	this.aggro = null;
+					//System.out.println("npcx : forgot about target");
+	            	// do not modify mobs health
+	            }
+	            
+
+	        }
+	    }
 		
 	}
 
