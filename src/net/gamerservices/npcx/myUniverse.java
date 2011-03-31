@@ -932,10 +932,11 @@ public class myUniverse {
 			// save factions
 			for (myPlayer_factionentry e : playerfactions.values())
 			{
-				PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO player_faction (player_name,faction_id,amount) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE amount=VALUES(amount) ",Statement.RETURN_GENERATED_KEYS);
+				PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO player_faction (player_name,faction_id,amount) VALUES (?,?,?) ON DUPLICATE KEY UPDATE amount=VALUES(amount) ",Statement.RETURN_GENERATED_KEYS);
 				stmt.setString(1,e.playername);
 				stmt.setInt(2,e.factionid);
 				stmt.setInt(3,e.amount);
+				stmt.setString(4,"");
 				
 				stmt.executeUpdate();
 				ResultSet keyset = stmt.getGeneratedKeys();
