@@ -733,6 +733,7 @@ public class npcx extends JavaPlugin {
 							{
 								z.setOwner(player.getName());
 								z.name = player.getName()+"s land";
+								player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* A new town has been bounded by "+player.getName()+"!");
 								player.sendMessage("Thanks! That's " +ChatColor.YELLOW+ cost + ChatColor.WHITE+" total coins!");
 								this.universe.subtractPlayerBalance(player,cost);		
 								player.sendMessage("You just bought region: ["+ChatColor.LIGHT_PURPLE+z.x+","+z.z+""+ChatColor.WHITE+"]!");
