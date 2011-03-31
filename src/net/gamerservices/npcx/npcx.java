@@ -649,9 +649,11 @@ public class npcx extends JavaPlugin {
 							if (z.ownername.equals(""))
 							{
 								z.setOwner(player.getName());
+								z.name = player.getName()+"s land";
 								player.sendMessage("Thanks! That's " + cost + " total coins!");
 								this.universe.subtractPlayerBalance(player,cost);		
 								player.sendMessage("You just bought "+z.name+" : "+z.x+","+z.z);
+								
 							} else {
 								
 								player.sendMessage("Sorry this zone has already been purchased by another civilization");
