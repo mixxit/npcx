@@ -189,14 +189,83 @@ public class npcxPListener extends PlayerListener {
 					}
 				
 				} else {
-					// False -  we dont want to protect or are using some other system
-					return;
+					// False -  we dont want to our wild areas or are using some other system
 					
+					try
+					{
+						for (myPlayer player : parent.universe.players.values())
+						{
+							if (player.player == event.getPlayer())
+							{
+								
+								
+								Location loc = event.getClickedBlock().getLocation();
+								Chunk chunk = loc.getWorld().getChunkAt(loc);
+								int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
+								int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
+								String owner = "";
+								for (myZone zone : this.parent.universe.zones)
+								{
+									if (zone.x == x && zone.z == z)
+									{
+										owner = zone.ownername;
+									}
+								}
+								
+								if (player.player.getName().matches(owner))
+								{
+									return;
+								} else {
+									event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
+									event.setCancelled(true);
+								}
+							}
+						}
+					} catch (Exception e)
+					{
+						// locked table
+						event.setCancelled(true);
+					}
 				}
 				
 				
 			} else {
 				// No setting, assume we dont want to protect or are using some other system
+				try
+				{
+					for (myPlayer player : parent.universe.players.values())
+					{
+						if (player.player == event.getPlayer())
+						{
+							
+							
+							Location loc = event.getClickedBlock().getLocation();
+							Chunk chunk = loc.getWorld().getChunkAt(loc);
+							int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
+							int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
+							String owner = "";
+							for (myZone zone : this.parent.universe.zones)
+							{
+								if (zone.x == x && zone.z == z)
+								{
+									owner = zone.ownername;
+								}
+							}
+							
+							if (player.player.getName().matches(owner))
+							{
+								return;
+							} else {
+								event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
+								event.setCancelled(true);
+							}
+						}
+					}
+				} catch (Exception e)
+				{
+					// locked table
+					event.setCancelled(true);
+				}
 				return;
 			}
 		} else {
