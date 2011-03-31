@@ -221,6 +221,8 @@ public class npcxPListener extends PlayerListener {
 										// wild is ok
 										//event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
 										return;
+									} else {
+										event.setCancelled(true);
 									}
 								}
 							}
@@ -265,6 +267,8 @@ public class npcxPListener extends PlayerListener {
 									// wild is ok
 									//event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
 									return;
+								} else {
+									event.setCancelled(true);
 								}
 							}
 						}
@@ -302,14 +306,7 @@ public class npcxPListener extends PlayerListener {
 			myZone zone = this.parent.universe.getZoneFromLoc(x,z,event.getPlayer().getWorld());
 			if (zone != null)
 			{
-				if (zone.ownername.matches(""))
-				{
-					event.getPlayer().sendMessage("Zone: ["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] - "+ChatColor.YELLOW+"for sale");
-							
-				} else {
-					event.getPlayer().sendMessage("["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] "+ChatColor.LIGHT_PURPLE +""+zone.name + ""+ChatColor.WHITE+" Owner: "+ChatColor.YELLOW+""+zone.ownername);
-				}
-						
+										
 				this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
 				this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
 				this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
