@@ -21,6 +21,7 @@ public class myPlayer {
 	public myZone lastmyzone;
 	public int lastchunkx;
 	public int lastchunkz;
+	public String lastchunkname;
 	
 	
 	myPlayer(npcx parent,Player player, String name)

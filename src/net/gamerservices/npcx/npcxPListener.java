@@ -53,17 +53,22 @@ public class npcxPListener extends PlayerListener {
 					myZone zone = this.parent.universe.getZoneFromLoc(x,z,event.getPlayer().getWorld());
 					if (zone != null)
 					{
-						if (zone.ownername.matches(""))
+						if (zone.name != this.parent.universe.getPlayerLastChunkName(event.getPlayer()))
 						{
-							event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+" - for sale");
+							if (zone.ownername.matches(""))
+							{
+								event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+" - for sale");
+								
+							} else {
+								event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+"] "+zone.name + " Owner: "+zone.ownername);
+							}
+							event.getPlayer().sendMessage(this.parent.universe.getZoneNameByLocation(xchunkloc, zchunkloc, event.getPlayer().getWorld()));
 							
-						} else {
-							event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+"] "+zone.name + " Owner: "+zone.ownername);
-						}
-						event.getPlayer().sendMessage(this.parent.universe.getZoneNameByLocation(xchunkloc, zchunkloc, event.getPlayer().getWorld()));
+							this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
+							this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
+							this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
 						
-						this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
-						this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
+						}
 					}
 				} else {
 					
@@ -134,7 +139,7 @@ public class npcxPListener extends PlayerListener {
 		
 		myPlayer player = new myPlayer(this.parent,event.getPlayer(),event.getPlayer().getName());
 		event.getPlayer().sendMessage("This server runs NPCX with Civilizations enabled!");
-		event.getPlayer().sendMessage("To claim your own piece of paradise, goto an area and type /civ buy!");
+		event.getPlayer().sendMessage("To claim your own piece of paradise use /civ buy!");
 		
 		//System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
 		parent.universe.players.put(player.player.getName(), player);

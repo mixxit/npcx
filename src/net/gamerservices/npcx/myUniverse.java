@@ -1878,5 +1878,24 @@ public class myUniverse {
 		return createBlankZone(x,z,world);
 	}
 
+	public void setPlayerLastChunkName(Player player, String name) {
+		// TODO Auto-generated method stub
+		for (myPlayer p : players.values())
+		{
+			if (p.player != null)
+				p.lastchunkname = name;
+		}
+	}
+
+	public String getPlayerLastChunkName(Player player) {
+		// TODO Auto-generated method stub
+		for (myPlayer p : players.values())
+		{
+			if (p.player != null)
+				return p.lastchunkname;
+		}
+		return "";
+	}
+
 	
 }
