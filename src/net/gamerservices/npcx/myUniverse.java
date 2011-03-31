@@ -268,7 +268,7 @@ public class myUniverse {
 	
 	private boolean updateDB() {
 		// TODO Auto-generated method stub
-		String targetdbversion = "1.05";
+		String targetdbversion = "1.06";
 		System.out.println("npcx : Checking for DB Updates from DBVersion:"+this.dbversion);
 		if(this.dbversion.matches(targetdbversion))
 		{
@@ -630,7 +630,7 @@ public class myUniverse {
 			try {
 				
 				sqlCreatestmt = conn.createStatement();
-				String sqlcreate = "ALTER TABLE merchant_entries ADD COLUMN category VARCHAR(45) NULL  AFTER pricesell ;";
+				String sqlcreate = "ALTER TABLE merchant ADD COLUMN category VARCHAR(45) NULL  AFTER name ;";
 				sqlCreatestmt.executeUpdate(sqlcreate);
 
 				sqlCreatestmt.close();
