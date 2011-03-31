@@ -572,6 +572,7 @@ public class npcx extends JavaPlugin {
          
          pm.registerEvent(Type.PLAYER_RESPAWN, mPlayerListener, Priority.Normal, this);
          pm.registerEvent(Type.PLAYER_INTERACT, mPlayerListener, Priority.Normal, this);
+         pm.registerEvent(Type.PLAYER_TELEPORT, mPlayerListener, Priority.Normal, this);
          
          pm.registerEvent(Type.PLAYER_JOIN, mPlayerListener, Priority.Normal, this);
          pm.registerEvent(Type.PLAYER_QUIT, mPlayerListener, Priority.Normal, this);

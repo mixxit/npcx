@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.HumanEntity;
 
@@ -33,6 +34,61 @@ public class npcxPListener extends PlayerListener {
         this.parent = parent;
     }
 	public void onPlayerMove(PlayerMoveEvent event)
+	{
+		if (this.parent.universe.nations.matches("true"))
+		{
+			
+			// natiosn chunk checking
+			// Area Coordinate = round down ( ( position / areasize ) + 0.9375 )
+			int xchunkloc = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
+			int zchunkloc = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
+			//event.getPlayer().sendMessage(xchunkloc+":"+zchunkloc);
+			
+			int lastx = this.parent.universe.getPlayerLastChunkX(event.getPlayer());
+			int lastz = this.parent.universe.getPlayerLastChunkZ(event.getPlayer());
+			String lastname = this.parent.universe.getPlayerLastChunkName(event.getPlayer());
+			//event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+" - from:"+ lastx + ":" + lastz);
+				if (lastx != xchunkloc ||  lastz != zchunkloc) 
+				{
+					// new position!
+					int x = xchunkloc;
+					int z = zchunkloc;
+					myZone zone = this.parent.universe.getZoneFromLoc(x,z,event.getPlayer().getWorld());
+					if (zone != null)
+					{
+						if (lastname != null)
+						{
+							if (!zone.name.matches(lastname))
+							{
+								if (zone.ownername.matches(""))
+								{
+									event.getPlayer().sendMessage("Zone: ["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] - "+ChatColor.YELLOW+"for sale");
+									
+								} else {
+									event.getPlayer().sendMessage("["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] "+ChatColor.LIGHT_PURPLE +""+zone.name + ""+ChatColor.WHITE+" Owner: "+ChatColor.YELLOW+""+zone.ownername);
+								}
+								
+								this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
+								this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
+								this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
+							
+							} else {
+								// skip we've been here recently
+							}
+						} else {
+							// dont provide them info, just update them
+							this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
+							this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
+							this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
+						}
+					}
+				} else {
+					
+				}
+		}
+	}
+	
+	public void onPlayerTeleport(PlayerTeleportEvent event)
 	{
 		if (this.parent.universe.nations.matches("true"))
 		{
@@ -154,15 +210,52 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerJoin(PlayerJoinEvent event) 
     {
-		
 		myPlayer player = new myPlayer(this.parent,event.getPlayer(),event.getPlayer().getName());
-		event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"This server runs NPCX with Civilizations enabled!");
-		event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"To claim your own piece of paradise use /civ buy!");
-		
+		if (this.parent.universe.nations.matches("true"))
+		{
+			// Area Coordinate = round down ( ( position / areasize ) + 0.9375 )
+			int xchunkloc = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
+			int zchunkloc = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
+			//event.getPlayer().sendMessage(xchunkloc+":"+zchunkloc);
+			
+			// new position!
+			int x = xchunkloc;
+			int z = zchunkloc;
+			
+			myZone zone = this.parent.universe.getZoneFromLoc(x,z,event.getPlayer().getWorld());
+			if (zone != null)
+			{
+				if (zone.ownername.matches(""))
+				{
+					event.getPlayer().sendMessage("Zone: ["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] - "+ChatColor.YELLOW+"for sale");
+							
+				} else {
+					event.getPlayer().sendMessage("["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] "+ChatColor.LIGHT_PURPLE +""+zone.name + ""+ChatColor.WHITE+" Owner: "+ChatColor.YELLOW+""+zone.ownername);
+				}
+						
+				this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
+				this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
+				this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
+					
+				
+			} else {
+				// dont provide them info, just update them
+				this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
+				this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
+				this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
+				
+			}
+			
+			event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"This server runs NPCX with Civilizations enabled!");
+			event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"To claim your own piece of paradise use /civ buy!");
+			event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"To claim your own piece of paradise use /civ buy!");
+		}
 		//System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
 		parent.universe.players.put(player.player.getName(), player);
 		
     }
+	
+
 	
 	
 	
