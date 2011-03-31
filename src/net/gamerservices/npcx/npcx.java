@@ -702,8 +702,11 @@ public class npcx extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 
 		// any player
-		if (this.universe.nations.equals("true"))
-		{
+		
+			//
+			// CIV COMMAND MENU
+			//
+			
 			if (command.getName().toLowerCase().equals("civ")) {
 				if (!(sender instanceof Player)) {
 	
@@ -718,6 +721,8 @@ public class npcx extends JavaPlugin {
 	            	return false;
 	            }
 				String subCommand = args[0].toLowerCase();
+				
+				
 				if (subCommand.equals("buy"))
 	            {
 					int cost = 25000;
@@ -773,11 +778,16 @@ public class npcx extends JavaPlugin {
 				}
 		
 	        }
-		}
+	
 		// ops only
 		
         try {
 	           
+        	
+        	// 
+        	// NPCX COMMAND MENU
+        	//
+        	
             if (!command.getName().toLowerCase().equals("npcx")) {
             	
                 return false;
@@ -803,6 +813,10 @@ public class npcx extends JavaPlugin {
             	player.sendMessage("Insufficient arguments /npcx npc");
             	player.sendMessage("Insufficient arguments /npcx pathgroup");
             	player.sendMessage("Insufficient arguments /npcx merchant");
+            	if (this.universe.nations.equals("true"))
+        		{
+            		player.sendMessage("Insufficient arguments /npcx civ");
+        		}
             	
             	return false;
             }
@@ -1065,6 +1079,8 @@ public class npcx extends JavaPlugin {
         			
         		}
             	
+            	
+            	
             	if (args[1].equals("updatepos")) 
             	{
             		if (args.length < 3)
@@ -1171,6 +1187,39 @@ public class npcx extends JavaPlugin {
         		
             }
             
+            //
+            // START CIV
+            //
+            
+            if (subCommand.equals("civ"))
+            {
+            		if (args.length < 2) {
+            			player.sendMessage("Insufficient arguments /npcx civ givemoney playername amount");
+            			return false;
+            		}
+            		
+            		if (args[1].equals("givemoney")) {
+                		if (args.length < 4) {
+                			player.sendMessage("Insufficient arguments /npcx civ givemoney playername amount");
+                			return false;
+                        	
+                		
+                		} else {
+                			for (myPlayer p : this.universe.players.values())
+                			{
+                				if (p.player.getName().matches(args[2]))
+                				{
+                					p.setNPCXBalance(p.getNPCXBalance() + (Integer.parseInt(args[3])));
+                					player.sendMessage("Added to balance " + args[2] + "<"+ args[3]+ "x"+args[4]+".");
+                				}
+                			}
+                		}
+                			
+                			
+            		}
+                
+        		
+    		}
 
             //
             // START LOOTTABLE
