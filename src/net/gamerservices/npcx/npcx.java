@@ -1228,7 +1228,7 @@ public class npcx extends JavaPlugin {
                 				if (p.player.getName().matches(args[2]))
                 				{
                 					p.setNPCXBalance(p.getNPCXBalance() + (Integer.parseInt(args[3])));
-                					player.sendMessage("Added to balance " + args[2] + "<"+ args[3]+ "x"+args[4]+".");
+                					player.sendMessage("Added to balance " + args[2] + "<"+ args[3]);
                 				}
                 			}
                 		}
