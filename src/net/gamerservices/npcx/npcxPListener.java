@@ -73,7 +73,10 @@ public class npcxPListener extends PlayerListener {
 							
 							}
 						} else {
-							event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+" - for sale");
+							// dont provide them info, just update them
+							this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
+							this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
+							this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
 						}
 					}
 				} else {
