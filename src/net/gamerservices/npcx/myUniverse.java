@@ -1653,7 +1653,17 @@ public class myUniverse {
 				if (p.player == player)
 					return p.getNPCXBalance();
 			}
-			e.printStackTrace();
+			//e.printStackTrace();
+			// We don't have iConomy
+			return 0;
+		}catch (NullPointerException e)
+		{
+			for (myPlayer p : this.players.values())
+			{
+				if (p.player == player)
+					return p.getNPCXBalance();
+			}
+			//e.printStackTrace();
 			// We don't have iConomy
 			return 0;
 		}
@@ -1676,6 +1686,17 @@ public class myUniverse {
 			// We don't have iConomy
 			
 			
+		}catch (NullPointerException e)
+		{
+			
+			for (myPlayer p : this.players.values())
+			{
+				if (p.player == player)
+					p.setNPCXBalance(p.getNPCXBalance()-totalcost);
+			}
+			// We don't have iConomy
+			
+			
 		}
 	}
 	
@@ -1687,6 +1708,14 @@ public class myUniverse {
 			Account account = iConomy.getBank().getAccount(player.getName());
 			account.add(totalcost);
 		} catch (NoClassDefFoundError e)
+		{
+			// We don't have iConomy
+			for (myPlayer p : this.players.values())
+			{
+				if (p.player == player)
+					p.setNPCXBalance(p.getNPCXBalance()+totalcost);
+			}
+		}catch (NullPointerException e)
 		{
 			// We don't have iConomy
 			for (myPlayer p : this.players.values())
