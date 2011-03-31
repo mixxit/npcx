@@ -734,7 +734,7 @@ public class npcx extends JavaPlugin {
             			player.sendMessage("Insufficient arguments /npcx civ add playername");
             			return false;
 					}
-					if (!args[2].equals(player.getName()))
+					if (!args[1].equals(player.getName()))
 					{
 						for (myZone z : this.universe.zones)
 						{
