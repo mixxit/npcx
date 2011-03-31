@@ -1919,10 +1919,10 @@ public class npcx extends JavaPlugin {
           		   
           		   if (args.length < 3)
           		   {
-          			   sglist = this.universe.conn.prepareStatement("SELECT id, name FROM merchant ORDER BY ID DESC LIMIT 10");
+          			   sglist = this.universe.conn.prepareStatement("SELECT id, name, category FROM merchant ORDER BY ID DESC LIMIT 10");
           		   } else {
 
-              		   sglist = this.universe.conn.prepareStatement("SELECT id, name FROM merchant WHERE name LIKE '%"+args[2]+"%'");
+              		   sglist = this.universe.conn.prepareStatement("SELECT id, name, category FROM merchant WHERE name LIKE '%"+args[2]+"%'");
           		   }
           		   sglist.executeQuery ();
           		   ResultSet rs = sglist.getResultSet ();
@@ -1934,7 +1934,8 @@ public class npcx extends JavaPlugin {
  	       		       String nameVal = rs.getString ("name");
  	       		       player.sendMessage(
  	       		               "id = " + idVal
- 	       		               + ", name = " + nameVal);
+ 	       		               + ", name = " + nameVal
+ 	       		       			+ ", category = " + rs.getString ("category"));
  	       		       ++count;
           		   }
           		   rs.close ();
