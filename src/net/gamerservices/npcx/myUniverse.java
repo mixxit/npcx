@@ -610,10 +610,76 @@ public class myUniverse {
 				System.out.println("* Congratulations! Your NPCX database is now *");
 				System.out.println("*       updated to version 1.05              *");
 				System.out.println("**********************************************");
-				return true;
+				// continue on
 			} catch (SQLException e) {
 				System.out.println("**********************************************");
 				System.out.println("*   Problem during update to version 1.05    *");
+				System.out.println("*  Please provide stacktrace below to devs   *");
+				System.out.println("**********************************************");
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		if (this.dbversion.matches("1.05"))
+		{
+			// Create Player table
+			// Update size of triggerword response
+			Statement sqlCreatestmt;
+			try {
+				
+				sqlCreatestmt = conn.createStatement();
+				String sqlcreate = "ALTER TABLE merchant_entries ADD COLUMN category VARCHAR(45) NULL  AFTER pricesell ;";
+				sqlCreatestmt.executeUpdate(sqlcreate);
+
+				sqlCreatestmt.close();
+	            Properties config = new Properties();
+				BufferedInputStream stream;
+				try
+				{
+					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
+					config.load(stream);
+			
+					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOCREEPER,nocreeper);
+					config.setProperty(PROP_DBHOST,dbhost);
+					config.setProperty(PROP_DBUSER,dbuser);
+					config.setProperty(PROP_DBPASS,dbpass);
+					config.setProperty(PROP_DBNAME,dbname);
+					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_NATIONS,nations);
+		            config.setProperty(PROP_DBVERSION,dbversion);
+					config.setProperty(PROP_WORLD,defaultworld);
+		            config.setProperty(PROP_UPDATE,"false");
+		            config.setProperty(PROP_DBVERSION, "1.06");
+		            this.dbversion = "1.06";
+		            File propfolder = parent.getDataFolder();
+		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		            propfile.createNewFile();
+		            
+		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+					config.store(stream1, "Default generated settings, please ensure mysqld matches");
+		            
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+					System.out.println("**********************************************");
+					System.out.println("*   Problem during update to version 1.06    *");
+					System.out.println("*     Can you access your config file?       *");
+					System.out.println("**********************************************");
+					return false;
+				}
+				
+				
+				System.out.println("**********************************************");
+				System.out.println("* Congratulations! Your NPCX database is now *");
+				System.out.println("*       updated to version 1.06              *");
+				System.out.println("**********************************************");
+				return true;
+			} catch (SQLException e) {
+				System.out.println("**********************************************");
+				System.out.println("*   Problem during update to version 1.06    *");
 				System.out.println("*  Please provide stacktrace below to devs   *");
 				System.out.println("**********************************************");
 				// TODO Auto-generated catch block
@@ -1301,6 +1367,8 @@ public class myUniverse {
             	myMerchant merchant = new myMerchant(this.parent,rspg.getInt ("id"),rspg.getString ("name"));
             	merchant.id = rspg.getInt ("id");
             	merchant.name = rspg.getString ("name");
+            	merchant.category = rspg.getString ("category");
+            	
             	
 
             	Statement sFindEntries = conn.createStatement();

@@ -1500,10 +1500,43 @@ public class npcx extends JavaPlugin {
                 	player.sendMessage("Insufficient arguments /npcx merchant list");
         			player.sendMessage("Insufficient arguments /npcx merchant add merchantid item amount pricebuyat pricesellat");
          			player.sendMessage("Insufficient arguments /npcx merchant inspect merchantid");
+         			player.sendMessage("Insufficient arguments /npcx merchant category merchantid category");
 
                	
                     return false;
                 }
+            	if (args[1].equals("category")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx merchant category merchantid category");
+            			
+            			
+            			
+            		} else {
+
+            			
+        	            PreparedStatement stmt = this.universe.conn.prepareStatement("UPDATE merchant SET category = ? WHERE id = ?;");
+        	            stmt.setString(1, args[3]);
+        	            stmt.setString(2, args[2]);
+        	            
+        	            stmt.executeUpdate();
+        	            
+        	            for(myMerchant n : universe.merchants)
+        	            {
+        	            	if (n.id == Integer.parseInt(args[2]))
+        	            	{
+        	            		
+        	            		n.category = args[3];
+        	            		player.sendMessage("npcx : Updated merchant to cached category ("+args[3]+"): "+n.category);
+        	            		// when faction changes reset aggro and follow status
+        	            		
+        	            	}
+        	            }
+            			
+            			player.sendMessage("Updated merchant category :" + args[3] + " on Merchant ID:[" + args[2]  + "]");
+        	            
+            			stmt.close();
+            		}
+            	}
             	
             	if (args[1].equals("inspect")) {
             		
@@ -1544,7 +1577,7 @@ public class npcx extends JavaPlugin {
         		}
             	
             	if (args[1].equals("add")) {
-            		if (args.length < 4) {
+            		if (args.length < 5) {
             			player.sendMessage("Insufficient arguments /npcx merchant add merchantid itemid amount pricebuyat pricesellat");
                     	
             		} else {
@@ -1559,6 +1592,7 @@ public class npcx extends JavaPlugin {
             			s2.setInt (3,Integer.parseInt(args[4]));
             			s2.setInt (4,Integer.parseInt(args[5]));
             			s2.setInt (5,Integer.parseInt(args[6]));
+            			
             			s2.executeUpdate();
         	            player.sendMessage("Merchant Item ["+ args[3] + "x" + args[4] + "@"+args[5]+"/"+args[6]+"] added to Merchant: ["+ args[2] + "]");
             			

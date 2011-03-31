@@ -435,14 +435,26 @@ public class myNPC {
 								{
 									if ( Material.matchMaterial(aMsg[1]).getId() == item.itemid)
 									{
-										say(player,Material.matchMaterial(aMsg[1]) + " x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+										if (!this.merchant.category.equals("nolimit"))
+										{
+											say(player,Material.matchMaterial(aMsg[1]) + " x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+										} else {
+											say(player,Material.matchMaterial(aMsg[1]) + " x UNLIMITED selling at " + item.pricesell + " Buying at " + item.pricebuy);
+											
+										}
 									}
 								} catch (NullPointerException e)
 								{
 									say(player,"Couldn't find any items matching the name you requested");
 								}
 							} else {
-								say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+								if (!this.merchant.category.equals("nolimit"))
+								{
+									say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+								} else {
+									say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x UNLIMITED selling at " + item.pricesell + " Buying at " + item.pricebuy);
+									
+								}
 							}
 						}
 						
@@ -544,10 +556,36 @@ public class myNPC {
 						return;
 					}
 					totalcoins = (item.getAmount() * buysat);
-					
-					if (this.coin >= totalcoins)
+					if (!this.merchant.category.equals("nolimit"))
 					{
+						if (this.coin >= totalcoins)
+						{
+							
+							for (myMerchant_entry entry : merchant.merchantentries)
+							{
+								if (entry.itemid == Material.matchMaterial(aMsg[1]).getId())
+								{
+									player.player.getInventory().removeItem(item);
+									entry.amount = entry.amount + item.getAmount();
+									say(player,"Thanks! Heres your " + totalcoins + " coins.");
+									
+									this.coin = this.coin - totalcoins;
+									this.parent.universe.addPlayerBalance(player.player,totalcoins);
+									return;
+								}
+							}
+							
+							say(player,"Sorry looks like I no longer need that item.");
+							return;
+	
+							
+						} else {
+							say(player,"Sorry, I only have: "+this.coin+" and thats worth "+totalcoins+"!");
+							return;
+						}
+					} else {
 						
+						// unlimited coin and amounts on this merchant
 						for (myMerchant_entry entry : merchant.merchantentries)
 						{
 							if (entry.itemid == Material.matchMaterial(aMsg[1]).getId())
@@ -562,13 +600,9 @@ public class myNPC {
 							}
 						}
 						
-						say(player,"Sorry look like I no longer need that item.");
+						say(player,"Sorry looks like I no longer need that item.");
 						return;
-
 						
-					} else {
-						say(player,"Sorry, I only have: "+this.coin+" and thats worth "+totalcoins+"!");
-						return;
 					}
 				} else {
 					
