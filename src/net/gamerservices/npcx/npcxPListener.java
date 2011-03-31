@@ -44,6 +44,7 @@ public class npcxPListener extends PlayerListener {
 			
 			int lastx = this.parent.universe.getPlayerLastChunkX(event.getPlayer());
 			int lastz = this.parent.universe.getPlayerLastChunkZ(event.getPlayer());
+			String lastname = this.parent.universe.getPlayerLastChunkName(event.getPlayer());
 			//event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+" - from:"+ lastx + ":" + lastz);
 				if (lastx != xchunkloc ||  lastz != zchunkloc) 
 				{
@@ -53,7 +54,7 @@ public class npcxPListener extends PlayerListener {
 					myZone zone = this.parent.universe.getZoneFromLoc(x,z,event.getPlayer().getWorld());
 					if (zone != null)
 					{
-						if (zone.name != this.parent.universe.getPlayerLastChunkName(event.getPlayer()))
+						if (zone.name.matches(lastname))
 						{
 							if (zone.ownername.matches(""))
 							{

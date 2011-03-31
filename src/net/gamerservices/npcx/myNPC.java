@@ -796,7 +796,7 @@ public class myNPC {
 							// Update cache
 							
 							
-							System.out.println("About to sell: " + i.getType().name() + ":"+ entry.amount);
+							System.out.println("About to sell: " + i.getType().name() + ":"+ amount);
 							return i;
 						}
 					}
