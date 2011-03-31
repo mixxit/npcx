@@ -39,8 +39,7 @@ public class myZone {
 			stmt.close();
 			
 			this.ownername = name2;
-			
-			
+			this.name = name2+"s land";
 		} catch (Exception e)
 		{
 			e.printStackTrace();
