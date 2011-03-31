@@ -66,6 +66,7 @@ public class npcx extends JavaPlugin {
     // end iconomy
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
 	private Timer tick = new Timer();
+	private Timer longtick = new Timer();
 
 
 	public boolean checkchunks = false;
@@ -125,7 +126,7 @@ public class npcx extends JavaPlugin {
 	
 	public void longCheck()
 	{
-		tick.schedule(new Tick(this), 1 * 20000);
+		longtick.schedule(new Tick(this), 1 * 2000);
 		this.universe.commitPlayerFactions();
 	}
 	
