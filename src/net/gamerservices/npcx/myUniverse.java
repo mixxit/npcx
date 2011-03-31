@@ -72,6 +72,9 @@ public class myUniverse {
 	public List< myPathgroup > pathgroups = new CopyOnWriteArrayList< myPathgroup >();
 	public List< myMerchant > merchants = new CopyOnWriteArrayList< myMerchant >();
 	public List< myZone > zones = new CopyOnWriteArrayList< myZone >();
+	
+	public HashMap<String, myZoneMember> zonemembers = new HashMap<String, myZoneMember>();
+	
 	public HashMap<String, myNpc_faction> npcfactions = new HashMap<String, myNpc_faction>();
 	
 	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
@@ -280,7 +283,7 @@ public class myUniverse {
 	
 	private boolean updateDB() {
 		// TODO Auto-generated method stub
-		String targetdbversion = "1.07";
+		String targetdbversion = "1.08";
 		System.out.println("npcx : Checking for DB Updates from DBVersion:"+this.dbversion);
 		if(this.dbversion.matches(targetdbversion))
 		{
@@ -768,7 +771,7 @@ public class myUniverse {
 				System.out.println("* Congratulations! Your NPCX database is now *");
 				System.out.println("*       updated to version 1.07              *");
 				System.out.println("**********************************************");
-				return true;
+				
 			} catch (SQLException e) {
 				System.out.println("**********************************************");
 				System.out.println("*   Problem during update to version 1.07    *");
@@ -779,6 +782,75 @@ public class myUniverse {
 				return false;
 			}
 		}
+		
+		if (this.dbversion.matches("1.07"))
+		{
+			// Create Player table
+			// Update size of triggerword response
+			Statement sqlCreatestmt;
+			try {
+				
+				sqlCreatestmt = conn.createStatement();
+				String sqlcreate = "ALTER TABLE zone_members ADD UNIQUE INDEX zoneidmember (playername ASC, zoneid ASC);";
+				sqlCreatestmt.executeUpdate(sqlcreate);
+
+				sqlCreatestmt.close();
+	            Properties config = new Properties();
+				BufferedInputStream stream;
+				try
+				{
+					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
+					config.load(stream);
+			
+					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOSPREAD,nospread);
+					config.setProperty(PROP_NOCREEPER,nocreeper);
+					config.setProperty(PROP_DBHOST,dbhost);
+					config.setProperty(PROP_DBUSER,dbuser);
+					config.setProperty(PROP_DBPASS,dbpass);
+					config.setProperty(PROP_DBNAME,dbname);
+					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_NATIONS,nations);
+		            config.setProperty(PROP_DBVERSION,dbversion);
+					config.setProperty(PROP_WORLD,defaultworld);
+		            config.setProperty(PROP_UPDATE,"false");
+		            config.setProperty(PROP_DBVERSION, "1.08");
+		            this.dbversion = "1.08";
+		            File propfolder = parent.getDataFolder();
+		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		            propfile.createNewFile();
+		            
+		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+					config.store(stream1, "Default generated settings, please ensure mysqld matches");
+		            
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+					System.out.println("**********************************************");
+					System.out.println("*   Problem during update to version 1.08    *");
+					System.out.println("*     Can you access your config file?       *");
+					System.out.println("**********************************************");
+					return false;
+				}
+				
+				
+				System.out.println("**********************************************");
+				System.out.println("* Congratulations! Your NPCX database is now *");
+				System.out.println("*       updated to version 1.08              *");
+				System.out.println("**********************************************");
+				return true;
+			} catch (SQLException e) {
+				System.out.println("**********************************************");
+				System.out.println("*   Problem during update to version 1.08    *");
+				System.out.println("*  Please provide stacktrace below to devs   *");
+				System.out.println("**********************************************");
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		
 		
 		return false;
 	}
@@ -1572,6 +1644,76 @@ public class myUniverse {
 			e.printStackTrace();
 		}
 	}
+	
+	public boolean isZoneMember(int zoneid, String name)
+	{
+		for (myZoneMember zm : this.zonemembers.values())
+		{
+			if (zm.zoneid == zoneid && zm.playename.equals(name))
+			{
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	public boolean addZoneMember(int zoneid, String name)
+	{
+		myZoneMember zm = new myZoneMember();
+		//zm.id = ;
+		
+		try {
+			PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO zone_members (zoneid,playername) VALUES (?,?) ON DUPLICATE KEY UPDATE playername=VALUES(playername) ",Statement.RETURN_GENERATED_KEYS);
+			stmt.setInt(1,zoneid);
+			stmt.setString(2,name);
+			
+			stmt.executeUpdate();
+			ResultSet keyset = stmt.getGeneratedKeys();
+			int key = 0;
+			if ( keyset.next() ) {
+			    // Retrieve the auto generated key(s).
+			    key = keyset.getInt(1);
+			    
+			}
+			stmt.close();
+			
+			try
+			{
+				
+				
+				zm.id = key;
+				zm.playename = name;
+				zm.zoneid = zoneid;
+				this.zonemembers.put(Integer.toString(key),zm);
+				
+				return true;
+			} catch (Exception e)
+			{
+				// failed to attach a zone to the zone entry
+				return false;
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	public boolean isZoneOwner(int zoneid, String name)
+	{
+		for (myZone z : this.zones)
+		{
+			if (z.id == zoneid && z.ownername.equals(name))
+			{
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
 
 	private void loadZones() {
 		// TODO Auto-generated method stub
@@ -1582,13 +1724,33 @@ public class myUniverse {
             s1.executeQuery ("SELECT * FROM zone");
             ResultSet rs1 = s1.getResultSet ();
             int countzone = 0;
+            int countentries = 0;
             System.out.println("npcx : loading zones");
             while (rs1.next ())
             {
+            	Statement sFindEntries = conn.createStatement();
+            	sFindEntries.executeQuery("SELECT * FROM zone_members WHERE zoneid = " + rs1.getInt("id"));
+            	ResultSet rsEntries = sFindEntries.getResultSet ();
+            	
+            	while (rsEntries.next ())
+	            {
+            		myZoneMember zm = new myZoneMember();
+            		
+            		zm.id = rsEntries.getInt("id");
+            		zm.playename = rsEntries.getString("playername");
+            		zm.zoneid = rsEntries.getInt("zoneid");
+            		
+            		countentries++;
+            		zonemembers.put(Integer.toString(zm.id),zm);
+	            }
+            	
+            	rsEntries.close();
+            	sFindEntries.close();
+            	
             	myZone z = new myZone(this,rs1.getInt ("id"),null,rs1.getInt ("x"),rs1.getInt ("z"));
             	z.name = rs1.getString ("name");
             	z.ownername = rs1.getString ("ownername");
-
+            	
 
             	countzone++;
             	zones.add(z);
@@ -1597,7 +1759,7 @@ public class myUniverse {
             }
             rs1.close();
             s1.close();
-            System.out.println("npcx : Loaded " + countzone + " zones.");
+            System.out.println("npcx : Loaded " + countzone + " zones with "+ countentries + " zone_members.");
             
         } catch (NullPointerException e) { 
 	 		System.out.println("npcx : ERROR - zone loading cancelled!");

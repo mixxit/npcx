@@ -165,11 +165,13 @@ public class npcxPListener extends PlayerListener {
 								int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
 								int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
 								String owner = "";
+								int zoneid = 0;
 								for (myZone zone : this.parent.universe.zones)
 								{
 									if (zone.x == x && zone.z == z)
 									{
 										owner = zone.ownername;
+										zoneid = zone.id;
 									}
 								}
 								
@@ -177,6 +179,14 @@ public class npcxPListener extends PlayerListener {
 								{
 									return;
 								} else {
+									// Are they a member?
+									if (zoneid != 0)
+									{
+										if (this.parent.universe.isZoneMember(zoneid, event.getPlayer().getName()))
+										{
+											return;
+										}
+									}
 									event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
 									event.setCancelled(true);
 								}
@@ -202,6 +212,8 @@ public class npcxPListener extends PlayerListener {
 								Location loc = event.getClickedBlock().getLocation();
 								Chunk chunk = loc.getWorld().getChunkAt(loc);
 								int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
+								int zoneid = 0;
+								
 								int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
 								String owner = "";
 								for (myZone zone : this.parent.universe.zones)
@@ -209,6 +221,7 @@ public class npcxPListener extends PlayerListener {
 									if (zone.x == x && zone.z == z)
 									{
 										owner = zone.ownername;
+										zoneid = zone.id;
 									}
 								}
 								
@@ -222,6 +235,15 @@ public class npcxPListener extends PlayerListener {
 										//event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
 										return;
 									} else {
+										// Are they a member?
+										if (zoneid != 0)
+										{
+											if (this.parent.universe.isZoneMember(zoneid, event.getPlayer().getName()))
+											{
+												return;
+											}
+										}
+										event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
 										event.setCancelled(true);
 									}
 								}
@@ -250,11 +272,13 @@ public class npcxPListener extends PlayerListener {
 							int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
 							int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
 							String owner = "";
+							int zoneid = 0;
 							for (myZone zone : this.parent.universe.zones)
 							{
 								if (zone.x == x && zone.z == z)
 								{
 									owner = zone.ownername;
+									zoneid = zone.id;
 								}
 							}
 							
@@ -265,9 +289,18 @@ public class npcxPListener extends PlayerListener {
 								if (owner.matches(""))
 								{
 									// wild is ok
-									//event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
 									return;
 								} else {
+									// Are they a member?
+									if (zoneid != 0)
+									{
+										if (this.parent.universe.isZoneMember(zoneid, event.getPlayer().getName()))
+										{
+											return;
+										}
+									}
+									
+									event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
 									event.setCancelled(true);
 								}
 							}

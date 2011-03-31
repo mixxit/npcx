@@ -715,6 +715,8 @@ public class npcx extends JavaPlugin {
 				Player player = (Player) sender;
 				if (args.length < 1) {
 	            	player.sendMessage("Insufficient arguments /civ buy");
+	            	player.sendMessage("Insufficient arguments /civ add playername");
+	            	
 	            	player.sendMessage("Insufficient arguments /civ here");
 	            	player.sendMessage("Insufficient arguments /civ gift playername");
 	            	player.sendMessage("Insufficient arguments /civ abandon");
@@ -722,6 +724,46 @@ public class npcx extends JavaPlugin {
 	            	return false;
 	            }
 				String subCommand = args[0].toLowerCase();
+				
+				
+				if (subCommand.equals("add"))
+	            {
+					int playerx = this.universe.getZoneCoord(player.getLocation().getX());
+					int playerz = this.universe.getZoneCoord(player.getLocation().getZ());
+					if (args.length < 2) {
+            			player.sendMessage("Insufficient arguments /npcx civ add playername");
+            			return false;
+					}
+					if (!args[2].equals(player.getName()))
+					{
+						for (myZone z : this.universe.zones)
+						{
+							if (z.x == playerx && z.z == playerz)
+							{
+								// are they the owner?
+								if (this.universe.isZoneOwner(z.id, player.getName()))
+								{
+									// are they in alraedy
+									if (this.universe.isZoneMember(z.id, args[1]))
+									{
+										player.sendMessage("Sorry that player is already in this civilisation!");		
+										return false;
+										
+									} else {
+										this.universe.addZoneMember(z.id,player.getName());
+										player.sendMessage("Player added to civilization!!");
+										return true;
+									}
+								}
+							} else {
+								// zone not in list
+							}
+						}
+					} else {
+						player.sendMessage("You cannot be a member of a town you own!");
+						return false;
+					}
+				}
 				
 				
 				if (subCommand.equals("buy"))
@@ -739,7 +781,7 @@ public class npcx extends JavaPlugin {
 							{
 								z.setOwner(player.getName());
 								z.name = player.getName()+"s land";
-								player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* A new civilization has been created by "+player.getName()+"!");
+								player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* A new civilization has been settled at [" + z.x + ":" + z.z+ "] by "+player.getName()+"!");
 								player.sendMessage("Thanks! That's " +ChatColor.YELLOW+ cost + ChatColor.WHITE+" total coins!");
 								this.universe.subtractPlayerBalance(player,cost);		
 								player.sendMessage("You just bought region: ["+ChatColor.LIGHT_PURPLE+z.x+","+z.z+""+ChatColor.WHITE+"]!");
@@ -771,6 +813,16 @@ public class npcx extends JavaPlugin {
 						{
 							z.setOwner("");
 							z.name = "Abandoned land";
+							
+							for (myZoneMember zm : this.universe.zonemembers.values())
+							{
+								if (zm.zoneid == z.id)
+								{
+									// member of town
+									zm = null;
+								}
+							}
+							
 							player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* "+ player.getName()+" has lost one of his civilizations!");
 							player.sendMessage("Thanks! Here's " +ChatColor.YELLOW+ 5000 + ChatColor.WHITE+" coin from the sale of our land!");
 							this.universe.addPlayerBalance(player,5000);		
