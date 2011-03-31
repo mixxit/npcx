@@ -422,7 +422,7 @@ public class BasicHumanNpc extends BasicNpc {
 		
 		
 		Block block = this.getBukkitEntity().getWorld().getBlockAt(loc);
-		if (block.getType() == Material.AIR && !isBlockFloatingAir(block) && !isBlockWall(block) && !isLastBlock(block))
+		if (block.getType() == Material.AIR && !isBlockOccupied(block) && !isBlockFloatingAir(block) && !isBlockWall(block) && !isLastBlock(block))
 		{
 			Debug(1,"transformCloserToLocation:Initial location was not a wall or last block");
 			return loc;
@@ -441,6 +441,24 @@ public class BasicHumanNpc extends BasicNpc {
 		
 	}
 	
+	private boolean isBlockOccupied(Block block) {
+		// TODO Auto-generated method stub
+		int count = 0;
+		for (Entity e : this.getBukkitEntity().getWorld().getEntities())
+		{
+			if (e.getLocation() == block.getLocation())
+			{
+				count++;
+			}
+		}
+		if (count == 0)
+		{
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	private boolean isLastBlock(Block block) {
 		if (this.lastloc != null)
 		{
@@ -550,7 +568,7 @@ public class BasicHumanNpc extends BasicNpc {
 					{
 						// Skip here, we're already there!
 					} else {
-						if (block.getType() == Material.AIR && !isBlockFloatingAir(block) && !isBlockWall(block) && !isLastBlock(block))
+						if (block.getType() == Material.AIR && !isBlockOccupied(block) && !isBlockFloatingAir(block) && !isBlockWall(block) && !isLastBlock(block))
 						{
 							Debug(1,"getNextBestLocation:GOINGTOMOVE:"+x+","+y+","+z);
 							return targetloc;
