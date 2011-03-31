@@ -108,8 +108,15 @@ public class npcxPListener extends PlayerListener {
 								Chunk chunk = loc.getWorld().getChunkAt(loc);
 								int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
 								int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
+								String owner = "";
+								for (myZone zone : this.parent.universe.zones)
+								{
+									if (zone.x == x && zone.z == z)
+									{
+										owner = zone.ownername;
+									}
+								}
 								
-								String owner = this.parent.universe.getZoneOwnerNameFromChunkAndLoc(chunk,x,z,event.getPlayer().getWorld());
 								if (player.player.getName().matches(owner))
 								{
 									return;
