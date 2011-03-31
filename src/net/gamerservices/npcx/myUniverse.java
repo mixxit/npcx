@@ -280,7 +280,7 @@ public class myUniverse {
 	
 	private boolean updateDB() {
 		// TODO Auto-generated method stub
-		String targetdbversion = "1.06";
+		String targetdbversion = "1.07";
 		System.out.println("npcx : Checking for DB Updates from DBVersion:"+this.dbversion);
 		if(this.dbversion.matches(targetdbversion))
 		{
@@ -435,14 +435,19 @@ public class myUniverse {
 			     
 				String sqldrop = "DROP TABLE IF EXISTS player_quests";
 	            sqlCreatestmt.executeUpdate(sqldrop);
-	            String sqlcreate = "CREATE  TABLE player_quests (  idnew_table INT NOT NULL ,  questid INT(11) UNSIGNED NULL ,  playername VARCHAR(45) NULL ,  status INT UNSIGNED NULL DEFAULT 1 ,  step INT UNSIGNED NULL DEFAULT 1 ,  INDEX fk_questid (questid ASC) ,  PRIMARY KEY (idnew_table) ,  CONSTRAINT fk_questid    FOREIGN KEY (questid )REFERENCES quests (id )    ON DELETE NO ACTION    ON UPDATE NO ACTION);";
-				sqlCreatestmt.executeUpdate(sqlcreate);
 
+				
 				sqldrop = "DROP TABLE IF EXISTS quests";
 	            sqlCreatestmt.executeUpdate(sqldrop);
-				sqlcreate = "CREATE TABLE quests (  id int(11) unsigned NOT NULL AUTO_INCREMENT,  name varchar(45) DEFAULT 'DefaultQuest',  reward int(10) unsigned DEFAULT '0',  rewardcoin int(10) unsigned DEFAULT '0',  rewardtext varchar(512) DEFAULT 'Well done!',  step int(11) DEFAULT '1',  category varchar(45) DEFAULT 'default',  PRIMARY KEY (id)) ";
+	            String sqlcreate = "CREATE TABLE quests (  id int(11) unsigned NOT NULL AUTO_INCREMENT,  name varchar(45) DEFAULT 'DefaultQuest',  reward int(10) unsigned DEFAULT '0',  rewardcoin int(10) unsigned DEFAULT '0',  rewardtext varchar(512) DEFAULT 'Well done!',  step int(11) DEFAULT '1',  category varchar(45) DEFAULT 'default',  PRIMARY KEY (id)) ";
 				sqlCreatestmt.executeUpdate(sqlcreate);
 
+				sqldrop = "DROP TABLE IF EXISTS player_quests";
+	            sqlCreatestmt.executeUpdate(sqldrop);
+	            sqlcreate = "CREATE  TABLE player_quests (  id INT NOT NULL ,  questid INT(11) UNSIGNED NULL ,  playername VARCHAR(45) NULL ,  status INT UNSIGNED NULL DEFAULT 1 ,  step INT UNSIGNED NULL DEFAULT 1 ,  INDEX fk_questid (questid ASC) ,  PRIMARY KEY (id) ,  CONSTRAINT fk_questid    FOREIGN KEY (questid )REFERENCES quests (id )    ON DELETE NO ACTION    ON UPDATE NO ACTION);";
+				sqlCreatestmt.executeUpdate(sqlcreate);
+
+				
 				sqlCreatestmt.close();
 	            Properties config = new Properties();
 				BufferedInputStream stream;
@@ -560,7 +565,7 @@ public class myUniverse {
 				System.out.println("* Congratulations! Your NPCX database is now *");
 				System.out.println("*       updated to version 1.04              *");
 				System.out.println("**********************************************");
-				return true;
+				
 			} catch (SQLException e) {
 				System.out.println("**********************************************");
 				System.out.println("*   Problem during update to version 1.04    *");
@@ -639,6 +644,8 @@ public class myUniverse {
 			}
 		}
 		
+
+
 		if (this.dbversion.matches("1.05"))
 		{
 			// Create Player table
@@ -694,10 +701,77 @@ public class myUniverse {
 				System.out.println("* Congratulations! Your NPCX database is now *");
 				System.out.println("*       updated to version 1.06              *");
 				System.out.println("**********************************************");
-				return true;
+				
 			} catch (SQLException e) {
 				System.out.println("**********************************************");
 				System.out.println("*   Problem during update to version 1.06    *");
+				System.out.println("*  Please provide stacktrace below to devs   *");
+				System.out.println("**********************************************");
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		if (this.dbversion.matches("1.06"))
+		{
+			// Create Player table
+			// Update size of triggerword response
+			Statement sqlCreatestmt;
+			try {
+				
+				sqlCreatestmt = conn.createStatement();
+				String sqlcreate = "ALTER TABLE npc_faction ADD UNIQUE INDEX npctofaction (npc_id ASC, faction_id ASC) ;";
+				sqlCreatestmt.executeUpdate(sqlcreate);
+
+				sqlCreatestmt.close();
+	            Properties config = new Properties();
+				BufferedInputStream stream;
+				try
+				{
+					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
+					config.load(stream);
+			
+					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOSPREAD,nospread);
+					config.setProperty(PROP_NOCREEPER,nocreeper);
+					config.setProperty(PROP_DBHOST,dbhost);
+					config.setProperty(PROP_DBUSER,dbuser);
+					config.setProperty(PROP_DBPASS,dbpass);
+					config.setProperty(PROP_DBNAME,dbname);
+					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_NATIONS,nations);
+		            config.setProperty(PROP_DBVERSION,dbversion);
+					config.setProperty(PROP_WORLD,defaultworld);
+		            config.setProperty(PROP_UPDATE,"false");
+		            config.setProperty(PROP_DBVERSION, "1.07");
+		            this.dbversion = "1.07";
+		            File propfolder = parent.getDataFolder();
+		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		            propfile.createNewFile();
+		            
+		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+					config.store(stream1, "Default generated settings, please ensure mysqld matches");
+		            
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+					System.out.println("**********************************************");
+					System.out.println("*   Problem during update to version 1.07    *");
+					System.out.println("*     Can you access your config file?       *");
+					System.out.println("**********************************************");
+					return false;
+				}
+				
+				
+				System.out.println("**********************************************");
+				System.out.println("* Congratulations! Your NPCX database is now *");
+				System.out.println("*       updated to version 1.07              *");
+				System.out.println("**********************************************");
+				return true;
+			} catch (SQLException e) {
+				System.out.println("**********************************************");
+				System.out.println("*   Problem during update to version 1.07    *");
 				System.out.println("*  Please provide stacktrace below to devs   *");
 				System.out.println("**********************************************");
 				// TODO Auto-generated catch block

@@ -272,7 +272,7 @@ public class npcx extends JavaPlugin {
 								    	// HumanEntity in range?
 									    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
 									    {
-									    	
+									    	dbg("npcx:think:NPCVSNPC:Found humanentity in range");
 									    	
 										    // monster in range but is it worth chasing?
 									    	if (this.universe.getNpcVsNpcFactionAggroState(npc,(HumanEntity)e))
