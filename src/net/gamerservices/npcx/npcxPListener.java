@@ -6,6 +6,7 @@ import net.gamerservices.npclibfork.NpcEntityTargetEvent;
 import net.gamerservices.npclibfork.NpcSpawner;
 import net.gamerservices.npclibfork.NpcEntityTargetEvent.NpcTargetReason;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
@@ -60,10 +61,10 @@ public class npcxPListener extends PlayerListener {
 							{
 								if (zone.ownername.matches(""))
 								{
-									event.getPlayer().sendMessage("Zone: [&a"+xchunkloc+":"+zchunkloc+"&f] - &efor sale&f");
+									event.getPlayer().sendMessage("Zone: ["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] - "+ChatColor.YELLOW+"for sale");
 									
 								} else {
-									event.getPlayer().sendMessage("[&a"+xchunkloc+":"+zchunkloc+"&f] &a"+zone.name + "&f Owner: &a"+zone.ownername);
+									event.getPlayer().sendMessage("["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] "+ChatColor.LIGHT_PURPLE +""+zone.name + ""+ChatColor.WHITE+" Owner: "+ChatColor.YELLOW+""+zone.ownername);
 								}
 								event.getPlayer().sendMessage(this.parent.universe.getZoneNameByLocation(xchunkloc, zchunkloc, event.getPlayer().getWorld()));
 								
@@ -114,7 +115,7 @@ public class npcxPListener extends PlayerListener {
 								{
 									return;
 								} else {
-									event.getPlayer().sendMessage("&cYou are not in the wild or in an area you own!");
+									event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own!");
 									event.setCancelled(true);
 								}
 							}
@@ -149,8 +150,8 @@ public class npcxPListener extends PlayerListener {
     {
 		
 		myPlayer player = new myPlayer(this.parent,event.getPlayer(),event.getPlayer().getName());
-		event.getPlayer().sendMessage("&eThis server runs NPCX with Civilizations enabled!&f");
-		event.getPlayer().sendMessage("&eTo claim your own piece of paradise use /civ buy!&f");
+		event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"This server runs NPCX with Civilizations enabled!");
+		event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"To claim your own piece of paradise use /civ buy!");
 		
 		//System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
 		parent.universe.players.put(player.player.getName(), player);
