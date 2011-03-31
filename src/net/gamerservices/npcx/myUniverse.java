@@ -1558,9 +1558,9 @@ public class myUniverse {
 			
 			try
 			{
-			myZone c = new myZone(this,key, world.getChunkAt(getLocationAtZoneLoc(x,z,world)),x,z);
-			this.zones.add(c);
-			return c;
+				myZone c = new myZone(this,key, world.getChunkAt(getLocationAtZoneLoc(x,z,world)),x,z);
+				this.zones.add(c);
+				return c;
 			} catch (Exception e)
 			{
 				// failed to attach a zone to the zone entry

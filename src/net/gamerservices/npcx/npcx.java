@@ -2286,7 +2286,7 @@ public class npcx extends JavaPlugin {
 
 	public void registerChunk(Chunk chunk) {
 		// TODO Auto-generated method stub
-		
+		/*
 		// get a location in the chunk
 		Location loc = chunk.getBlock(0, 0, 0).getLocation();
 		
@@ -2296,11 +2296,12 @@ public class npcx extends JavaPlugin {
 			myZone mc = new myZone(this.universe, m.id, chunk, m.x, m.z);
 			this.universe.zones.add(mc);
 		}
-		
+		*/
 	}
 
 	public void deregisterChunk(Chunk chunk) {
 		// TODO Auto-generated method stub
+		/*
 		Location loc = chunk.getBlock(0, 0, 0).getLocation();
 		myZone m = this.universe.getZoneFromChunk(chunk,loc);
 		if (m != null)
@@ -2310,7 +2311,7 @@ public class npcx extends JavaPlugin {
 		} else {
 			// doesn't exist anyway
 		}
-		
+		*/
 	}
 
 
