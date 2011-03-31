@@ -840,7 +840,7 @@ public class myNPC {
 					if (entry.itemid == itemid)
 					{
 						System.out.println("Item matched!");
-						if (!merchant.category.equals("nolimit"))
+						if (merchant.category == null)
 						{
 							if (entry.amount >= amount)
 							{
@@ -856,6 +856,26 @@ public class myNPC {
 								return null;				
 							}
 						} else {
+							
+							if (!merchant.category.equals("nolimit"))
+							{
+								// TODO - NEEDS TO MOVE
+								if (entry.amount >= amount)
+								{
+									ItemStack i = new ItemStack(itemid);
+									i.setAmount(amount);
+									// Update cache
+									
+									entry.amount = entry.amount - amount;
+									System.out.println("About to sell: " + i.getType().name() + ":"+ entry.amount);
+									return i;
+								} else {
+									System.out.println("Not enough ["+entry.amount+"] compared to your ["+amount+"]!");
+									return null;				
+								}
+							} else {
+							
+							// UNLIMITED 
 							ItemStack i = new ItemStack(itemid);
 							i.setAmount(amount);
 							// Update cache
@@ -863,6 +883,7 @@ public class myNPC {
 							
 							System.out.println("About to sell: " + i.getType().name() + ":"+ amount);
 							return i;
+							}
 						}
 					}
 				}
