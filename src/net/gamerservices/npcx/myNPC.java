@@ -797,18 +797,18 @@ public class myNPC {
 		{
 			if  (merchant.merchantentries != null)
 			{
-				System.out.println("Found entries!");
+				//System.out.println("Found entries!");
 				for (myMerchant_entry entry : merchant.merchantentries)
 				{
 					if (entry.itemid == itemid)
 					{
-						System.out.println("Item matched!");
+						//System.out.println("Item matched!");
 						
 							ItemStack i = new ItemStack(itemid);
 							i.setAmount(amount);
 							// Update cache
 							entry.amount = entry.amount;
-							System.out.println("About to sell: " + i.getType().name() + ":"+ entry.amount);
+							//System.out.println("About to sell: " + i.getType().name() + ":"+ entry.amount);
 							return i;
 						
 					}
