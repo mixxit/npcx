@@ -974,7 +974,7 @@ public class myUniverse {
             {
             	myPlayer_factionentry z = new myPlayer_factionentry();
             	z.id = rs1.getInt("id");
-            	z.playername = rs1.getString("playername");
+            	z.playername = rs1.getString("player_name");
             	z.factionid = rs1.getInt("id");
             	countfaction++;
             	playerfactions.put(Integer.toString(z.id),z);
