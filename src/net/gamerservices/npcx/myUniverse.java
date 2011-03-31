@@ -564,7 +564,7 @@ public class myUniverse {
 			try {
 				
 				sqlCreatestmt = conn.createStatement();
-				String sqlcreate = "ALTER TABLE player_faction ADD UNIQUE INDEX playerfaction (player_name ASC, faction_id ASC) ;";
+				String sqlcreate = "ALTER TABLE player_faction ADD UNIQUE INDEX playerfactionzz (player_name ASC, faction_id ASC) ;";
 				sqlCreatestmt.executeUpdate(sqlcreate);
 
 				sqlCreatestmt.close();
