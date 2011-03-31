@@ -717,6 +717,7 @@ public class npcx extends JavaPlugin {
 	            	player.sendMessage("Insufficient arguments /civ buy");
 	            	player.sendMessage("Insufficient arguments /civ here");
 	            	player.sendMessage("Insufficient arguments /civ gift playername");
+	            	player.sendMessage("Insufficient arguments /civ abandon");
 	            	
 	            	return false;
 	            }
@@ -738,7 +739,7 @@ public class npcx extends JavaPlugin {
 							{
 								z.setOwner(player.getName());
 								z.name = player.getName()+"s land";
-								player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* A new town has been bounded by "+player.getName()+"!");
+								player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* A new civilization has created by "+player.getName()+"!");
 								player.sendMessage("Thanks! That's " +ChatColor.YELLOW+ cost + ChatColor.WHITE+" total coins!");
 								this.universe.subtractPlayerBalance(player,cost);		
 								player.sendMessage("You just bought region: ["+ChatColor.LIGHT_PURPLE+z.x+","+z.z+""+ChatColor.WHITE+"]!");
@@ -758,6 +759,35 @@ public class npcx extends JavaPlugin {
 						}
 					} else {
 						player.sendMessage("You don't have enough to buy this plot (25000)!");
+					}
+	            }
+				
+				if (subCommand.equals("abandon"))
+	            {
+					myZone z = this.universe.getZoneFromChunkAndLoc(this.universe.getZoneCoord(player.getLocation().getX()),this.universe.getZoneCoord(player.getLocation().getZ()), player.getLocation().getWorld());
+					if (z != null)
+					{
+						if (z.ownername.equals(player.getName()))
+						{
+							z.setOwner("");
+							z.name = player.getName()+"Wild land";
+							player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* "+ player.getName()+" has lost one of his civilizations!");
+							player.sendMessage("Thanks! Here's " +ChatColor.YELLOW+ 5000 + ChatColor.WHITE+" coin from the sale of our land!");
+							this.universe.addPlayerBalance(player,5000);		
+							player.sendMessage("You just released region: ["+ChatColor.LIGHT_PURPLE+z.x+","+z.z+""+ChatColor.WHITE+"]!");
+							
+							this.universe.setPlayerLastChunkX(player,z.x);
+							this.universe.setPlayerLastChunkZ(player,z.z);
+							this.universe.setPlayerLastChunkName(player,"Wild Land");
+							
+						} else {
+							
+							player.sendMessage("Sorry this zone is not yours to abandon");
+						}
+						
+					} else {
+						player.sendMessage("Failed to abandon zone at your location - target zone does not exist");
+					
 					}
 	            }
 				
@@ -1235,6 +1265,24 @@ public class npcx extends JavaPlugin {
                 			
                 			
             		}
+            		if (args[1].matches("unclaim")) {
+			            		myZone z = this.universe.getZoneFromChunkAndLoc(this.universe.getZoneCoord(player.getLocation().getX()),this.universe.getZoneCoord(player.getLocation().getZ()), player.getLocation().getWorld());
+								if (z != null)
+								{
+									
+										z.setOwner("");
+										z.name = player.getName()+"Wild land";
+										player.sendMessage("You just released region: ["+ChatColor.LIGHT_PURPLE+z.x+","+z.z+""+ChatColor.WHITE+"]!");
+										
+										this.universe.setPlayerLastChunkX(player,z.x);
+										this.universe.setPlayerLastChunkZ(player,z.z);
+										this.universe.setPlayerLastChunkName(player,"Wild Land");
+									
+								} else {
+									player.sendMessage("Failed to buy zone at your location - target zone does not exist");
+								
+								}
+                	}
                 
         		
     		}
