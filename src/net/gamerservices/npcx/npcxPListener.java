@@ -66,7 +66,6 @@ public class npcxPListener extends PlayerListener {
 								} else {
 									event.getPlayer().sendMessage("["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] "+ChatColor.LIGHT_PURPLE +""+zone.name + ""+ChatColor.WHITE+" Owner: "+ChatColor.YELLOW+""+zone.ownername);
 								}
-								event.getPlayer().sendMessage(this.parent.universe.getZoneNameByLocation(xchunkloc, zchunkloc, event.getPlayer().getWorld()));
 								
 								this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
 								this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);

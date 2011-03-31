@@ -29,7 +29,7 @@ public class myZone {
 		// TODO Auto-generated method stub
 		
 		try {
-			System.out.println("npcx :myZone:setOwner:"+name2+":"+this.id);
+			//System.out.println("npcx :myZone:setOwner:"+name2+":"+this.id);
 			PreparedStatement stmt = this.parent.parent.universe.conn.prepareStatement("UPDATE zone set name=?,ownername=? WHERE id = ?");
 			stmt.setString(1,name2+"s land");
 			stmt.setString(2,name2);
