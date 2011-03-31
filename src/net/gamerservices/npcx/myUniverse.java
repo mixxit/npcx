@@ -31,6 +31,7 @@ public class myUniverse {
 	public final String FILE_PROPERTIES = "npcx.properties";
 	public final String PROP_NOWILD = "nowild";
 	public final String PROP_NOCREEPER = "nocreeper";
+	public final String PROP_NOSPREAD = "nospread";
 	public final String PROP_DBHOST = "db-host";
 	public final String PROP_DBUSER = "db-user";
 	public final String PROP_DBPASS = "db-pass";
@@ -45,6 +46,7 @@ public class myUniverse {
 	public String dsn;
 	public Connection conn = null;
 	public String nowild;
+	public String nospread;	
 	public String nocreeper;
 	public String nations;
 	public String dbhost;
@@ -86,7 +88,8 @@ public class myUniverse {
 		if (dbhost == null)
 	 	{
 		 	this.nowild = "false";
-			this.nocreeper = "false";
+			this.nospread = "false";
+		 	this.nocreeper = "false";
 		 	this.dbhost = "localhost";
 			this.dbuser = "npcx";
 			this.dbname = "npcx";
@@ -154,6 +157,7 @@ public class myUniverse {
 				// Load the configuration
 				config.load(stream);
 				nowild = config.getProperty("nowild");
+				nospread = config.getProperty("nospread");
 				nocreeper = config.getProperty("nocreeper");
 				dbhost = config.getProperty("db-host");
 				dbuser = config.getProperty("db-user");
@@ -170,7 +174,7 @@ public class myUniverse {
 				dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
 				System.out.println(dsn);
 				
-				if (nocreeper == null || nowild == null || nations == null)
+				if (nospread == null || nocreeper == null || nowild == null || nations == null)
 				{
 					if (nowild == null)
 					{
@@ -190,6 +194,12 @@ public class myUniverse {
 					{
 						config.setProperty(PROP_NATIONS,"false");
 						nations = "false";
+					}
+					
+					if (nospread == null)
+					{
+						config.setProperty(PROP_NOSPREAD,"false");
+						nospread = "false";
 					}
 					
 					
@@ -293,6 +303,7 @@ public class myUniverse {
 					config.load(stream);
 			
 					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOSPREAD, nospread);
 					config.setProperty(PROP_NOCREEPER,nocreeper);
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
@@ -364,6 +375,7 @@ public class myUniverse {
 					config.load(stream);
 			
 					config.setProperty(PROP_NOCREEPER,nocreeper);
+					config.setProperty(PROP_NOSPREAD, nospread);
 					config.setProperty(PROP_NOWILD,nowild);
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
@@ -438,6 +450,7 @@ public class myUniverse {
 					config.load(stream);
 			
 					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOSPREAD, nospread);
 					config.setProperty(PROP_NOCREEPER,nocreeper);
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
@@ -510,6 +523,7 @@ public class myUniverse {
 					config.load(stream);
 			
 					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOSPREAD,nospread);
 					config.setProperty(PROP_NOCREEPER,nocreeper);
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
@@ -576,6 +590,7 @@ public class myUniverse {
 					config.load(stream);
 			
 					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOSPREAD,nospread);
 					config.setProperty(PROP_NOCREEPER,nocreeper);
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
@@ -642,6 +657,7 @@ public class myUniverse {
 					config.load(stream);
 			
 					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOSPREAD,nospread);
 					config.setProperty(PROP_NOCREEPER,nocreeper);
 					config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);
@@ -715,6 +731,7 @@ public class myUniverse {
 				propfile.createNewFile();
 				prop = new Properties();
 				prop.setProperty(PROP_NOWILD, "false");
+				prop.setProperty(PROP_NOSPREAD, "false");
 				prop.setProperty(PROP_NOCREEPER, "false");
 				prop.setProperty(PROP_DBHOST, "localhost");
 				prop.setProperty(PROP_DBUSER, "npcx");
@@ -724,6 +741,7 @@ public class myUniverse {
 				prop.setProperty(PROP_NATIONS, "false");
 				prop.setProperty(PROP_DBVERSION, "1");
 				prop.setProperty(PROP_UPDATE, "true");
+				this.nospread = "false";
 				this.nocreeper = "false";
 				this.nowild = "false";
 				this.dbhost = "localhost";
@@ -929,7 +947,7 @@ public class myUniverse {
 	            	sqlCreatestmt.close();
 		            
 		            System.out.println("npcx : finished table configuration");
-
+		            nospread = config.getProperty("nospread");
 		            nocreeper = config.getProperty("nocreeper");
 		            nowild = config.getProperty("nowild");
 		            dbhost = config.getProperty("db-host");
@@ -944,6 +962,7 @@ public class myUniverse {
 		            defaultworld = config.getProperty("world");
 		            
 					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOSPREAD,nospread);
 					config.setProperty(PROP_NOCREEPER,nocreeper);
 		            config.setProperty(PROP_DBHOST,dbhost);
 					config.setProperty(PROP_DBUSER,dbuser);

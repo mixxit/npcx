@@ -56,6 +56,7 @@ public class npcx extends JavaPlugin {
 	private npcxEListener mEntityListener;
 	private npcxPListener mPlayerListener;
 	private npcxWListener mWorldListener;
+	private npcxBListener mBlockListener;
 	public myUniverse universe;
 	
 	// iconomy
@@ -551,6 +552,7 @@ public class npcx extends JavaPlugin {
          mEntityListener = new npcxEListener(this);
          mPlayerListener = new npcxPListener(this);
          mWorldListener = new npcxWListener(this);
+         mBlockListener = new npcxBListener(this);
          
          pm.registerEvent(Type.CHUNK_LOAD, mWorldListener, Priority.Normal, this);
          pm.registerEvent(Type.CHUNK_UNLOAD, mWorldListener, Priority.Normal, this);
@@ -559,8 +561,10 @@ public class npcx extends JavaPlugin {
          pm.registerEvent(Type.ENTITY_DAMAGE, mEntityListener, Priority.Normal, this);
          pm.registerEvent(Type.ENTITY_EXPLODE, mEntityListener, Priority.Normal, this);
          
+         
          pm.registerEvent(Type.ENTITY_DEATH, mEntityListener, Priority.Normal, this);
          pm.registerEvent(Type.CREATURE_SPAWN, mEntityListener, Priority.Normal, this);
+         pm.registerEvent(Type.BLOCK_IGNITE, mBlockListener, Priority.Normal, this);
          
          pm.registerEvent(Type.PLAYER_RESPAWN, mPlayerListener, Priority.Normal, this);
          pm.registerEvent(Type.PLAYER_INTERACT, mPlayerListener, Priority.Normal, this);
