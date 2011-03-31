@@ -69,8 +69,6 @@ public class npcxPListener extends PlayerListener {
 					
 				}
 		}
-		
-		
 	}
 	 
 	

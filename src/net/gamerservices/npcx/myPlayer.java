@@ -86,6 +86,9 @@ public class myPlayer {
 		
 		try
 		{
+			// Can do this to the cache now instead
+			
+			/*
 			PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO player_faction (player_name,faction_id,amount) VALUES (?,?,?) ON DUPLICATE KEY UPDATE amount=amount+VALUES(amount) ",Statement.RETURN_GENERATED_KEYS);
 			stmt.setString(1,this.player.getName());
 			stmt.setInt(2,faction.id);
@@ -98,7 +101,27 @@ public class myPlayer {
 			    key = keyset.getInt(1);
 			    
 			}
-			return true;
+			*/
+			for (myPlayer_factionentry f : this.parent.universe.playerfactions.values())
+			{
+				if (f.factionid == faction.id && f.playername.matches(this.player.getName()))
+				{
+					f.amount = f.amount - 1;
+					return true;
+				}
+			}
+			
+			// Doesn't exist so lets make a new one
+			myPlayer_factionentry fe = createFactionEntry(faction.id,faction.name,this.player.getName(),-1);
+			
+			if (fe != null)
+			{
+				return true;
+			} else {
+				// didn't find an entry
+				return false;
+			
+			}
 			
 		} catch (Exception e)
 		{
@@ -107,24 +130,52 @@ public class myPlayer {
 		}
 	}
 
+	
+	
+	private myPlayer_factionentry createFactionEntry(int factionid, String factionname,
+			String playername, int amount) {
+		// TODO Auto-generated method stub
+		try {
+			
+			PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO player_faction (player_name,faction_id,amount) VALUES (?,?,?) ON DUPLICATE KEY UPDATE amount=amount+VALUES(amount) ",Statement.RETURN_GENERATED_KEYS);
+			stmt.setString(1,this.player.getName());
+			stmt.setInt(2,factionid);
+			stmt.setInt(3,amount);
+			stmt.executeUpdate();
+			ResultSet keyset = stmt.getGeneratedKeys();
+			int key = 0;
+			if ( keyset.next() ) {
+			    // Retrieve the auto generated key(s).
+			    key = keyset.getInt(1);
+			    
+			}
+			myPlayer_factionentry m = new myPlayer_factionentry();
+			m.id = key;
+			m.playername = playername;
+			m.factionid = factionid;
+			m.amount = amount;
+			return m;
+			
+		} catch (Exception e)
+		{
+		
+			return null;
+		}
+	}
+
 	public int getPlayerFactionStanding(myFaction faction) {
 		// TODO Auto-generated method stub
 		try {
-			PreparedStatement stmtNPC = this.parent.universe.conn.prepareStatement("SELECT amount FROM player_faction WHERE player_name = ? AND faction_id = ? LIMIT 1;");
-			stmtNPC.setString(1,this.player.getName());
-			stmtNPC.setInt(2,faction.id);
-			
-			stmtNPC.executeQuery();
-			ResultSet rsNPC = stmtNPC.getResultSet ();
-			while (rsNPC.next ())
+			for (myPlayer_factionentry e : this.parent.universe.playerfactions.values())
 			{
-			      return rsNPC.getInt ("amount");
-			       
+				if (e.factionid == faction.id )
+				{
+					return e.amount;
+				}
 			}
-			rsNPC.close();
-			stmtNPC.close();
 			
 			return 0;
+
 		} catch (Exception e)
 		{
 			e.printStackTrace();

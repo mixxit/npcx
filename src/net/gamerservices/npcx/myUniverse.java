@@ -74,7 +74,7 @@ public class myUniverse {
 	public HashMap<String, myPlayer> players = new HashMap<String, myPlayer>();
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
 	public List< Monster > monsters = new CopyOnWriteArrayList< Monster >();
-	
+	public HashMap<String, myPlayer_factionentry> playerfactions = new HashMap<String, myPlayer_factionentry>();
 	
 	public myUniverse(npcx parent)
 	{
@@ -849,12 +849,80 @@ public class myUniverse {
 
 	public void loadData() {
 		// TODO Auto-generated method stub
+		loadPlayerFactions();
 		loadZones();
 		loadMerchants();
 		loadFactions();
 		loadPathgroups();
 		loadLoottables();
 		loadSpawngroups();
+	}
+	
+	private void commitPlayerFactions() {
+		// TODO Auto-generated method stub
+		try 
+        {
+           int countfaction = 0;
+			// save factions
+			for (myPlayer_factionentry e : playerfactions.values())
+			{
+				PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO player_factions (player_name,faction_id,amount) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE amount=VALUES(amount) ",Statement.RETURN_GENERATED_KEYS);
+				stmt.setString(1,e.playername);
+				stmt.setInt(2,e.factionid);
+				stmt.setInt(3,e.amount);
+				stmt.setString(4,"");
+				
+				stmt.executeUpdate();
+				ResultSet keyset = stmt.getGeneratedKeys();
+				int key = 0;
+				if ( keyset.next() ) {
+				    // Retrieve the auto generated key(s).
+				    key = keyset.getInt(1);
+				}
+				countfaction++;
+
+				stmt.close();
+			}
+			
+            System.out.println("npcx : finished " + countfaction + " factions commit.");
+            
+        } catch (NullPointerException e) { 
+	 		System.out.println("npcx : ERROR - player factions commit cancelled!");
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void loadPlayerFactions() {
+		// TODO Auto-generated method stub
+		try 
+        {
+            // Load faction_list
+            Statement s1 = conn.createStatement ();
+            s1.executeQuery ("SELECT * FROM player_factions");
+            ResultSet rs1 = s1.getResultSet ();
+            int countfaction = 0;
+            System.out.println("npcx : loading player factions");
+            while (rs1.next ())
+            {
+            	myPlayer_factionentry z = new myPlayer_factionentry();
+            	z.id = rs1.getInt("id");
+            	z.playername = rs1.getString("playername");
+            	z.factionid = rs1.getInt("id");
+            	countfaction++;
+            	playerfactions.put(Integer.toString(z.id),z);
+            }
+            rs1.close();
+            s1.close();
+            System.out.println("npcx : Loaded " + countfaction + " player factions.");
+            
+        } catch (NullPointerException e) { 
+	 		System.out.println("npcx : ERROR - player factions loading cancelled!");
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public HashMap<String, myTriggerword> fetchTriggerWords(int npcid) throws SQLException
