@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -128,6 +129,8 @@ public class npcx extends JavaPlugin {
 	public void longCheck()
 	{
 		this.universe.commitPlayerFactions();
+		this.universe.commitNpcFactions();
+		
 		longtick.schedule(new LongTick(this), 1 * 20000);
 		
 	}
@@ -258,6 +261,48 @@ public class npcx extends JavaPlugin {
 									    		npc.npc.aggro = null;
 									    		npc.npc.follow = null;
 									    		
+									    	}
+		
+									    	
+										}
+								    }
+								    
+								    if (e instanceof HumanEntity)
+								    {
+								    	// HumanEntity in range?
+									    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+									    {
+									    	
+									    	
+										    // monster in range but is it worth chasing?
+									    	if (this.universe.getNpcVsNpcFactionAggroState(npc,(HumanEntity)e))
+									    	{
+									    	// face direction
+			
+										    	// line of site
+			
+										    	boolean foundresult = false;
+										    	for (Block blockinsight : e.getLineOfSight(null, 5))
+										    	{
+										    		// Entities seem to be Y + 1
+										    		Location eloc = e.getLocation();
+										    		eloc.setY(eloc.getY()+1);
+										    		
+										    		if (blockinsight == eloc.getBlock())
+										    		{
+										    			foundresult = true;
+											    		npc.npc.aggro =  e;
+											    		npc.npc.follow =   e;
+										    		}
+										    	}
+										    	if (foundresult == false)
+										    	{
+										    		//System.out.println("I can hear one but can't see it");
+										    		npc.npc.faceLocation(e.getLocation());
+										    		npc.npc.aggro = null;
+										    		npc.npc.follow = null;
+										    		
+										    	}
 									    	}
 		
 									    	
@@ -1261,11 +1306,43 @@ public class npcx extends JavaPlugin {
             	if (args.length < 2) {
             		player.sendMessage("Insufficient arguments /npcx faction create baseamount factionname");
                 	player.sendMessage("Insufficient arguments /npcx faction list");
+                	player.sendMessage("Insufficient arguments /npcx faction npc add factionid amount");
                 	return false;
             		
             		
             		
                 }
+            	
+            	if (args[1].equals("add")) {
+            		if (args.length < 5) {
+            			player.sendMessage("Insufficient arguments /npcx faction npc add npcid factionid amount");
+                    	
+            		} else {
+            			
+            			// add to database
+            		
+            			
+            			PreparedStatement s2 = this.universe.conn.prepareStatement("INSERT INTO npc_faction (npc_id,faction_id,amount) VALUES (?,?,?);",Statement.RETURN_GENERATED_KEYS);
+            			s2.setInt(1,Integer.parseInt(args[2]));
+            			s2.setInt(2,Integer.parseInt(args[3]));
+            			s2.setInt(3,Integer.parseInt(args[4]));
+            			s2.executeUpdate();
+            			ResultSet keyset = s2.getGeneratedKeys();
+            			int key = 0;
+            			if ( keyset.next() ) {
+            			    // Retrieve the auto generated key(s).
+            			    key = keyset.getInt(1);
+            			    
+            			}
+            			s2.close();
+            			myNpc_faction nf = new myNpc_faction(key, Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
+            			player.sendMessage("Added to npc faction ["+key+"] "+args[2]+"<" + args[3] + "="+ args[4]+ ".");
+            			this.universe.npcfactions.put(Integer.toString(nf.id), nf);
+        	            
+        	            
+            		}
+        			
+        		}
             	
             	if (args[1].equals("create")) {
             		if (args.length < 3) {

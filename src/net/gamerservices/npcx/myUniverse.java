@@ -16,6 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -71,6 +72,7 @@ public class myUniverse {
 	public List< myPathgroup > pathgroups = new CopyOnWriteArrayList< myPathgroup >();
 	public List< myMerchant > merchants = new CopyOnWriteArrayList< myMerchant >();
 	public List< myZone > zones = new CopyOnWriteArrayList< myZone >();
+	public HashMap<String, myNpc_faction> npcfactions = new HashMap<String, myNpc_faction>();
 	
 	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
 	public HashMap<String, myPlayer> players = new HashMap<String, myPlayer>();
@@ -1001,6 +1003,8 @@ public class myUniverse {
 	public void loadData() {
 		// TODO Auto-generated method stub
 		loadPlayerFactions();
+		loadNpcFactions();
+
 		loadZones();
 		loadMerchants();
 		loadFactions();
@@ -1043,7 +1047,73 @@ public class myUniverse {
 			e.printStackTrace();
 		}
 	}
+	public void commitNpcFactions() {
+		// TODO Auto-generated method stub
+		try 
+        {
+           int countfaction = 0;
+			// save factions
+			for (myNpc_faction  e : npcfactions.values())
+			{
+				PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO npc_faction (npc_id,faction_id,amount) VALUES (?,?,?) ON DUPLICATE KEY UPDATE amount=VALUES(amount) ",Statement.RETURN_GENERATED_KEYS);
+				stmt.setInt(1,e.npcid);
+				stmt.setInt(2,e.factionid);
+				stmt.setInt(3,e.amount);
+				
+				stmt.executeUpdate();
+				ResultSet keyset = stmt.getGeneratedKeys();
+				int key = 0;
+				if ( keyset.next() ) {
+				    // Retrieve the auto generated key(s).
+				    key = keyset.getInt(1);
+				}
+				countfaction++;
 
+				stmt.close();
+			}
+			
+            
+        } catch (NullPointerException e) { 
+	 		System.out.println("npcx : ERROR - npc factions commit cancelled!");
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void loadNpcFactions() {
+		// TODO Auto-generated method stub
+		try 
+        {
+            // Load faction_list
+            Statement s1 = conn.createStatement ();
+            s1.executeQuery ("SELECT * FROM npc_faction");
+            ResultSet rs1 = s1.getResultSet ();
+            int countfaction = 0;
+            System.out.println("npcx : loading npc factions");
+            while (rs1.next ())
+            {
+            	myNpc_faction z = new myNpc_faction(rs1.getInt("id"),rs1.getInt("npc_id"),rs1.getInt("faction_id"),rs1.getInt("amount"));
+            	z.id = rs1.getInt("id");
+            	z.npcid = rs1.getInt("npc_id");
+            	z.factionid = rs1.getInt("faction_id");
+            	z.amount = rs1.getInt("amount");
+            	
+            	countfaction++;
+            	npcfactions.put(Integer.toString(z.id),z);
+            }
+            rs1.close();
+            s1.close();
+            System.out.println("npcx : Loaded " + countfaction + " npc factions.");
+            
+        } catch (NullPointerException e) { 
+	 		System.out.println("npcx : ERROR - npc factions loading cancelled!");
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	private void loadPlayerFactions() {
 		// TODO Auto-generated method stub
 		try 
@@ -1914,6 +1984,48 @@ public class myUniverse {
 				return p.lastchunkname;
 		}
 		return "";
+	}
+
+	public boolean getNpcVsNpcFactionAggroState(myNPC npc, LivingEntity e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean getNpcVsHumanEntityFactionAggroState(myNPC npc, HumanEntity e) {
+		// TODO Auto-generated method stub
+		
+		// Check the npc has a primary faction
+		if (npc.faction != null)
+		{
+			int myfactionid = npc.faction.id;
+			int targetfactionid = 0;
+			
+			for (myNPC n : this.npcs.values())
+			{
+				if (n.npc != null)
+					if (n.npc == e)
+						if (n.faction != null)
+						{
+							targetfactionid = n.faction.id;
+						}
+			}
+			
+			for (myNpc_faction n : this.npcfactions.values())
+			{
+				if (n.factionid == targetfactionid && n.npcid == Integer.parseInt(npc.id) && n.amount < -1000)
+				{
+					npc.npc.aggro = e;
+					npc.npc.follow = e;
+					
+					return true;
+				}				
+			}
+			
+			return false;
+
+			
+		}
+		return false;
 	}
 
 	

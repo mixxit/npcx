@@ -100,7 +100,6 @@ public class npcxEListener extends EntityListener
 		            	// do not modify mobs health
 		            }
 		            
-		            event.setCancelled(true);
 	
 		        }
 		    }
