@@ -654,6 +654,10 @@ public class npcx extends JavaPlugin {
 								this.universe.subtractPlayerBalance(player,cost);		
 								player.sendMessage("You just bought "+z.name+" : "+z.x+","+z.z);
 								
+								this.universe.setPlayerLastChunkX(player,z.x);
+								this.universe.setPlayerLastChunkZ(player,z.z);
+								this.universe.setPlayerLastChunkName(player,z.name);
+								
 							} else {
 								
 								player.sendMessage("Sorry this zone has already been purchased by another civilization");
