@@ -566,8 +566,9 @@ public class myNPC {
 						return;
 					}
 					totalcoins = (item.getAmount() * buysat);
-					if (!this.merchant.category.equals("nolimit"))
+					if (this.merchant.category != null && !this.merchant.category.matches("nolimit"))
 					{
+					
 						if (this.coin >= totalcoins)
 						{
 							
@@ -614,6 +615,7 @@ public class myNPC {
 						return;
 						
 					}
+					
 				} else {
 					
 					say(player,"Sorry, you only have: "+count+" !");

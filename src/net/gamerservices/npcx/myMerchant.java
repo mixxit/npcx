@@ -9,7 +9,7 @@ public class myMerchant {
 	public String name;
 	npcx parent;
 	public List< myMerchant_entry > merchantentries = new ArrayList< myMerchant_entry >();
-	public String category;
+	public String category = "default";
 	
 	public myMerchant(npcx parent, int id, String name)
 	{
