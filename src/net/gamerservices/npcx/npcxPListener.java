@@ -121,7 +121,7 @@ public class npcxPListener extends PlayerListener {
 								{
 									return;
 								} else {
-									event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own!");
+									event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
 									event.setCancelled(true);
 								}
 							}
