@@ -492,7 +492,7 @@ public class myUniverse {
 				System.out.println("* Congratulations! Your NPCX database is now *");
 				System.out.println("*       updated to version 1.03              *");
 				System.out.println("**********************************************");
-				return true;
+				
 			} catch (SQLException e) {
 				System.out.println("**********************************************");
 				System.out.println("*   Problem during update to version 1.03    *");
