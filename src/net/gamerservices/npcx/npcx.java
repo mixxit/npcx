@@ -734,15 +734,22 @@ public class npcx extends JavaPlugin {
             			player.sendMessage("Insufficient arguments /npcx civ add playername");
             			return false;
 					}
+					int count = 0;
 					if (!args[1].equals(player.getName()))
 					{
+						player.sendMessage("Searching for zones...");
+
 						for (myZone z : this.universe.zones)
 						{
 							if (z.x == playerx && z.z == playerz)
 							{
+								count++;
+								player.sendMessage("Located your zone.. checking privileges...");
 								// are they the owner?
 								if (this.universe.isZoneOwner(z.id, player.getName()))
 								{
+									player.sendMessage("You are the owner");
+
 									// are they in alraedy
 									if (this.universe.isZoneMember(z.id, args[1]))
 									{
@@ -756,6 +763,11 @@ public class npcx extends JavaPlugin {
 									}
 								}
 							}
+						}
+						if (count == 0)
+						{
+							player.sendMessage("That zone does not exist");
+
 						}
 					} else {
 						player.sendMessage("You cannot be a member of a town you own!");
