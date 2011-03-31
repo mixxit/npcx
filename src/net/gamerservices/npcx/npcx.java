@@ -1195,7 +1195,29 @@ public class npcx extends JavaPlugin {
             {
             		if (args.length < 2) {
             			player.sendMessage("Insufficient arguments /npcx civ givemoney playername amount");
+            			player.sendMessage("Insufficient arguments /npcx civ money playername");
+            			player.sendMessage("Insufficient arguments /npcx civ unclaim");
+            			
             			return false;
+            		}
+            		
+            		if (args[1].equals("money")) {
+                		if (args.length < 3) {
+                			player.sendMessage("Insufficient arguments /npcx civ money playername");
+                			return false;
+                        	
+                		
+                		} else {
+                			for (myPlayer p : this.universe.players.values())
+                			{
+                				if (p.player.getName().matches(args[2]))
+                				{
+                					player.sendMessage("Balance: " + p.getNPCXBalance());
+                				}
+                			}
+                		}
+                			
+                			
             		}
             		
             		if (args[1].equals("givemoney")) {
