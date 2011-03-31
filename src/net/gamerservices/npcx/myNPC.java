@@ -448,12 +448,19 @@ public class myNPC {
 									say(player,"Couldn't find any items matching the name you requested");
 								}
 							} else {
-								if (!this.merchant.category.equals("nolimit"))
+								if (this.merchant != null)
 								{
-									say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
-								} else {
-									say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x UNLIMITED selling at " + item.pricesell + " Buying at " + item.pricebuy);
-									
+									if (this.merchant.category != null)
+									{
+										if (!this.merchant.category.equals("nolimit"))
+										{
+											say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+										} else {
+											say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x UNLIMITED selling at " + item.pricesell + " Buying at " + item.pricebuy);
+										}
+									} else {
+										say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x UNLIMITED selling at " + item.pricesell + " Buying at " + item.pricebuy);
+									}
 								}
 							}
 						}
