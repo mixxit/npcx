@@ -638,8 +638,49 @@ public class myNPC {
 					int amount = Integer.parseInt(aMsg[2]);
 					int itemid = Material.matchMaterial(aMsg[1]).getId();
 					
-					if (getMerchantAmount(itemid) >= Integer.parseInt(aMsg[2]))
+					
+					if (!this.merchant.category.equals("nolimit"))
 					{
+						if (getMerchantAmount(itemid) >= Integer.parseInt(aMsg[2]))
+						{
+							for (myMerchant_entry entry : merchant.merchantentries)
+							{
+								if (entry.itemid == itemid)
+								{
+									ItemStack i = sellMerchantItem(entry.itemid,amount);
+										
+									if (i != null)
+									{
+										
+										int cost = entry.pricesell * amount;
+										if (cost <= this.parent.universe.getPlayerBalance(player.player))
+										{
+											player.player.getInventory().addItem(i);
+											say(player,"Thanks! That's " + cost + " total coins!");
+											this.parent.universe.subtractPlayerBalance(player.player,cost);		
+											return;
+										} else {
+											say(player,"You don't have enough!!");
+											
+											return;
+										}
+										
+										
+									} else {
+										// hmm, didnt get an item back
+										say(player,"Sorry, looks like that item just sold!");
+										return;
+									}
+								}
+							}
+							
+							
+							
+						} else {
+							say(player,"Sorry, out of stock in that item. Have you tried our [list]?");
+							return;
+						}
+					} else {
 						for (myMerchant_entry entry : merchant.merchantentries)
 						{
 							if (entry.itemid == itemid)
@@ -670,12 +711,6 @@ public class myNPC {
 								}
 							}
 						}
-						
-						
-						
-					} else {
-						say(player,"Sorry, out of stock in that item. Have you tried our [list]?");
-						return;
 					}
 				} else {
 					say(player,"Sorry that's not enough.");
@@ -690,6 +725,42 @@ public class myNPC {
 			
 	}
 
+	private ItemStack sellNolimitMerchantItem(int itemid,int amount) {
+		// TODO Auto-generated method stub
+		// find item
+		if (merchant != null)
+		{
+			if  (merchant.merchantentries != null)
+			{
+				System.out.println("Found entries!");
+				for (myMerchant_entry entry : merchant.merchantentries)
+				{
+					if (entry.itemid == itemid)
+					{
+						System.out.println("Item matched!");
+						
+							ItemStack i = new ItemStack(itemid);
+							i.setAmount(amount);
+							// Update cache
+							entry.amount = entry.amount;
+							System.out.println("About to sell: " + i.getType().name() + ":"+ entry.amount);
+							return i;
+						
+					}
+				}
+			} else {
+				System.out.println("This merchant has no entries");
+			
+			}
+			
+			
+			
+		} else {
+			System.out.println("This isnt a mechant");
+		}
+		
+		return null;
+	}
 
 	private ItemStack sellMerchantItem(int itemid,int amount) {
 		// TODO Auto-generated method stub
