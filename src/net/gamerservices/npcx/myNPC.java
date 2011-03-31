@@ -834,12 +834,12 @@ public class myNPC {
 		{
 			if  (merchant.merchantentries != null)
 			{
-				System.out.println("Found entries!");
+				//System.out.println("Found entries!");
 				for (myMerchant_entry entry : merchant.merchantentries)
 				{
 					if (entry.itemid == itemid)
 					{
-						System.out.println("Item matched!");
+						//System.out.println("Item matched!");
 						if (merchant.category == null)
 						{
 							if (entry.amount >= amount)
@@ -849,10 +849,10 @@ public class myNPC {
 								// Update cache
 								
 								entry.amount = entry.amount - amount;
-								System.out.println("About to sell: " + i.getType().name() + ":"+ entry.amount);
+								//System.out.println("About to sell: " + i.getType().name() + ":"+ entry.amount);
 								return i;
 							} else {
-								System.out.println("Not enough ["+entry.amount+"] compared to your ["+amount+"]!");
+								//System.out.println("Not enough ["+entry.amount+"] compared to your ["+amount+"]!");
 								return null;				
 							}
 						} else {
