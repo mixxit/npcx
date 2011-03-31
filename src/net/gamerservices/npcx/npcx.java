@@ -680,13 +680,17 @@ public class npcx extends JavaPlugin {
 				
 				if (subCommand.equals("here"))
 	            {
-					Chunk c = player.getLocation().getWorld().getChunkAt(player.getLocation());
-					myZone z = this.universe.getZoneFromChunkAndLoc(this.universe.getZoneCoord(player.getLocation().getX()),this.universe.getZoneCoord(player.getLocation().getZ()), player.getLocation().getWorld());
-					if (z != null)
+					int playerx = this.universe.getZoneCoord(player.getLocation().getX());
+					int playerz = this.universe.getZoneCoord(player.getLocation().getZ());
+					
+					for (myZone z : this.universe.zones)
 					{
-						player.sendMessage("["+ChatColor.LIGHT_PURPLE+""+z.x+","+z.z+""+ChatColor.WHITE+"] "+ChatColor.YELLOW+""+z.name);
-					} else {
-						//
+						if (z.x == playerx && z.z == playerz)
+						{
+							player.sendMessage("["+ChatColor.LIGHT_PURPLE+""+z.x+","+z.z+""+ChatColor.WHITE+"] "+ChatColor.YELLOW+""+z.name);
+						} else {
+							// zone not in list
+						}
 					}
 				}
 		
