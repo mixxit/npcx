@@ -673,22 +673,25 @@ public class npcx extends JavaPlugin {
 							player.sendMessage("Failed to buy zone at your location - target zone does not exist");
 						
 						}
-						
-						
-						
 					} else {
 						player.sendMessage("You don't have enough to buy this plot (25000)!");
-						
-						
 					}
-					
-					
 	            }
+				
+				if (subCommand.equals("here"))
+	            {
+					Chunk c = player.getLocation().getWorld().getChunkAt(player.getLocation());
+					myZone z = this.universe.getZoneFromChunkAndLoc(this.universe.getZoneCoord(player.getLocation().getX()),this.universe.getZoneCoord(player.getLocation().getZ()), player.getLocation().getWorld());
+					if (z != null)
+					{
+						player.sendMessage("["+ChatColor.LIGHT_PURPLE+""+z.x+","+z.z+""+ChatColor.WHITE+"] "+ChatColor.YELLOW+""+z.name);
+					} else {
+						//
+					}
+				}
+		
 	        }
 		}
-		
-
-		
 		// ops only
 		
         try {
