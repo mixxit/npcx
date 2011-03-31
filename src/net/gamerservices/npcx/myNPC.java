@@ -650,8 +650,12 @@ public class myNPC {
 					int amount = Integer.parseInt(aMsg[2]);
 					int itemid = Material.matchMaterial(aMsg[1]).getId();
 					
+					if (this.merchant.category != null)
+					{
+						
+					}
 					
-					if (!this.merchant.category.equals("nolimit"))
+					if (this.merchant.category == null)
 					{
 						if (getMerchantAmount(itemid) >= Integer.parseInt(aMsg[2]))
 						{
@@ -693,35 +697,84 @@ public class myNPC {
 							return;
 						}
 					} else {
-						for (myMerchant_entry entry : merchant.merchantentries)
+						
+						if (this.merchant.category.equals("nolimit"))
 						{
-							if (entry.itemid == itemid)
+						
+							for (myMerchant_entry entry : merchant.merchantentries)
 							{
-								ItemStack i = sellMerchantItem(entry.itemid,amount);
-									
-								if (i != null)
+								if (entry.itemid == itemid)
 								{
-									
-									int cost = entry.pricesell * amount;
-									if (cost <= this.parent.universe.getPlayerBalance(player.player))
-									{
-										player.player.getInventory().addItem(i);
-										say(player,"Thanks! That's " + cost + " total coins!");
-										this.parent.universe.subtractPlayerBalance(player.player,cost);		
-										return;
-									} else {
-										say(player,"You don't have enough!!");
+									ItemStack i = sellMerchantItem(entry.itemid,amount);
 										
+									if (i != null)
+									{
+										
+										int cost = entry.pricesell * amount;
+										if (cost <= this.parent.universe.getPlayerBalance(player.player))
+										{
+											player.player.getInventory().addItem(i);
+											say(player,"Thanks! That's " + cost + " total coins!");
+											this.parent.universe.subtractPlayerBalance(player.player,cost);		
+											return;
+										} else {
+											say(player,"You don't have enough!!");
+											
+											return;
+										}
+										
+										
+									} else {
+										// hmm, didnt get an item back
+										say(player,"Sorry, looks like that item just sold!");
 										return;
 									}
-									
-									
-								} else {
-									// hmm, didnt get an item back
-									say(player,"Sorry, looks like that item just sold!");
-									return;
 								}
 							}
+						} else {
+							// Do above
+							
+							//TODO This needs to move into a seperate function
+							if (getMerchantAmount(itemid) >= Integer.parseInt(aMsg[2]))
+							{
+								for (myMerchant_entry entry : merchant.merchantentries)
+								{
+									if (entry.itemid == itemid)
+									{
+										ItemStack i = sellMerchantItem(entry.itemid,amount);
+											
+										if (i != null)
+										{
+											
+											int cost = entry.pricesell * amount;
+											if (cost <= this.parent.universe.getPlayerBalance(player.player))
+											{
+												player.player.getInventory().addItem(i);
+												say(player,"Thanks! That's " + cost + " total coins!");
+												this.parent.universe.subtractPlayerBalance(player.player,cost);		
+												return;
+											} else {
+												say(player,"You don't have enough!!");
+												
+												return;
+											}
+											
+											
+										} else {
+											// hmm, didnt get an item back
+											say(player,"Sorry, looks like that item just sold!");
+											return;
+										}
+									}
+								}
+								
+								
+								
+							} else {
+								say(player,"Sorry, out of stock in that item. Have you tried our [list]?");
+								return;
+							}
+							
 						}
 					}
 				} else {

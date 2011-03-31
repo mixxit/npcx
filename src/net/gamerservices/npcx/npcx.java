@@ -770,7 +770,7 @@ public class npcx extends JavaPlugin {
 						if (z.ownername.equals(player.getName()))
 						{
 							z.setOwner("");
-							z.name = player.getName()+"Wild land";
+							z.name = "Abandoned land";
 							player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* "+ player.getName()+" has lost one of his civilizations!");
 							player.sendMessage("Thanks! Here's " +ChatColor.YELLOW+ 5000 + ChatColor.WHITE+" coin from the sale of our land!");
 							this.universe.addPlayerBalance(player,5000);		
@@ -778,7 +778,7 @@ public class npcx extends JavaPlugin {
 							
 							this.universe.setPlayerLastChunkX(player,z.x);
 							this.universe.setPlayerLastChunkZ(player,z.z);
-							this.universe.setPlayerLastChunkName(player,"Wild Land");
+							this.universe.setPlayerLastChunkName(player,"Abandoned land");
 							
 						} else {
 							
@@ -1271,12 +1271,12 @@ public class npcx extends JavaPlugin {
 								{
 									
 										z.setOwner("");
-										z.name = player.getName()+"Wild land";
+										z.name = "Refurbished land";
 										player.sendMessage("You just released region: ["+ChatColor.LIGHT_PURPLE+z.x+","+z.z+""+ChatColor.WHITE+"]!");
 										
 										this.universe.setPlayerLastChunkX(player,z.x);
 										this.universe.setPlayerLastChunkZ(player,z.z);
-										this.universe.setPlayerLastChunkName(player,"Wild Land");
+										this.universe.setPlayerLastChunkName(player,"Refurbished land");
 									
 								} else {
 									player.sendMessage("Failed to buy zone at your location - target zone does not exist");
