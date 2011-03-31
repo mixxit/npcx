@@ -54,21 +54,26 @@ public class npcxPListener extends PlayerListener {
 					myZone zone = this.parent.universe.getZoneFromLoc(x,z,event.getPlayer().getWorld());
 					if (zone != null)
 					{
-						if (zone.name.matches(lastname))
+						if (lastname != null)
 						{
-							if (zone.ownername.matches(""))
+							if (zone.name.matches(lastname))
 							{
-								event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+" - for sale");
+								if (zone.ownername.matches(""))
+								{
+									event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+" - for sale");
+									
+								} else {
+									event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+"] "+zone.name + " Owner: "+zone.ownername);
+								}
+								event.getPlayer().sendMessage(this.parent.universe.getZoneNameByLocation(xchunkloc, zchunkloc, event.getPlayer().getWorld()));
 								
-							} else {
-								event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+"] "+zone.name + " Owner: "+zone.ownername);
-							}
-							event.getPlayer().sendMessage(this.parent.universe.getZoneNameByLocation(xchunkloc, zchunkloc, event.getPlayer().getWorld()));
+								this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
+								this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
+								this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
 							
-							this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
-							this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
-							this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
-						
+							}
+						} else {
+							event.getPlayer().sendMessage("Zone: "+xchunkloc+":"+zchunkloc+" - for sale");
 						}
 					}
 				} else {
