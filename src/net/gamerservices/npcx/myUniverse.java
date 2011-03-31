@@ -1556,9 +1556,16 @@ public class myUniverse {
 			}
 			stmt.close();
 			
+			try
+			{
 			myZone c = new myZone(this,key, world.getChunkAt(getLocationAtZoneLoc(x,z,world)),x,z);
 			this.zones.add(c);
 			return c;
+			} catch (Exception e)
+			{
+				// failed to attach a zone to the zone entry
+				return null;
+			}
 		} catch (Exception e)
 		{
 			e.printStackTrace();
