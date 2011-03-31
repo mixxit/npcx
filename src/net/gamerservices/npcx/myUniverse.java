@@ -268,7 +268,7 @@ public class myUniverse {
 	
 	private boolean updateDB() {
 		// TODO Auto-generated method stub
-		String targetdbversion = "1.04";
+		String targetdbversion = "1.05";
 		System.out.println("npcx : Checking for DB Updates from DBVersion:"+this.dbversion);
 		if(this.dbversion.matches(targetdbversion))
 		{
@@ -547,7 +547,73 @@ public class myUniverse {
 				return true;
 			} catch (SQLException e) {
 				System.out.println("**********************************************");
-				System.out.println("*   Problem during update to version 1.03    *");
+				System.out.println("*   Problem during update to version 1.04    *");
+				System.out.println("*  Please provide stacktrace below to devs   *");
+				System.out.println("**********************************************");
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		if (this.dbversion.matches("1.04"))
+		{
+			// Create Player table
+			// Update size of triggerword response
+			Statement sqlCreatestmt;
+			try {
+				
+				sqlCreatestmt = conn.createStatement();
+				String sqlcreate = "ALTER TABLE player_faction ADD UNIQUE INDEX playerfaction (player_name ASC, faction_id ASC) ;";
+				sqlCreatestmt.executeUpdate(sqlcreate);
+
+				sqlCreatestmt.close();
+	            Properties config = new Properties();
+				BufferedInputStream stream;
+				try
+				{
+					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
+					config.load(stream);
+			
+					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOCREEPER,nocreeper);
+					config.setProperty(PROP_DBHOST,dbhost);
+					config.setProperty(PROP_DBUSER,dbuser);
+					config.setProperty(PROP_DBPASS,dbpass);
+					config.setProperty(PROP_DBNAME,dbname);
+					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_NATIONS,nations);
+		            config.setProperty(PROP_DBVERSION,dbversion);
+					config.setProperty(PROP_WORLD,defaultworld);
+		            config.setProperty(PROP_UPDATE,"false");
+		            config.setProperty(PROP_DBVERSION, "1.05");
+		            this.dbversion = "1.05";
+		            File propfolder = parent.getDataFolder();
+		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		            propfile.createNewFile();
+		            
+		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+					config.store(stream1, "Default generated settings, please ensure mysqld matches");
+		            
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+					System.out.println("**********************************************");
+					System.out.println("*   Problem during update to version 1.05    *");
+					System.out.println("*     Can you access your config file?       *");
+					System.out.println("**********************************************");
+					return false;
+				}
+				
+				
+				System.out.println("**********************************************");
+				System.out.println("* Congratulations! Your NPCX database is now *");
+				System.out.println("*       updated to version 1.05              *");
+				System.out.println("**********************************************");
+				return true;
+			} catch (SQLException e) {
+				System.out.println("**********************************************");
+				System.out.println("*   Problem during update to version 1.05    *");
 				System.out.println("*  Please provide stacktrace below to devs   *");
 				System.out.println("**********************************************");
 				// TODO Auto-generated catch block
