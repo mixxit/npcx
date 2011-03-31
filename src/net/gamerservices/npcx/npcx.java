@@ -108,7 +108,7 @@ public class npcx extends JavaPlugin {
 		
 		npclist.remove(npc);
 		universe.npcs.remove(npc);
-		System.out.println("Removing NPC");
+		//System.out.println("Removing NPC");
 		NpcSpawner.RemoveBasicHumanNpc(npc);
 		
 		if (npc.parent != null)

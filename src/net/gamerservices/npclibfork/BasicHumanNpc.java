@@ -816,7 +816,7 @@ public class BasicHumanNpc extends BasicNpc {
         		anpc.npc.follow = null;
         		anpc.npc.aggro = null;
         		
-        		System.out.println("I just died!!");		            		
+        		//System.out.println("I just died!!");		            		
         		this.onDeath(anpc.npc.getBukkitEntity());
         		this.parent.parent.onNPCDeath(this);
         		
@@ -867,7 +867,7 @@ public class BasicHumanNpc extends BasicNpc {
 
 	            	if (this.hp < 1)
 	            	{
-	            		System.out.println("I just died!!");		            		
+	            		//System.out.println("I just died!!");		            		
 	            		this.onDeath((LivingEntity)p);
 	            		this.parent.parent.onNPCDeath(this);
 	            		
