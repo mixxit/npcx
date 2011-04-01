@@ -48,6 +48,7 @@ public class BasicHumanNpc extends BasicNpc {
     public CHumanNpc mcEntity;
     private static final Logger logger = Logger.getLogger("Minecraft");
     public myNPC parent;
+	private boolean dead = false;
     public BasicHumanNpc(myNPC parent,CHumanNpc entity, String uniqueId, String name, double spawnx, double spawny, double spawnz,double spawnyaw, double spawnpitch) {
     	super(uniqueId, name);
     	this.parent = parent;
@@ -673,51 +674,26 @@ public class BasicHumanNpc extends BasicNpc {
 
 	public void attackLivingEntity(LivingEntity ent) {
         try {
+        	// check the ent has some health at least
         	
-            
-            if ((ent.getHealth() - dmg) <= 0)
+            if (ent.getHealth() > 0)
             {
-            	ent.damage(dmg);
-            	follow = null;
-            	aggro = null;
-            	if (ent instanceof Player)
-            	{
-            		((Player) ent).getServer().broadcastMessage(((Player) ent).getName() + " was slaughtered by " + getName() + ".");
-            		((Player) ent).sendMessage("You have been slaughtered by " + getName());
-            		this.onKilled(ent);
-            		
-            	}
-            } else {
-            	if (ent instanceof Monster)
-            	{
-            		
-            		double myx = this.getBukkitEntity().getLocation().getX();
-            		double myy = this.getBukkitEntity().getLocation().getY();
-            		double myz = this.getBukkitEntity().getLocation().getZ();
-            		
-            		double tx = ent.getLocation().getX();
-            		double ty = ent.getLocation().getY();
-            		double tz = ent.getLocation().getZ();
-
-            		double diffx = myx - tx;
-            		double diffy = myy - ty;
-            		double diffz = myz - tz;
-            		
-            		
-            		if (diffx < 2 && diffx > -2 && diffy < 2 && diffy > -2 && diffz < 2 && diffz > -2)
-            		{
-            		
-		            	//System.out.println("Gahh! ");
-		            	this.mcEntity.animateArmSwing();
-		            	ent.damage(dmg);
-		            
-            		}
-	            	
-	            	
-	            } else {
+	            if ((ent.getHealth() - dmg) <= 0)
+	            {
+	            	ent.damage(200);
+	            	follow = null;
+	            	aggro = null;
 	            	if (ent instanceof Player)
 	            	{
-
+	            		((Player) ent).getServer().broadcastMessage(((Player) ent).getName() + " was slaughtered by " + getName() + ".");
+	            		((Player) ent).sendMessage("You have been slaughtered by " + getName());
+	            		this.onKilled(ent);
+	            		
+	            	}
+	            } else {
+	            	if (ent instanceof Monster)
+	            	{
+	            		
 	            		double myx = this.getBukkitEntity().getLocation().getX();
 	            		double myy = this.getBukkitEntity().getLocation().getY();
 	            		double myz = this.getBukkitEntity().getLocation().getZ();
@@ -725,21 +701,53 @@ public class BasicHumanNpc extends BasicNpc {
 	            		double tx = ent.getLocation().getX();
 	            		double ty = ent.getLocation().getY();
 	            		double tz = ent.getLocation().getZ();
-
+	
 	            		double diffx = myx - tx;
 	            		double diffy = myy - ty;
 	            		double diffz = myz - tz;
 	            		
+	            		
 	            		if (diffx < 2 && diffx > -2 && diffy < 2 && diffy > -2 && diffz < 2 && diffz > -2)
 	            		{
-	            			//System.out.println("Processed this as a player "+ent.getClass().toString());
+	            		
+			            	//System.out.println("Gahh! ");
 			            	this.mcEntity.animateArmSwing();
 			            	ent.damage(dmg);
-			            	
+			            
 	            		}
+		            	
+		            	
+		            } else {
+		            	if (ent instanceof Player)
+		            	{
+	
+		            		double myx = this.getBukkitEntity().getLocation().getX();
+		            		double myy = this.getBukkitEntity().getLocation().getY();
+		            		double myz = this.getBukkitEntity().getLocation().getZ();
+		            		
+		            		double tx = ent.getLocation().getX();
+		            		double ty = ent.getLocation().getY();
+		            		double tz = ent.getLocation().getZ();
+	
+		            		double diffx = myx - tx;
+		            		double diffy = myy - ty;
+		            		double diffz = myz - tz;
+		            		
+		            		if (diffx < 2 && diffx > -2 && diffy < 2 && diffy > -2 && diffz < 2 && diffz > -2)
+		            		{
+		            			//System.out.println("Processed this as a player "+ent.getClass().toString());
+				            	this.mcEntity.animateArmSwing();
+				            	ent.damage(dmg);
+				            	
+		            		}
+			            }
 		            }
 	            }
-            }
+        	} else {
+        		// no health, not worth the effort
+        		follow = null;
+            	aggro = null;
+        	}
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -771,8 +779,12 @@ public class BasicHumanNpc extends BasicNpc {
 	}
 
 	public void onDeath(LivingEntity p) {
-		// TODO Auto-generated method stub
-		this.parent.onDeath(p);
+		if (this.dead != true)
+		{
+			// TODO Auto-generated method stub
+			this.dead = true;
+			this.parent.onDeath(p);
+		}
 		
 	}
 
@@ -790,16 +802,15 @@ public class BasicHumanNpc extends BasicNpc {
 		// TODO Auto-generated method stub
 		if (this.parent.spawngroup != null)
 		{
-			System.out.println("npcx : DBG : ChunkInactive for spawngroup:"+this.parent.spawngroup.name);
+			//System.out.println("npcx : DBG : ChunkInactive for spawngroup:"+this.parent.spawngroup.name);
 			this.parent.spawngroup.chunkactive = false;
 		}
 		
 		
 	}
 	
-	public void onDamage(myNPC anpc) {
+	public void onNpcVsNpcDamage(myNPC anpc) {
 		
-    	
     	this.follow = anpc.npc.getBukkitEntity();
     	this.aggro = anpc.npc.getBukkitEntity();
         
@@ -830,60 +841,65 @@ public class BasicHumanNpc extends BasicNpc {
 
 	public void onDamage(EntityDamageEvent event) {
 		// TODO Auto-generated method stub
-		if (event instanceof EntityDamageByEntityEvent)
-	    {
-			EntityDamageByEntityEvent edee = (EntityDamageByEntityEvent) event;
-
-			
-	        if (this != null && edee.getDamager() instanceof LivingEntity) 
-	        {
-
-	        	Entity p = edee.getDamager();
-	        	if (this.parent != null)
-	        	{
-	        		for (myPlayer player : this.parent.parent.universe.players.values())
-	        		{
-	        			if (player.player == edee.getDamager())
-	        			{
-	        				if (this.aggro == null)
-	        				{
-	        					// First time sent an event
-	        					this.parent.onPlayerAggroChange(player);
-	        					
-	        				} 
-	        			}
-	        		}
-	        	}
-	        	this.follow = (LivingEntity)p;
-	        	this.aggro = (LivingEntity)p;
-	            
-	            try
-	            {
-	            	
-	            	int dmgdone = this.parent.getDamageDone(this,(Player)p);
-	            	this.hp = this.hp - dmgdone;
-
-	            	if (this.hp < 1)
-	            	{
-	            		//System.out.println("I just died!!");		            		
-	            		this.onDeath((LivingEntity)p);
-	            		this.parent.parent.onNPCDeath(this);
-	            		
-	            	}
-	            } 
-	            catch (Exception e)
-	            {
-	            	this.follow = null;
-	            	this.aggro = null;
-					//System.out.println("npcx : forgot about target");
-	            	// do not modify mobs health
-	            }
-	            
-
-	        }
-	    }
+			//System.out.println("onDamage called for entity"+event.getEntity().getEntityId());
 		
+			if (event instanceof EntityDamageByEntityEvent)
+		    {
+				EntityDamageByEntityEvent edee = (EntityDamageByEntityEvent) event;
+				
+				// Process monster damage only
+				// Do the rest in myNPC
+				
+				//if (edee.getDamager() instanceof Monster)
+				//{
+					
+			        if (this != null && edee.getDamager() instanceof LivingEntity) 
+			        {
+		
+			        	Entity p = edee.getDamager();
+			        	if (this.parent != null)
+			        	{
+			        		for (myPlayer player : this.parent.parent.universe.players.values())
+			        		{
+			        			if (player.player == edee.getDamager())
+			        			{
+			        				if (this.aggro == null)
+			        				{
+			        					// First time sent an event
+			        					this.parent.onPlayerAggroChange(player);
+			        					
+			        				} 
+			        			}
+			        		}
+			        	}
+			        	this.follow = (LivingEntity)p;
+			        	this.aggro = (LivingEntity)p;
+			            
+			            try
+			            {
+			            	
+			            	int dmgdone = this.parent.getDamageDone(this,(Player)p);
+			            	this.hp = this.hp - dmgdone;
+		
+			            	if (this.hp < 1)
+			            	{
+			            		
+			            		//System.out.println("I just died!!");		            		
+			            		this.onDeath((LivingEntity)p);
+			            		this.parent.parent.onNPCDeath(this);
+			            		
+			            	}
+			            } 
+			            catch (Exception e)
+			            {
+			            	this.follow = null;
+			            	this.aggro = null;
+							//System.out.println("npcx : forgot about target");
+			            	// do not modify mobs health
+			            }
+			        }
+				//}
+		    }
 	}
-
 
 }

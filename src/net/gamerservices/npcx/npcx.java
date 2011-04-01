@@ -258,7 +258,7 @@ public class npcx extends JavaPlugin {
 									    			foundresult = true;
 										    		npc.npc.aggro =  e;
 										    		npc.npc.follow =   e;
-										    		targetnpc.npc.onDamage(npc);
+										    		targetnpc.npc.onNpcVsNpcDamage(npc);
 									    		}
 									    	}
 									    	
@@ -392,7 +392,7 @@ public class npcx extends JavaPlugin {
 												//System.out.println("npcx : made spawngroup active");
 												Double  pitch = new Double(spawngroup.pitch);
 												Double yaw = new Double(spawngroup.yaw);
-												BasicHumanNpc hnpc = npc.Spawn(npc.id, npc.name, this.getServer().getWorld(this.universe.defaultworld), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
+												BasicHumanNpc hnpc = npc.Spawn(npc.spawngroup.id+"-"+npc.id, npc.name, this.getServer().getWorld(this.universe.defaultworld), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
 												npc.npc = hnpc;
 												ItemStack iprimary = new ItemStack(npc.weapon);
 												ItemStack ihelmet = new ItemStack(npc.helmet);
@@ -781,7 +781,9 @@ public class npcx extends JavaPlugin {
 				if (subCommand.equals("buy"))
 	            {
 					int cost = 25000;
-					if (cost <= this.universe.getPlayerBalance(player))
+					myPlayer mp = this.universe.getmyPlayer(player);
+					
+					if (cost <= mp.getPlayerBalance(player))
 					{
 						
 						Chunk c = player.getLocation().getWorld().getChunkAt(player.getLocation());
@@ -795,7 +797,7 @@ public class npcx extends JavaPlugin {
 								z.name = player.getName()+"s land";
 								player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* A new civilization has been settled at [" + z.x + ":" + z.z+ "] by "+player.getName()+"!");
 								player.sendMessage("Thanks! That's " +ChatColor.YELLOW+ cost + ChatColor.WHITE+" total coins!");
-								this.universe.subtractPlayerBalance(player,cost);		
+								mp.subtractPlayerBalance(player,cost);		
 								player.sendMessage("You just bought region: ["+ChatColor.LIGHT_PURPLE+z.x+","+z.z+""+ChatColor.WHITE+"]!");
 								
 								this.universe.setPlayerLastChunkX(player,z.x);
@@ -812,7 +814,7 @@ public class npcx extends JavaPlugin {
 						
 						}
 					} else {
-						player.sendMessage("You don't have enough to buy this plot (25000)!");
+						player.sendMessage("You don't have enough to buy this plot ("+ChatColor.YELLOW+"25000"+ChatColor.WHITE+")!");
 					}
 	            }
 				
@@ -837,7 +839,8 @@ public class npcx extends JavaPlugin {
 							
 							player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* "+ player.getName()+" has lost one of his civilizations!");
 							player.sendMessage("Thanks! Here's " +ChatColor.YELLOW+ 5000 + ChatColor.WHITE+" coin from the sale of our land!");
-							this.universe.addPlayerBalance(player,5000);		
+							myPlayer mp = this.universe.getmyPlayer(player);
+							mp.addPlayerBalance(player,5000);		
 							player.sendMessage("You just released region: ["+ChatColor.LIGHT_PURPLE+z.x+","+z.z+""+ChatColor.WHITE+"]!");
 							
 							this.universe.setPlayerLastChunkX(player,z.x);

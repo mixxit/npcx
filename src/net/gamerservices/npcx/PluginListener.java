@@ -24,7 +24,7 @@ public class PluginListener extends ServerListener {
             if (iConomy != null) {
                 if(iConomy.isEnabled()) {
                     parent.setiConomy((iConomy)iConomy);
-                    System.out.println("[(Plugin)] Successfully linked with iConomy.");
+                    System.out.println("npcx : Successfully linked with iConomy.");
                 }
             }
         }

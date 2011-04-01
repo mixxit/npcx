@@ -1802,118 +1802,6 @@ public class myUniverse {
 		}
 	}
 
-	public int getPlayerBalance(Player player) {
-		// TODO Auto-generated method stub
-		try
-		{
-			Account account = iConomy.getBank().getAccount(player.getName());
-			return (int)account.getBalance();
-		} catch (NoClassDefFoundError e)
-		{
-			for (myPlayer p : this.players.values())
-			{
-				if (p.player == player)
-					return p.getNPCXBalance();
-			}
-			//e.printStackTrace();
-			// We don't have iConomy
-			return 0;
-		}catch (NullPointerException e)
-		{
-			for (myPlayer p : this.players.values())
-			{
-				if (p.player == player)
-					return p.getNPCXBalance();
-			}
-			//e.printStackTrace();
-			// We don't have iConomy
-			return 0;
-		}
-	}
-
-	public void subtractPlayerBalance(Player player, int totalcost) {
-		// TODO Auto-generated method stub
-		try
-		{
-			Account account = iConomy.getBank().getAccount(player.getName());
-			account.subtract(totalcost);
-		} catch (NoClassDefFoundError e)
-		{
-			
-			for (myPlayer p : this.players.values())
-			{
-				if (p.player == player)
-					p.setNPCXBalance(p.getNPCXBalance()-totalcost);
-			}
-			// We don't have iConomy
-			
-			
-		}catch (NullPointerException e)
-		{
-			
-			for (myPlayer p : this.players.values())
-			{
-				if (p.player == player)
-					p.setNPCXBalance(p.getNPCXBalance()-totalcost);
-			}
-			// We don't have iConomy
-			
-			
-		}
-	}
-	
-
-	public void addPlayerBalance(Player player, int totalcost) {
-		// TODO Auto-generated method stub
-		try
-		{
-			Account account = iConomy.getBank().getAccount(player.getName());
-			account.add(totalcost);
-		} catch (NoClassDefFoundError e)
-		{
-			// We don't have iConomy
-			for (myPlayer p : this.players.values())
-			{
-				if (p.player == player)
-					p.setNPCXBalance(p.getNPCXBalance()+totalcost);
-			}
-		}catch (NullPointerException e)
-		{
-			// We don't have iConomy
-			for (myPlayer p : this.players.values())
-			{
-				if (p.player == player)
-					p.setNPCXBalance(p.getNPCXBalance()+totalcost);
-			}
-		}
-	}
-
-	public boolean hasPlayerEnoughPlayerBalance(Player player, float totalcost) {
-		// TODO Auto-generated method stub
-		
-		try
-		{
-			Account account = iConomy.getBank().getAccount(player.getName());
-			return account.hasEnough(totalcost);
-		} catch (NoClassDefFoundError e)
-		{
-			for (myPlayer p : this.players.values())
-			{
-				if (p.player == player)
-				{
-					if (p.getNPCXBalance() >= totalcost)
-					{
-						
-						return true;
-					} else {
-						return false;
-					}
-				}
-			}
-			return false;
-			
-		}
-	}
 
 	public boolean checkChunks() {
 		// TODO Auto-generated method stub
@@ -2013,7 +1901,7 @@ public class myUniverse {
 				return p.lastchunkx;
 			}
 		}
-		System.out.println("Did not find player!");
+		//System.out.println("Did not find player!");
 		return 0;
 	}
 	
@@ -2295,6 +2183,18 @@ public class myUniverse {
 			return null;
 
 			
+		}
+		return null;
+	}
+
+	public myPlayer getmyPlayer(Player player) {
+		// TODO Auto-generated method stub
+		for (myPlayer p : this.players.values())
+		{
+			if (p.player == player)
+			{
+				return p;
+			}
 		}
 		return null;
 	}

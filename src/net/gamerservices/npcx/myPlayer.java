@@ -9,6 +9,9 @@ import net.gamerservices.npclibfork.BasicHumanNpc;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import com.nijiko.coelho.iConomy.iConomy;
+import com.nijiko.coelho.iConomy.system.Account;
+
 
 public class myPlayer {
 
@@ -30,6 +33,87 @@ public class myPlayer {
 		this.player = player;
 		this.name = name;
 		
+	}
+	
+
+	public int getPlayerBalance(Player player) {
+		// TODO Auto-generated method stub
+		try
+		{
+			Account account = iConomy.getBank().getAccount(player.getName());
+			return (int)account.getBalance();
+		} catch (NoClassDefFoundError e)
+		{
+			this.getNPCXBalance();
+			//e.printStackTrace();
+			// We don't have iConomy
+			return 0;
+		}catch (NullPointerException e)
+		{
+			this.getNPCXBalance();
+			// We don't have iConomy
+			return 0;
+		}
+	}
+
+	public void subtractPlayerBalance(Player player, int totalcost) {
+		// TODO Auto-generated method stub
+		try
+		{
+			Account account = iConomy.getBank().getAccount(player.getName());
+			account.subtract(totalcost);
+		} catch (NoClassDefFoundError e)
+		{
+			
+			this.setNPCXBalance(this.getNPCXBalance()-totalcost);
+			// We don't have iConomy
+			
+			
+		}catch (NullPointerException e)
+		{
+			
+			this.setNPCXBalance(this.getNPCXBalance()-totalcost);
+			
+		}
+	}
+	
+
+	public void addPlayerBalance(Player player, int totalcost) {
+		// TODO Auto-generated method stub
+		try
+		{
+			Account account = iConomy.getBank().getAccount(player.getName());
+			account.add(totalcost);
+		} catch (NoClassDefFoundError e)
+		{
+			// We don't have iConomy
+			this.setNPCXBalance(this.getNPCXBalance()+totalcost);
+			
+		}catch (NullPointerException e)
+		{
+			// We don't have iConomy
+			this.setNPCXBalance(this.getNPCXBalance()+totalcost);
+			
+		}
+	}
+
+	public boolean hasPlayerEnoughPlayerBalance(Player player, float totalcost) {
+		// TODO Auto-generated method stub
+		
+		try
+		{
+			Account account = iConomy.getBank().getAccount(player.getName());
+			return account.hasEnough(totalcost);
+		} catch (NoClassDefFoundError e)
+		{
+			
+			if (this.getNPCXBalance() >= totalcost)
+			{
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 	
 	public int getNPCXBalance()

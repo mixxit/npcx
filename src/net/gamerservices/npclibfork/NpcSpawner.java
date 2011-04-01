@@ -68,6 +68,7 @@ public class NpcSpawner {
             MinecraftServer ms = GetMinecraftServer(ws.getServer());
 
             CHumanNpc eh = new CHumanNpc(ms, ws, name, new ItemInWorldManager(ws));
+            eh.forceSetName(name);
             Double yaw2 = new Double(yaw);
             Double pitch2 = new Double(pitch);
             
