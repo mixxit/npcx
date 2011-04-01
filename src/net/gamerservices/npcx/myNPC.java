@@ -359,7 +359,7 @@ public class myNPC {
 					say(p,send);
 					
 					count2++;
-					
+					parseChat(p,"EVENT_ITEM");
 				}
 			}
 			if (count2 == 0)

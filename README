@@ -217,6 +217,7 @@ Syntax: /npcx npc response
 Added 'NPCSUMMONPLAYER' event to triggerword responses <--- Summons player to npc
 Added 'NPCSUMMONZOMBIE' event to triggerword responses <--- Summons one zombie at npc
 Added 'NPCATTACK' event to triggerword responses - <--- Forces npc to attack player
+Added 'NPCSUMMONWOLF' event to triggerword responses - <--- Summons one wolf at the npc
 
 Code:
 /npcx npc triggerword add NPCID TRIGGERWORD NPCATTACK <--- attacks based on triggerword
