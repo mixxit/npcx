@@ -768,7 +768,7 @@ public class npcx extends JavaPlugin {
 											return false;
 											
 										} else {
-											this.universe.addZoneMember(z.id,player.getName());
+											this.universe.addZoneMember(z.id,args[1]);
 											player.sendMessage("Player added to civilization!!");
 											return true;
 										}
