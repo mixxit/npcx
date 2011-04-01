@@ -441,9 +441,9 @@ public class myNPC {
 									{
 										if (!this.merchant.category.equals("nolimit"))
 										{
-											say(player,ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " x " + item.amount + " Selling: $" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying: $" + ChatColor.YELLOW+ item.pricebuy);
+											say(player,ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " x " + item.amount + " S: " + ChatColor.YELLOW + "$"+ item.pricesell + ChatColor.WHITE + " B: $" + ChatColor.YELLOW+ "$"+ item.pricebuy);
 										} else {
-											say(player,ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " Selling:$" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying:" + ChatColor.YELLOW + item.pricebuy);
+											say(player,ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " S:" + ChatColor.YELLOW + "$" + item.pricesell + ChatColor.WHITE + " B:" + ChatColor.YELLOW + "$" + item.pricebuy);
 											
 										}
 									}
@@ -1060,10 +1060,10 @@ public class myNPC {
 				{
 					if (item.item.getType().name().contains(aMsg[1]))
 					{
-						say(player,item.item.getType().name() + " x " + item.item.getAmount() + " selling at " + ChatColor.YELLOW + (float)checkHints(item.item.getTypeId()) + ChatColor.WHITE + " before commision");
+						say(player,item.item.getType().name() + " x " + item.item.getAmount() + " COST:" + ChatColor.YELLOW + "$" + (float)checkHints(item.item.getTypeId()) + ChatColor.WHITE + " before commision");
 					}
 				} else {
-					say(player,item.item.getType().name() + " x " + item.item.getAmount() + " selling at " + ChatColor.YELLOW +(float)checkHints(item.item.getTypeId()) + ChatColor.WHITE + " before commision");
+					say(player,item.item.getType().name() + " x " + item.item.getAmount() + " COST: " + ChatColor.YELLOW +"$"+(float)checkHints(item.item.getTypeId()) + ChatColor.WHITE + " before commision");
 				}
 			}
 			say(player,ChatColor.LIGHT_PURPLE + "" + count + ChatColor.WHITE + " items in the shop.'");
@@ -1373,14 +1373,12 @@ public class myNPC {
     					
 					}
 					
-					p.sendMessage("**************************************************************");
 					if (p.isOp())
 					{
 						p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+"):M ("+tMID+")");
 					}
                     p.sendMessage("* You are now chatting to: " + ChatColor.YELLOW + name + ChatColor.WHITE + ". Right Click to cancel.");
                     p.sendMessage("* Words in "+ChatColor.LIGHT_PURPLE+"[brackets]"+ChatColor.WHITE+" you should type! "+ChatColor.YELLOW+"Type a word to begin"+ChatColor.WHITE);
-                    p.sendMessage("**************************************************************");
                     if (player.target != null && player.target.parent != null && player.target.parent.category != null)
                     {
                     	// check what type (category) of npc this is
@@ -1514,7 +1512,7 @@ public class myNPC {
 			// Killed by an npc
 			return;
 		}
-		System.out.println("Not killed by an npc");
+
 		// above is to 
 		// make sure this is just for a HUMAN player
 		if (p instanceof Player)

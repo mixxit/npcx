@@ -51,7 +51,7 @@ public class myUniverse {
 	public String nowild;
 	public String nospread;	
 	public String nocreeper;
-	public String nations;
+	public String nations = "false";
 	public String dbhost;
 	public String update;
 	public String dbuser;
