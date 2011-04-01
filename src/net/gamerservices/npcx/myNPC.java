@@ -112,6 +112,7 @@ public class myNPC {
 							String npcattack = "NPCATTACK";
 							String summonplayer = "NPCSUMMONPLAYER";
 							String npcsummonzombie = "NPCSUMMONZOMBIE";
+							String npcsummonwolf = "NPCSUMMONWOLF";
 							
 							
 							// NPCATTACK variable
@@ -133,23 +134,31 @@ public class myNPC {
 									double z = npc.getBukkitEntity().getLocation().getZ();
 									Location location = new Location(npc.getBukkitEntity().getLocation().getWorld(), x, y, z);
 									
-									myplayer.player.teleportTo(location);
+									myplayer.player.teleport(location);
 									return;
 	
 							}
 	
+							
+							
 							// NPCSUMMONMOB
 							if (tw.response.toLowerCase().contains(npcsummonzombie.toLowerCase()))
 							{
-								double x = myplayer.player.getLocation().getX();
-								double y = myplayer.player.getLocation().getY();
-								double z = myplayer.player.getLocation().getZ();
-								Location location = new Location(npc.getBukkitEntity().getLocation().getWorld(), x, y, z);
 								
-								
-								npc.getBukkitEntity().getWorld().spawnCreature(location,CreatureType.ZOMBIE);
+								npc.getBukkitEntity().getWorld().spawnCreature(this.npc.getBukkitEntity().getLocation(),CreatureType.ZOMBIE);
 								
 								say(myplayer,"Look out");
+								return;
+							}
+							
+
+							// NPCSUMMONWOLF
+							if (tw.response.toLowerCase().contains(npcsummonzombie.toLowerCase()))
+							{
+								
+								npc.getBukkitEntity().getWorld().spawnCreature(this.npc.getBukkitEntity().getLocation(),CreatureType.WOLF);
+								
+								say(myplayer,"It's a wolf!");
 								return;
 							}
 	
