@@ -2197,12 +2197,19 @@ public class myUniverse {
 			}
 		}
 		System.out.println("***************************************");
-		System.out.println("Player name was missing from the list:");
+		System.out.println(player.getName()+ " was missing from the list:");
 		String playerlist = "";
 		for (myPlayer p : this.players.values())
 		{
-			playerlist += p.name+",";
+			try
+			{
+			playerlist += p.name+"["+p.player.getName()+"], ";
+			} catch (Exception e)
+			{
+				System.out.println("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
+			}
 		}
+		System.out.println("***************************************");
 		System.out.println(playerlist);
 		System.out.println("***************************************");
 

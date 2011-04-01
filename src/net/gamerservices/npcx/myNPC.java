@@ -971,7 +971,7 @@ public class myNPC {
 		{
 			balance = mp.getPlayerBalance(player);
 		} else {
-			System.out.println("npcx : Can't find "+player.getName()+"in the directory");
+			System.out.println("npcx : Can't find "+player.getName()+" in the directory");
 
 		}
 		
