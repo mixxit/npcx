@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.gamerservices.npclibfork.BasicHumanNpc;
+import net.gamerservices.npclibfork.CHumanNpc;
 import net.gamerservices.npclibfork.NpcSpawner;
 
 import org.bukkit.ChatColor;
@@ -1462,6 +1463,12 @@ public class myNPC {
 		// TODO Auto-generated method stub
 		// TODO Auto-generated method stub
 		
+		if (p instanceof CHumanNpc)
+		{
+			// ignroe other npcs
+			return;
+		}
+		
 		int count2 = 0;
 		for (myTriggerword tw : triggerwords.values())
 		{
@@ -1494,6 +1501,14 @@ public class myNPC {
 	public void onDeath(LivingEntity p) {
 		// TODO Auto-generated method stub
 	
+		if (p instanceof CHumanNpc)
+		{
+			// Killed by an npc
+			return;
+		}
+		
+		// above is to 
+		// make sure this is just for a HUMAN player
 		if (p instanceof Player)
 		{
 			int count2 = 0;
@@ -1567,6 +1582,15 @@ public class myNPC {
 
 	public void onKilled(LivingEntity ent) {
 		// TODO Auto-generated method stub
+		
+		if (ent instanceof CHumanNpc)
+		{
+			// dont want to generate stuff for player npcs atm
+			return;
+		}
+		
+		// make sure above is returned since a chumannpc can be a player
+		
 		if (ent instanceof Player)
 		{
 			int count2 = 0;
