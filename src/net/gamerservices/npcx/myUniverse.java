@@ -2196,6 +2196,16 @@ public class myUniverse {
 				return p;
 			}
 		}
+		System.out.println("***************************************");
+		System.out.println("Player name was missing from the list:");
+		String playerlist = "";
+		for (myPlayer p : this.players.values())
+		{
+			playerlist += p.name+",";
+		}
+		System.out.println(playerlist);
+		System.out.println("***************************************");
+
 		return null;
 	}
 
