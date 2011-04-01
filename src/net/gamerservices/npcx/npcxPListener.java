@@ -60,7 +60,7 @@ public class npcxPListener extends PlayerListener {
 						{
 							if (!zone.name.equals(lastname))
 							{
-								if (this.parent.universe.getPlayerToggle(event.getPlayer()))
+								if (this.parent.universe.getPlayerToggle(event.getPlayer()).equals("true"))
 								{
 								
 									if (zone.ownername.equals(""))

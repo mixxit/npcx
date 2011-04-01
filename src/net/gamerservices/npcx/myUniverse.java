@@ -2291,10 +2291,21 @@ public class myUniverse {
 		
 	}
 
-	public boolean getPlayerToggle(Player player) {
+	public String getPlayerToggle(Player player) {
 		// TODO Auto-generated method stub
 		myPlayer myplayer = this.findmyPlayerByPlayer(player);
-		return myplayer.toggle;
+		if (myplayer != null)
+		{
+			if (myplayer.toggle == true)
+				return "true";
+			if (myplayer.toggle == true)
+				return "false";
+			
+			
+		} else {
+			return "null";
+		}
+		return "null";
 	}
 
 	
