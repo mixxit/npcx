@@ -770,8 +770,8 @@ public class npcx extends JavaPlugin {
 									// Change accounts
 									recipient.addPlayerBalance(recipient.player, amount);
 									recipient.player.sendMessage(ChatColor.LIGHT_PURPLE + "* "+ChatColor.YELLOW +  me.player.getName()+ ChatColor.LIGHT_PURPLE + " just paid you " +ChatColor.YELLOW +  amount);
-									me.subtractPlayerBalance(recipient.player, amount);
-									me.player.sendMessage(ChatColor.LIGHT_PURPLE + "* "+ChatColor.YELLOW +  me.player.getName()+ ChatColor.LIGHT_PURPLE + " just received your payment of:" + ChatColor.YELLOW + amount);
+									me.subtractPlayerBalance(me.player, amount);
+									me.player.sendMessage(ChatColor.LIGHT_PURPLE + "* "+ChatColor.YELLOW +  recipient.player.getName()+ ChatColor.LIGHT_PURPLE + " just received your payment of:" + ChatColor.YELLOW + amount);
 									
 									
 								}
