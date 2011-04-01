@@ -69,8 +69,8 @@ public class NpcSpawner {
 
             CHumanNpc eh = new CHumanNpc(ms, ws, name, new ItemInWorldManager(ws));
             eh.forceSetName(name);
-            Double yaw2 = new Double(yaw);
-            Double pitch2 = new Double(pitch);
+            Float yaw2 = new Float(yaw);
+            Float pitch2 = new Float(pitch);
             
             eh.c(x, y, z, yaw2.floatValue(), pitch2.floatValue());
 

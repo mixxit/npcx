@@ -195,8 +195,8 @@ public class npcx extends JavaPlugin {
 									    			{
 									    				if (npc.npc.parent.faction.base <= -1000)
 									    				{
-									    					npc.npc.aggro = player.player;
-									    					npc.npc.follow = player.player;
+									    					npc.npc.setAggro(player.player);
+									    					npc.npc.setFollow(player.player);
 									    				} else {
 									    					// Add the players faction standing onto this base
 									    					int newfactvalue = npc.npc.parent.faction.base + player.getPlayerFactionStanding(npc.npc.parent.faction);
@@ -256,8 +256,8 @@ public class npcx extends JavaPlugin {
 									    		if (blockinsight == eloc.getBlock())
 									    		{
 									    			foundresult = true;
-										    		npc.npc.aggro =  e;
-										    		npc.npc.follow =   e;
+										    		npc.npc.setAggro(e);
+										    		npc.npc.setFollow(e);
 										    		targetnpc.npc.onNpcVsNpcDamage(npc);
 									    		}
 									    	}
@@ -266,8 +266,8 @@ public class npcx extends JavaPlugin {
 									    	{
 									    		//System.out.println("I can hear one but can't see it");
 									    		npc.npc.faceLocation(e.getLocation());
-									    		npc.npc.aggro = null;
-									    		npc.npc.follow = null;
+									    		npc.npc.setAggro(null);
+									    		npc.npc.setFollow(null);
 									    		
 									    	}
 								    	} catch (NullPointerException ex)
@@ -320,16 +320,16 @@ public class npcx extends JavaPlugin {
 									    		if (blockinsight == eloc.getBlock())
 									    		{
 									    			foundresult = true;
-										    		npc.npc.aggro =  e;
-										    		npc.npc.follow =   e;
+										    		npc.npc.setAggro(e);
+										    		npc.npc.setFollow(e);
 									    		}
 									    	}
 									    	if (foundresult == false)
 									    	{
 									    		//System.out.println("I can hear one but can't see it");
 									    		npc.npc.faceLocation(e.getLocation());
-									    		npc.npc.aggro = null;
-									    		npc.npc.follow = null;
+									    		npc.npc.setAggro(null);
+									    		npc.npc.setFollow(null);
 									    		
 									    	}
 		
@@ -1036,8 +1036,8 @@ public class npcx extends JavaPlugin {
             			double x = player.getLocation().getX();
             			double y = player.getLocation().getY();
             			double z = player.getLocation().getZ();
-            			double pitch = player.getLocation().getPitch();
-            			double yaw = player.getLocation().getYaw();
+            			float pitch = player.getLocation().getPitch();
+            			float yaw = player.getLocation().getYaw();
             			
             			PreparedStatement stmt = this.universe.conn.prepareStatement("INSERT INTO spawngroup (name,x,y,z,pitch,yaw) VALUES (?,?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
             			stmt.setString(1,args[2]);
@@ -2462,8 +2462,8 @@ public class npcx extends JavaPlugin {
         	            		n.faction = getFactionByID(Integer.parseInt(args[3]));
         	            		player.sendMessage("npcx : Updated living npc to cached faction ("+args[3]+"): "+n.faction.name);
         	            		// when faction changes reset aggro and follow status
-        	            		n.npc.aggro = null;
-        	            		n.npc.follow = null;
+        	            		n.npc.setAggro(null);
+        	            		n.npc.setFollow(null);
         	            	}
         	            }
             			
@@ -2703,12 +2703,12 @@ public class npcx extends JavaPlugin {
 		
 		for (myNPC npc : this.universe.npcs.values())
 		{
-			if (npc.npc != null && npc.npc.aggro != null)
+			if (npc.npc != null && npc.npc.getAggro() != null)
 			{
-				if (npc.npc.aggro == player)
+				if (npc.npc.getAggro() == player)
 				{
 					dbg(1,"informNpcDeadPlayer:aggro:"+player.getName());
-					npc.npc.follow = null;
+					npc.npc.setFollow(null);
 				}
 				
 			}

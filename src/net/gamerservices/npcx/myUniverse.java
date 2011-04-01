@@ -1380,8 +1380,8 @@ public class myUniverse {
             spawngroup.x = Double.parseDouble(rs1.getString ("x"));
             spawngroup.y = Double.parseDouble(rs1.getString ("y"));
             spawngroup.z = Double.parseDouble(rs1.getString ("z"));
-            spawngroup.yaw = Double.parseDouble(rs1.getString ("yaw"));
-            spawngroup.pitch = Double.parseDouble(rs1.getString ("pitch"));
+            spawngroup.yaw = (float) Double.parseDouble(rs1.getString ("yaw"));
+            spawngroup.pitch = (float) Double.parseDouble(rs1.getString ("pitch"));
             
             Location loc = new Location(parent.getServer().getWorld(this.defaultworld),spawngroup.x,spawngroup.y,spawngroup.z);
             
@@ -2172,10 +2172,10 @@ public class myUniverse {
 				{
 					if (target != null && n.factionid == targetfactionid && n.npcid == Integer.parseInt(npc.id) && n.amount < -1000)
 					{
-						npc.npc.aggro = e;
-						npc.npc.follow = e;
-						target.npc.aggro = npc.npc.getBukkitEntity();
-						target.npc.follow = npc.npc.getBukkitEntity();
+						npc.npc.setAggro(e);
+						npc.npc.setFollow(e);
+						target.npc.setAggro(npc.npc.getBukkitEntity());
+						target.npc.setFollow(npc.npc.getBukkitEntity());
 						
 						return target;
 					}				

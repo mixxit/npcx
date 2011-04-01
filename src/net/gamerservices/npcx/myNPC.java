@@ -118,8 +118,8 @@ public class myNPC {
 							if (tw.response.toLowerCase().contains(npcattack.toLowerCase()))
 							{
 									say(myplayer,"You will regret that");
-									npc.aggro = myplayer.player;
-									npc.follow = myplayer.player;
+									npc.setAggro(myplayer.player);
+									npc.setFollow(myplayer.player);
 									return;
 	
 							}

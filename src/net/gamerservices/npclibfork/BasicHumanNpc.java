@@ -28,15 +28,15 @@ import org.bukkit.util.Vector;
 
 public class BasicHumanNpc extends BasicNpc {
 
-	public LivingEntity follow;
-	public LivingEntity aggro;
+	private LivingEntity mFollow;
+	public LivingEntity mAggro;
 	public int hp = 200;
 	public int dmg = 3;
 	public double spawnx;
 	public double spawny;
 	public double spawnz;
-	public double spawnyaw;
-	public double spawnpitch;
+	public float spawnyaw;
+	public float spawnpitch;
 	
 	public double seekx;
 	public double seeky;
@@ -49,7 +49,7 @@ public class BasicHumanNpc extends BasicNpc {
     private static final Logger logger = Logger.getLogger("Minecraft");
     public myNPC parent;
 	private boolean dead = false;
-    public BasicHumanNpc(myNPC parent,CHumanNpc entity, String uniqueId, String name, double spawnx, double spawny, double spawnz,double spawnyaw, double spawnpitch) {
+    public BasicHumanNpc(myNPC parent,CHumanNpc entity, String uniqueId, String name, double spawnx, double spawny, double spawnz,float spawnyaw, float spawnpitch) {
     	super(uniqueId, name);
     	this.parent = parent;
     	this.spawnx = spawnx;
@@ -63,6 +63,42 @@ public class BasicHumanNpc extends BasicNpc {
     public HumanEntity getBukkitEntity() {
         return (HumanEntity) this.mcEntity.getBukkitEntity();
     }
+    
+    public LivingEntity getAggro()
+    {
+    	return this.mAggro;
+    	
+    }
+    
+    public LivingEntity getFollow()
+    {
+    	return this.mFollow;
+    	
+    }
+    
+    public void setAggro(LivingEntity aggro)
+    {
+    	if (this.stuck == 0)
+    	{
+    		// Start my stuck check timer
+    		this.stuck = 1;
+    	}
+    	
+    	this.mAggro = aggro;
+    	
+    }
+    
+    public void setFollow(LivingEntity aggro)
+    {
+    	if (this.stuck == 0)
+    	{
+    		// Start my stuck check timer
+    		this.stuck = 1;
+    	}
+    	
+    	this.mFollow = aggro;
+    	
+    }
 
     protected CHumanNpc getMCEntity() {
         return this.mcEntity;
@@ -70,11 +106,13 @@ public class BasicHumanNpc extends BasicNpc {
     
     public void checkNotStuck()
     {
-    	if (stuck > 50000)
+    	if (stuck > 1400)
     	{
-    		this.follow = null;
-    		this.aggro = null;
+    		this.setFollow(null);
+    		this.setAggro(null);
     		this.stuck = 0;
+    		Location loc = new Location (this.getBukkitEntity().getWorld(),spawnx,spawny,spawnz,spawnyaw,spawnpitch);
+    		this.forceMove(loc);
     		
     	} else {
     		if (stuck == 0)
@@ -141,7 +179,7 @@ public class BasicHumanNpc extends BasicNpc {
 	    		//return;
 			} else {
 	    		
-		    	if (follow == null && aggro == null)
+		    	if (getFollow() == null && getAggro() == null)
 		    	{
 		    		//System.out.println("npcx : moving  ["+ spawnx + "] ["+ spawny + "] ["+ spawnz + "]");
 		    		
@@ -169,26 +207,26 @@ public class BasicHumanNpc extends BasicNpc {
 	    	// NPC FOLLOW
 	    	//
 	    	
-			if (follow instanceof LivingEntity)
+			if (getFollow() instanceof LivingEntity)
 			{
-				if (this.follow != null)
+				if (this.getFollow() != null)
 				{
-						Debug(1,this.getName() + ":follow:" + follow.toString()+":"+follow.getHealth());
+						Debug(1,this.getName() + ":follow:" + getFollow().toString()+":"+getFollow().getHealth());
 						// lets follow this entity
-						if (this.hp == 0 || this.follow.getHealth() == 0)
+						if (this.hp == 0 || this.getFollow().getHealth() == 0)
 						{
 							
 							// they're dead, stop following
-							this.follow = null;
-							this.aggro = null;
+							this.setFollow(null);
+							this.setAggro(null);
 							
 							
 						} else {
 							
 							// they're alive lets check distance
-							double x1 = this.follow.getLocation().getX();
-				    		double y1 = this.follow.getLocation().getY();
-				    		double z1 = this.follow.getLocation().getZ();
+							double x1 = this.getFollow().getLocation().getX();
+				    		double y1 = this.getFollow().getLocation().getY();
+				    		double z1 = this.getFollow().getLocation().getZ();
 				    		
 				    		double x2 = this.getBukkitEntity().getLocation().getX();
 				    		double y2 = this.getBukkitEntity().getLocation().getY();
@@ -200,11 +238,11 @@ public class BasicHumanNpc extends BasicNpc {
 				    		if (xdist > -30 && xdist < 30 && ydist > -30 && ydist < 30 && zdist > -30 && zdist < 30)
 				    		{
 				    			Debug(1,this.getName() + ":Attacking a monster near to me");
-				    			this.moveCloserToLocation(this.follow.getLocation());
+				    			this.moveCloserToLocation(this.getFollow().getLocation());
 				    		} else {
 				    			// too far for me
-				    			this.follow = null;
-								this.aggro = null;
+				    			this.setFollow(null);
+								this.setAggro(null);
 				    		}
 						}
 				}
@@ -214,17 +252,17 @@ public class BasicHumanNpc extends BasicNpc {
 			// NPC ATTACK
 			//
 			
-			if (aggro instanceof LivingEntity)
+			if (getAggro() instanceof LivingEntity)
 			{
 				// lets follow this entity
-				if (this.aggro != null)
+				if (this.getAggro() != null)
 					{
 					if (this.hp == 0)
 					{
-						this.follow = null;
-						this.aggro = null;
+						this.setFollow(null);
+						this.setAggro(null);
 					} else {
-						attackLivingEntity(aggro);
+						attackLivingEntity(getAggro());
 					}
 				}
 			}
@@ -713,8 +751,8 @@ public class BasicHumanNpc extends BasicNpc {
 	            if ((ent.getHealth() - dmg) <= 0)
 	            {
 	            	ent.damage(200);
-	            	follow = null;
-	            	aggro = null;
+	            	setFollow(null);
+	            	setAggro(null);
 	            	if (ent instanceof Player)
 	            	{
 	            		((Player) ent).getServer().broadcastMessage(((Player) ent).getName() + " was slaughtered by " + getName() + ".");
@@ -777,8 +815,8 @@ public class BasicHumanNpc extends BasicNpc {
 	            }
         	} else {
         		// no health, not worth the effort
-        		follow = null;
-            	aggro = null;
+        		setFollow(null);
+            	setAggro(null);
         	}
         } catch (Exception e) {
             e.printStackTrace();
@@ -843,8 +881,8 @@ public class BasicHumanNpc extends BasicNpc {
 	
 	public void onNpcVsNpcDamage(myNPC anpc) {
 		
-    	this.follow = anpc.npc.getBukkitEntity();
-    	this.aggro = anpc.npc.getBukkitEntity();
+    	this.setFollow(anpc.npc.getBukkitEntity());
+    	this.setAggro(anpc.npc.getBukkitEntity());
         
         try
         {
@@ -854,8 +892,8 @@ public class BasicHumanNpc extends BasicNpc {
 
         	if (this.hp < 1)
         	{
-        		anpc.npc.follow = null;
-        		anpc.npc.aggro = null;
+        		anpc.npc.setFollow(null);
+        		anpc.npc.setAggro(null);
         		
         		//System.out.println("I just died!!");		            		
         		this.onDeathFromNPC(anpc.npc.getBukkitEntity());
@@ -865,8 +903,8 @@ public class BasicHumanNpc extends BasicNpc {
         } 
         catch (Exception e)
         {
-        	this.follow = null;
-        	this.aggro = null;
+        	this.setFollow(null);
+        	this.setAggro(null);
         	e.printStackTrace();
         }
 	}
@@ -888,11 +926,6 @@ public class BasicHumanNpc extends BasicNpc {
 		    {
 				EntityDamageByEntityEvent edee = (EntityDamageByEntityEvent) event;
 				
-				// Process monster damage only
-				// Do the rest in myNPC
-				
-				//if (edee.getDamager() instanceof Monster)
-				//{
 					
 			        if (this != null && edee.getDamager() instanceof LivingEntity) 
 			        {
@@ -904,7 +937,7 @@ public class BasicHumanNpc extends BasicNpc {
 			        		{
 			        			if (player.player == edee.getDamager())
 			        			{
-			        				if (this.aggro == null)
+			        				if (this.getAggro() == null)
 			        				{
 			        					// First time sent an event
 			        					this.parent.onPlayerAggroChange(player);
@@ -913,8 +946,8 @@ public class BasicHumanNpc extends BasicNpc {
 			        			}
 			        		}
 			        	}
-			        	this.follow = (LivingEntity)p;
-			        	this.aggro = (LivingEntity)p;
+			        	this.setFollow((LivingEntity)p);
+			        	this.setAggro((LivingEntity)p);
 			            
 			            try
 			            {
@@ -933,13 +966,12 @@ public class BasicHumanNpc extends BasicNpc {
 			            } 
 			            catch (Exception e)
 			            {
-			            	this.follow = null;
-			            	this.aggro = null;
-							//System.out.println("npcx : forgot about target");
-			            	// do not modify mobs health
+			            	this.setFollow(null);
+			            	this.setAggro(null);
+							
 			            }
 			        }
-				//}
+				
 		    }
 	}
 
