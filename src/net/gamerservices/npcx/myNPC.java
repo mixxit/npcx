@@ -153,7 +153,7 @@ public class myNPC {
 							
 
 							// NPCSUMMONWOLF
-							if (tw.response.toLowerCase().contains(npcsummonzombie.toLowerCase()))
+							if (tw.response.toLowerCase().contains(npcsummonwolf.toLowerCase()))
 							{
 								
 								npc.getBukkitEntity().getWorld().spawnCreature(this.npc.getBukkitEntity().getLocation(),CreatureType.WOLF);
