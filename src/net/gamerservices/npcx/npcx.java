@@ -1893,7 +1893,7 @@ public class npcx extends JavaPlugin {
            			   	   	   int pricebuy = rspginspect.getInt ("pricebuy");
            			   	   	   int pricesell = rspginspect.getInt ("pricesell");
               				   
-        	       		       player.sendMessage("EID:"+idVal+":MID:"+merchantid+" Item:"+itemid +" - Amount: "+amount+" Buying: "+pricebuy+"Selling: "+pricesell);
+        	       		       player.sendMessage("EID:"+idVal+":MID:"+merchantid+" Item:"+itemid +" - Amount: "+amount+" B: "+pricebuy+"S: "+pricesell);
         	       		       ++count;
               		   }
               		   rspginspect.close ();

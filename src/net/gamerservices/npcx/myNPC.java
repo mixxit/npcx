@@ -458,12 +458,12 @@ public class myNPC {
 									{
 										if (!this.merchant.category.equals("nolimit"))
 										{
-											say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") x " + item.amount + " Selling: $" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying: $" + ChatColor.YELLOW+ item.pricebuy);
+											say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") x " + item.amount + " S: " + ChatColor.YELLOW + "$" + item.pricesell + ChatColor.WHITE + " B: " + ChatColor.YELLOW+"$" + item.pricebuy);
 										} else {
-											say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") Selling:$" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying:" + ChatColor.YELLOW + item.pricebuy);
+											say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") S:" + ChatColor.YELLOW +"$" + item.pricesell + ChatColor.WHITE + " B:" + ChatColor.YELLOW +"$" + item.pricebuy);
 										}
 									} else {
-										say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE+") x " + item.amount + " Selling:$" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying:" + ChatColor.YELLOW + item.pricebuy);
+										say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE+") x " + item.amount + " S:" + ChatColor.YELLOW + "$" +item.pricesell + ChatColor.WHITE + " B:" + ChatColor.YELLOW + "$" +item.pricebuy);
 									}
 								}
 							}
