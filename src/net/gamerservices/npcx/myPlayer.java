@@ -25,6 +25,7 @@ public class myPlayer {
 	public int lastchunkx;
 	public int lastchunkz;
 	public String lastchunkname;
+	public boolean toggle = true;
 	
 	
 	myPlayer(npcx parent,Player player, String name)

@@ -725,11 +725,18 @@ public class npcx extends JavaPlugin {
 		            	player.sendMessage("/civ abandon - abandons the civilisation area");
 		            	player.sendMessage("/civ pay playername amount - pays a player an amount");
 		            	player.sendMessage("/civ name name - name a civilisation area");
+		            	player.sendMessage("/civ toggle - toggle on/off area info");
+		            	
 		            	
 		            	
 		            	return false;
 		            }
 					String subCommand = args[0].toLowerCase();
+					
+					if (subCommand.equals("toggle"))
+		            {
+						player.sendMessage("* Toggled zone info to is: " + this.universe.togglePlayerZoneInfo(player));
+					}
 					
 					if (subCommand.equals("name"))
 		            {

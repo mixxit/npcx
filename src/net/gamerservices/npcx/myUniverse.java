@@ -2276,5 +2276,20 @@ public class myUniverse {
 		}
 	}
 
+	public boolean togglePlayerZoneInfo(Player player) {
+		// TODO Auto-generated method stub
+		myPlayer myplayer = this.findmyPlayerByPlayer(player);
+		if (myplayer.toggle == false)
+		{
+			myplayer.toggle = true;
+			return true;
+		} else {
+			myplayer.toggle = false;
+			return false;
+			
+		}
+		
+	}
+
 	
 }
