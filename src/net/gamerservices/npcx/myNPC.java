@@ -1423,6 +1423,12 @@ public class myNPC {
 	public void onClosestPlayer(Player p) {
 		// TODO Auto-generated method stub
 		
+		if (p instanceof CHumanNpc)
+		{
+			// ignroe other npcs
+			return;
+		}
+		
 		if (triggerwords != null)
 		{
 			int count2 = 0;
@@ -1506,7 +1512,7 @@ public class myNPC {
 			// Killed by an npc
 			return;
 		}
-		
+		System.out.println("Not killed by an npc");
 		// above is to 
 		// make sure this is just for a HUMAN player
 		if (p instanceof Player)
