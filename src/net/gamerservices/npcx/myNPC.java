@@ -403,7 +403,7 @@ public class myNPC {
 		if (aMsg[0].toLowerCase().matches("help"))
 		{
 						
-			say(player,"What do you need? [list], [sell] or [buy]");
+			say(player,"What do you need? "+ChatColor.LIGHT_PURPLE +"[list], [sell]"+ChatColor.WHITE+" or "+ChatColor.LIGHT_PURPLE+"[buy]");
 			return;
 		}
 		
@@ -414,7 +414,7 @@ public class myNPC {
 			if (this.merchant != null)
 			{
 				int mysize = this.merchant.merchantentries.size();
-				say(player,"Checking my list of: " + mysize);
+				say(player,"Checking my list of: " + ChatColor.LIGHT_PURPLE + mysize);
 				boolean match = false;
 				
 	
@@ -440,9 +440,9 @@ public class myNPC {
 									{
 										if (!this.merchant.category.equals("nolimit"))
 										{
-											say(player,Material.matchMaterial(aMsg[1]) + " x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+											say(player,ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " x " + item.amount + " Selling: $" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying: $" + ChatColor.YELLOW+ item.pricebuy);
 										} else {
-											say(player,Material.matchMaterial(aMsg[1]) + " x UNLIMITED selling at " + item.pricesell + " Buying at " + item.pricebuy);
+											say(player,ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " x UNLIMITED Selling:$" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying:" + ChatColor.YELLOW + item.pricebuy);
 											
 										}
 									}
@@ -457,12 +457,12 @@ public class myNPC {
 									{
 										if (!this.merchant.category.equals("nolimit"))
 										{
-											say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+											say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") x " + item.amount + " Selling: $" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying: $" + ChatColor.YELLOW+ item.pricebuy);
 										} else {
-											say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x UNLIMITED selling at " + item.pricesell + " Buying at " + item.pricebuy);
+											say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") x UNLIMITED Selling:$" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying:" + ChatColor.YELLOW + item.pricebuy);
 										}
 									} else {
-										say(player,item.itemid + "("+Material.matchMaterial(Integer.toString(item.itemid)).toString()+") x " + item.amount + " selling at " + item.pricesell + " Buying at " + item.pricebuy);
+										say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE+") x " + item.amount + " Selling:$" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying:" + ChatColor.YELLOW + item.pricebuy);
 									}
 								}
 							}
@@ -470,7 +470,7 @@ public class myNPC {
 						
 					}
 				}
-				say(player,count + " items in the Merchant.'");
+				say(player,ChatColor.LIGHT_PURPLE + "" + count + ChatColor.WHITE + " items in the Merchant.'");
 				
 				return;
 			}
@@ -484,7 +484,7 @@ public class myNPC {
 		{
 			if (aMsg.length < 3)
 			{		
-				say(player,"sell [itemid] [amount]");
+				say(player,"sell " + ChatColor.LIGHT_PURPLE + "[itemid] [amount]");
 				return;
 			} else {
 				
@@ -515,16 +515,16 @@ public class myNPC {
 				} catch (NullPointerException e)
 				{
 					// lol
-					say(player,"Hmm try another item similar named to "+aMsg[1]+" and i might be interested.");
+					say(player,"Hmm try another item similar named to "+ChatColor.LIGHT_PURPLE + aMsg[1]+ChatColor.WHITE+" and i might be interested.");
 
-					say(player,"Hmm try another item similar named to "+aMsg[1]+" and i might be interested.");
+					say(player,"Hmm try another item similar named to "+ChatColor.LIGHT_PURPLE + aMsg[1]+ChatColor.WHITE+" and i might be interested.");
 					//e.printStackTrace();
 					return;
 				
 				} catch (Exception e)
 				{
 					this.parent.sendPlayerItemList(player.player);
-					say(player,"Hmm try another item similar named to "+aMsg[1]+" and i might be interested.");
+					say(player,"Hmm try another item similar named to "+ChatColor.LIGHT_PURPLE + aMsg[1]+ChatColor.WHITE+" and i might be interested.");
 					//e.printStackTrace();
 					return;
 					
@@ -557,7 +557,7 @@ public class myNPC {
 				if (count >= item.getAmount())
 				{
 					
-					say(player,"Ok thats "+ item.getAmount() +" out of your "+count +".");
+					say(player,"Ok thats "+ ChatColor.YELLOW+item.getAmount() + ChatColor.WHITE + " out of your "+ ChatColor.YELLOW + count + ChatColor.WHITE +".");
 					int totalcoins = 0;
 					int buysat = getMerchantPriceBuyAt(Merchantitem.item.getTypeId());
 					if (buysat == 0)
@@ -578,7 +578,7 @@ public class myNPC {
 								{
 									player.player.getInventory().removeItem(item);
 									entry.amount = entry.amount + item.getAmount();
-									say(player,"Thanks! Heres your " + totalcoins + " coins.");
+									say(player,"Thanks! Heres your " + ChatColor.YELLOW+ totalcoins + ChatColor.WHITE+ " coins.");
 									
 									this.coin = this.coin - totalcoins;
 									player.addPlayerBalance(player.player,totalcoins);
@@ -591,7 +591,7 @@ public class myNPC {
 	
 							
 						} else {
-							say(player,"Sorry, I only have: "+this.coin+" and thats worth "+totalcoins+"!");
+							say(player,"Sorry, I only have: "+ChatColor.YELLOW+this.coin+ChatColor.WHITE+" and thats worth "+ChatColor.YELLOW+totalcoins+ChatColor.WHITE+"!");
 							return;
 						}
 					} else {
@@ -603,7 +603,7 @@ public class myNPC {
 							{
 								player.player.getInventory().removeItem(item);
 								entry.amount = entry.amount + item.getAmount();
-								say(player,"Thanks! Heres your " + totalcoins + " coins.");
+								say(player,"Thanks! Heres your " + ChatColor.YELLOW+ totalcoins + ChatColor.WHITE+ " coins.");
 								
 								this.coin = this.coin - totalcoins;
 								player.addPlayerBalance(player.player,totalcoins);
@@ -618,7 +618,7 @@ public class myNPC {
 					
 				} else {
 					
-					say(player,"Sorry, you only have: "+count+" !");
+					say(player,"Sorry, you only have: "+ChatColor.YELLOW+count+ChatColor.WHITE+" !");
 					return;
 				}
 			}
@@ -631,7 +631,7 @@ public class myNPC {
 		{
 			if (aMsg.length < 3)
 			{
-				say(player,"buy [itemid] [amount]");
+				say(player,"buy " + ChatColor.LIGHT_PURPLE+ "[itemid] [amount]");
 				return;
 			} else {
 				
@@ -672,7 +672,7 @@ public class myNPC {
 										if (cost <= player.getPlayerBalance(player.player))
 										{
 											player.player.getInventory().addItem(i);
-											say(player,"Thanks! That's " + cost + " total coins!");
+											say(player,"Thanks! That's " + ChatColor.YELLOW+ cost +ChatColor.WHITE+ " total coins!");
 											player.subtractPlayerBalance(player.player,cost);		
 											return;
 										} else {
@@ -693,7 +693,7 @@ public class myNPC {
 							
 							
 						} else {
-							say(player,"Sorry, out of stock in that item. Have you tried our [list]?");
+							say(player,"Sorry, out of stock in that item. Have you tried our "+ChatColor.LIGHT_PURPLE+"[list]"+ChatColor.WHITE+"?");
 							return;
 						}
 					} else {
@@ -714,7 +714,7 @@ public class myNPC {
 										if (cost <= player.getPlayerBalance(player.player))
 										{
 											player.player.getInventory().addItem(i);
-											say(player,"Thanks! That's " + cost + " total coins!");
+											say(player,"Thanks! That's " + ChatColor.YELLOW+ cost + ChatColor.WHITE+" total coins!");
 											player.subtractPlayerBalance(player.player,cost);		
 											return;
 										} else {
@@ -750,7 +750,7 @@ public class myNPC {
 											if (cost <= player.getPlayerBalance(player.player))
 											{
 												player.player.getInventory().addItem(i);
-												say(player,"Thanks! That's " + cost + " total coins!");
+												say(player,"Thanks! That's " + ChatColor.YELLOW+cost + ChatColor.WHITE+" total coins!");
 												player.subtractPlayerBalance(player.player,cost);		
 												return;
 											} else {
@@ -771,7 +771,7 @@ public class myNPC {
 								
 								
 							} else {
-								say(player,"Sorry, out of stock in that item. Have you tried our [list]?");
+								say(player,"Sorry, out of stock in that item. Have you tried our "+ChatColor.LIGHT_PURPLE+"[list]"+ChatColor.WHITE+"?");
 								return;
 							}
 							
@@ -784,7 +784,7 @@ public class myNPC {
 		}
 		
 		// Unknown command
-		say(player,"Sorry, can i [help] you?");
+		say(player,"Sorry, can i "+ChatColor.LIGHT_PURPLE+"[help]"+ChatColor.WHITE+" you?");
 		
 		return;
 			
@@ -965,8 +965,12 @@ public class myNPC {
 		// TODO Auto-generated method stub
 		
 		myPlayer mp = this.parent.universe.getmyPlayer(player);
-		
-		int balance = mp.getPlayerBalance(player);
+		System.out.println("npcx : Can't find "+player.getName()+"in the directory");
+		int balance = 0;
+		if (mp != null)
+		{
+			balance = mp.getPlayerBalance(player);
+		}
 		
 		
 		String newresponse = response;

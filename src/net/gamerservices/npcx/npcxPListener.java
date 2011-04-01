@@ -349,11 +349,11 @@ public class npcxPListener extends PlayerListener {
 				// dont provide them info, just update them
 				this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
 				this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
-				this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
+				this.parent.universe.setPlayerLastChunkName(event.getPlayer(),"Unknown Zone");
 				
 			}
 			
-			event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"This server runs NPCX with Civilizations enabled!");
+			event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"This server runs "+ChatColor.YELLOW+"NPCX"+ChatColor.WHITE+" with Civilizations enabled!");
 			event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"To claim your own piece of paradise use /civ buy!");
 		}
 		//System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
