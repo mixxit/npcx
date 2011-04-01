@@ -839,12 +839,15 @@ public class npcx extends JavaPlugin {
 								z.setOwner("");
 								z.name = "Abandoned land";
 								
+														
 								for (myZoneMember zm : this.universe.zonemembers.values())
 								{
 									if (zm.zoneid == z.id)
 									{
 										// member of town
+										this.universe.removeZoneMember(zm.id);
 										zm = null;
+										
 									}
 								}
 								
@@ -1357,6 +1360,17 @@ public class npcx extends JavaPlugin {
 										z.setOwner("");
 										z.name = "Refurbished land";
 										player.sendMessage("You just released region: ["+ChatColor.LIGHT_PURPLE+z.x+","+z.z+""+ChatColor.WHITE+"]!");
+										
+										for (myZoneMember zm : this.universe.zonemembers.values())
+										{
+											if (zm.zoneid == z.id)
+											{
+												// member of town
+												this.universe.removeZoneMember(zm.id);
+												zm = null;
+												
+											}
+										}
 										
 										this.universe.setPlayerLastChunkX(player,z.x);
 										this.universe.setPlayerLastChunkZ(player,z.z);

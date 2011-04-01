@@ -2230,5 +2230,20 @@ public class myUniverse {
 		return null;
 	}
 
+	public void removeZoneMember(int id) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		try {
+			PreparedStatement stmt = this.parent.universe.conn.prepareStatement("DELETE FROM zone_members WHERE id = ?");
+			stmt.setInt(1,id);
+			stmt.executeUpdate();
+			stmt.close();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+
 	
 }
