@@ -2257,5 +2257,17 @@ public class myUniverse {
 		
 	}
 
+	public void setZoneName(int id, String string) {
+		// TODO Auto-generated method stub
+		for (myZone z : zones)
+		{
+			if (z.id == id)
+			{
+				z.setName(string);
+			}
+			
+		}
+	}
+
 	
 }

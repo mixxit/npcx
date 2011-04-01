@@ -45,4 +45,25 @@ public class myZone {
 			e.printStackTrace();
 		}
 	}
+
+
+	public void setName(String string) {
+		// TODO Auto-generated method stub
+		try {
+			//System.out.println("npcx :myZone:setOwner:"+name2+":"+this.id);
+			PreparedStatement stmt = this.parent.parent.universe.conn.prepareStatement("UPDATE zone set name=? WHERE id = ?");
+			stmt.setString(1,string);
+			stmt.setInt(2,this.id);
+			stmt.setInt(3,this.id);
+			
+			stmt.executeUpdate();
+			stmt.close();
+			
+			
+			this.name = string;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 }

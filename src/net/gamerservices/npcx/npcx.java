@@ -718,18 +718,59 @@ public class npcx extends JavaPlugin {
 					}
 					Player player = (Player) sender;
 					if (args.length < 1) {
-		            	player.sendMessage("/civ buy  - buys a civilizations area");
-		            	player.sendMessage("/civ add playername - adds a player to a civilization area");
+		            	player.sendMessage("/civ buy  - buys a civilisations area");
+		            	player.sendMessage("/civ add playername - adds a player to a civilisation area");
 		            	player.sendMessage("/civ balance - lists your bank balance");
-		            	player.sendMessage("/civ here - lists info about the civilization area you are at");
-		            	player.sendMessage("/civ abandon - abandons the civilization area");
+		            	player.sendMessage("/civ here - lists info about the civilisation area you are at");
+		            	player.sendMessage("/civ abandon - abandons the civilisation area");
 		            	player.sendMessage("/civ pay playername amount - pays a player an amount");
+		            	player.sendMessage("/civ name name - name a civilisation area");
 		            	
 		            	
 		            	return false;
 		            }
 					String subCommand = args[0].toLowerCase();
 					
+					if (subCommand.equals("name"))
+		            {
+						int playerx = this.universe.getZoneCoord(player.getLocation().getX());
+						int playerz = this.universe.getZoneCoord(player.getLocation().getZ());
+						if (args.length < 2) {
+	            			player.sendMessage("Insufficient arguments /civ name name");
+	            			return false;
+						}
+						int count = 0;
+						player.sendMessage("Searching for zones...");
+						
+						for (myZone z : this.universe.zones)
+						{
+							if (z.x == playerx && z.z == playerz)
+							{
+								count++;
+								player.sendMessage("Located your zone.. checking privileges...");
+								// are they the owner?
+								if (z.ownername.equals(player.getName()))
+								{
+									player.sendMessage("You are the owner");
+
+									
+									this.universe.setZoneName(z.id,args[1]);
+									player.sendMessage("Zone name set!!");
+									
+									return true;
+									
+								} else {
+									player.sendMessage("You cannot name this civilization area as you are not the owner ("+this.universe.getZoneOwnerName(z.id)+")!");
+									return false;
+								}
+							}
+						}
+						if (count == 0)
+						{
+							player.sendMessage("That zone does not exist");
+
+						}
+					}
 					
 					if (subCommand.equals("balance"))
 		            {
@@ -737,6 +778,8 @@ public class npcx extends JavaPlugin {
 						int balance = player2.getPlayerBalance(player);
 						player.sendMessage("* Your balance is: " + balance);
 					}
+					
+					
 					
 					if (subCommand.equals("pay"))
 		            {
