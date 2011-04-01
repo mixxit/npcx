@@ -44,15 +44,16 @@ public class myPlayer {
 			return (int)account.getBalance();
 		} catch (NoClassDefFoundError e)
 		{
-			this.getNPCXBalance();
+			System.out.println("Failed to find iconomy - using NPCX");
+			
 			//e.printStackTrace();
 			// We don't have iConomy
-			return 0;
+			return this.getNPCXBalance();
 		}catch (NullPointerException e)
 		{
 			this.getNPCXBalance();
 			// We don't have iConomy
-			return 0;
+			return this.getNPCXBalance();
 		}
 	}
 
