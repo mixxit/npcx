@@ -2201,6 +2201,18 @@ public class myUniverse {
 		return false;
 	}
 
+	public myPlayer getmyPlayer(String name) {
+		// TODO Auto-generated method stub
+		for (myPlayer p : this.players.values())
+		{
+			if (p.player.getName().equals(name))
+			{
+				return p;
+			}
+		}
+		return null;
+	}
+	
 	public myPlayer getmyPlayer(Player player) {
 		// TODO Auto-generated method stub
 		for (myPlayer p : this.players.values())

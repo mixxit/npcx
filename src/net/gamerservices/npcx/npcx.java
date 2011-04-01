@@ -718,12 +718,13 @@ public class npcx extends JavaPlugin {
 					}
 					Player player = (Player) sender;
 					if (args.length < 1) {
-		            	player.sendMessage("Insufficient arguments /civ buy");
-		            	player.sendMessage("Insufficient arguments /civ add playername");
-		            	player.sendMessage("Insufficient arguments /civ balance");
-		            	player.sendMessage("Insufficient arguments /civ here");
-		            	player.sendMessage("Insufficient arguments /civ gift playername");
-		            	player.sendMessage("Insufficient arguments /civ abandon");
+		            	player.sendMessage("/civ buy  - buys a civilizations area");
+		            	player.sendMessage("/civ add playername - adds a player to a civilization area");
+		            	player.sendMessage("/civ balance - lists your bank balance");
+		            	player.sendMessage("/civ here - lists info about the civilization area you are at");
+		            	player.sendMessage("/civ abandon - abandons the civilization area");
+		            	player.sendMessage("/civ pay playername amount - pays a player an amount");
+		            	
 		            	
 		            	return false;
 		            }
@@ -737,12 +738,56 @@ public class npcx extends JavaPlugin {
 						player.sendMessage("* Your balance is: " + balance);
 					}
 					
+					if (subCommand.equals("pay"))
+		            {
+						if (args.length < 3) {
+	            			player.sendMessage("Insufficient arguments /civ pay playername amount");
+	            			return false;
+						}
+						int amount = 0;
+						// Is their amount correct?
+						try {
+							amount = Integer.parseInt(args[2]);
+							
+						} catch (NumberFormatException ex)
+						{
+							player.sendMessage("Cannot pay that amount");
+							return false;
+						}
+						
+						// Check amount and send
+						if (amount > 0)
+						{
+							myPlayer me = this.universe.getmyPlayer(player);
+							myPlayer recipient = this.universe.getmyPlayer(args[1]);
+							
+							if (recipient != null && me != null && recipient.player != null && me.player != null)
+							{
+								int balanceme = me.getPlayerBalance(me.player);
+								
+								if(balanceme >= amount)
+								{
+									// Change accounts
+									recipient.addPlayerBalance(recipient.player, amount);
+									recipient.subtractPlayerBalance(recipient.player, amount);
+									
+									
+								}
+								
+			            	} else {
+			            		player.sendMessage("Sorry one of those accounts doesn't exist or is offline");
+			            	}
+						} else {
+							player.sendMessage("Cannot pay that amount");
+						}
+					}
+					
 					if (subCommand.equals("add"))
 		            {
 						int playerx = this.universe.getZoneCoord(player.getLocation().getX());
 						int playerz = this.universe.getZoneCoord(player.getLocation().getZ());
 						if (args.length < 2) {
-	            			player.sendMessage("Insufficient arguments /npcx civ add playername");
+	            			player.sendMessage("Insufficient arguments /civ add playername");
 	            			return false;
 						}
 						int count = 0;
