@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import net.gamerservices.npclibfork.CHumanNpc;
+
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -2185,6 +2187,18 @@ public class myUniverse {
 			
 		}
 		return null;
+	}
+	
+	public boolean isLivingEntityAnNPC(LivingEntity e)
+	{
+		for (myNPC n : this.npcs.values())
+		{
+			if (n.npc == e)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public myPlayer getmyPlayer(Player player) {

@@ -443,7 +443,7 @@ public class myNPC {
 										{
 											say(player,ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " x " + item.amount + " Selling: $" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying: $" + ChatColor.YELLOW+ item.pricebuy);
 										} else {
-											say(player,ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " x UNLIMITED Selling:$" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying:" + ChatColor.YELLOW + item.pricebuy);
+											say(player,ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " Selling:$" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying:" + ChatColor.YELLOW + item.pricebuy);
 											
 										}
 									}
@@ -460,7 +460,7 @@ public class myNPC {
 										{
 											say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") x " + item.amount + " Selling: $" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying: $" + ChatColor.YELLOW+ item.pricebuy);
 										} else {
-											say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") x UNLIMITED Selling:$" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying:" + ChatColor.YELLOW + item.pricebuy);
+											say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") Selling:$" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying:" + ChatColor.YELLOW + item.pricebuy);
 										}
 									} else {
 										say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE+") x " + item.amount + " Selling:$" + ChatColor.YELLOW + item.pricesell + ChatColor.WHITE + " Buying:" + ChatColor.YELLOW + item.pricebuy);
@@ -1423,7 +1423,7 @@ public class myNPC {
 	public void onClosestPlayer(Player p) {
 		// TODO Auto-generated method stub
 		
-		if (p instanceof CHumanNpc)
+		if (this.parent.universe.isLivingEntityAnNPC(p))
 		{
 			// ignroe other npcs
 			return;
@@ -1469,7 +1469,7 @@ public class myNPC {
 		// TODO Auto-generated method stub
 		// TODO Auto-generated method stub
 		
-		if (p instanceof CHumanNpc)
+		if (this.parent.universe.isLivingEntityAnNPC(p))
 		{
 			// ignroe other npcs
 			return;
@@ -1504,10 +1504,12 @@ public class myNPC {
 		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation(),true));
 	}
 
+	
+	
 	public void onDeath(LivingEntity p) {
 		// TODO Auto-generated method stub
 	
-		if (p instanceof CHumanNpc)
+		if (this.parent.universe.isLivingEntityAnNPC(p))
 		{
 			// Killed by an npc
 			return;
@@ -1589,7 +1591,7 @@ public class myNPC {
 	public void onKilled(LivingEntity ent) {
 		// TODO Auto-generated method stub
 		
-		if (ent instanceof CHumanNpc)
+		if (this.parent.universe.isLivingEntityAnNPC(ent))
 		{
 			// dont want to generate stuff for player npcs atm
 			return;
