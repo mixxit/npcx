@@ -965,11 +965,14 @@ public class myNPC {
 		// TODO Auto-generated method stub
 		
 		myPlayer mp = this.parent.universe.getmyPlayer(player);
-		System.out.println("npcx : Can't find "+player.getName()+"in the directory");
+		
 		int balance = 0;
 		if (mp != null)
 		{
 			balance = mp.getPlayerBalance(player);
+		} else {
+			System.out.println("npcx : Can't find "+player.getName()+"in the directory");
+
 		}
 		
 		
