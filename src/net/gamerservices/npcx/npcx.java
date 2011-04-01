@@ -757,7 +757,7 @@ public class npcx extends JavaPlugin {
 									count++;
 									player.sendMessage("Located your zone.. checking privileges...");
 									// are they the owner?
-									if (this.universe.isZoneOwner(z.id, player.getName()))
+									if (z.ownername.equals(player.getName()))
 									{
 										player.sendMessage("You are the owner");
 	

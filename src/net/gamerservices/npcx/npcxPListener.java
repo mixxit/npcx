@@ -74,6 +74,9 @@ public class npcxPListener extends PlayerListener {
 							
 							} else {
 								// skip we've been here recently
+								this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
+								this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
+								this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);
 							}
 						} else {
 							// dont provide them info, just update them
@@ -83,7 +86,7 @@ public class npcxPListener extends PlayerListener {
 						}
 					}
 				} else {
-					
+					// Already this value
 				}
 		}
 	}
