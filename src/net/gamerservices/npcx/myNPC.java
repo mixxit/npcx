@@ -354,12 +354,66 @@ public class myNPC {
 			{
 				if (tw.word.toLowerCase().matches("event_receive"+item.getType().getId()))
 				{
+					String npcattack = "NPCATTACK";
+					String summonplayer = "NPCSUMMONPLAYER";
+					String npcsummonzombie = "NPCSUMMONZOMBIE";
+					String npcsummonwolf = "NPCSUMMONWOLF";
+					
+					
+					// NPCATTACK variable
+					if (tw.response.toLowerCase().contains(npcattack.toLowerCase()))
+					{
+							say(p,"You will regret that");
+							npc.setAggro(p.player);
+							npc.setFollow(p.player);
+							return;
+
+					}
+
+					// NPCSUMMONPLAYER
+					if (tw.response.toLowerCase().contains(summonplayer.toLowerCase()))
+					{
+							say(p,"Come here");
+							double x = npc.getBukkitEntity().getLocation().getX();
+							double y = npc.getBukkitEntity().getLocation().getY();
+							double z = npc.getBukkitEntity().getLocation().getZ();
+							Location location = new Location(npc.getBukkitEntity().getLocation().getWorld(), x, y, z);
+							
+							p.player.teleport(location);
+							return;
+
+					}
+
+					
+					
+					// NPCSUMMONMOB
+					if (tw.response.toLowerCase().contains(npcsummonzombie.toLowerCase()))
+					{
+						
+						npc.getBukkitEntity().getWorld().spawnCreature(this.npc.getBukkitEntity().getLocation(),CreatureType.ZOMBIE);
+						
+						say(p,"Look out");
+						return;
+					}
+					
+
+					// NPCSUMMONWOLF
+					if (tw.response.toLowerCase().contains(npcsummonwolf.toLowerCase()))
+					{
+						
+						npc.getBukkitEntity().getWorld().spawnCreature(this.npc.getBukkitEntity().getLocation(),CreatureType.WOLF);
+						
+						say(p,"It's a wolf!");
+						return;
+					}
+					
+					
 					String send = variablise(tw.response,p.player);
 					
 					say(p,send);
 					
 					count2++;
-					parseChat(p,"EVENT_ITEM");
+					
 				}
 			}
 			if (count2 == 0)
