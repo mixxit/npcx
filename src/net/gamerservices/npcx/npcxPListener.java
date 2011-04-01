@@ -325,6 +325,9 @@ public class npcxPListener extends PlayerListener {
 	public void onPlayerJoin(PlayerJoinEvent event) 
     {
 		myPlayer player = new myPlayer(this.parent,event.getPlayer(),event.getPlayer().getName());
+
+		
+		
 		if (this.parent.universe.nations.matches("true"))
 		{
 			// Area Coordinate = round down ( ( position / areasize ) + 0.9375 )
@@ -353,11 +356,24 @@ public class npcxPListener extends PlayerListener {
 				
 			}
 			
-			event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"This server runs "+ChatColor.YELLOW+"NPCX"+ChatColor.WHITE+" with Civilizations enabled!");
+			event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"This server runs "+ChatColor.YELLOW+"NPCX"+ChatColor.LIGHT_PURPLE+" with Civilizations enabled!");
 			event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"To claim your own piece of paradise use /civ buy!");
 		}
-		//System.out.println("npcx : added player ("+ event.getPlayer().getName()+")");
-		parent.universe.players.put(player.player.getName(), player);
+		int count = 0;
+		for (myPlayer p : this.parent.universe.players.values())
+		{
+			if (p.name.equals(event.getPlayer().getName()))
+			{
+				// attach them
+				p.player = event.getPlayer();
+				count++;
+			}
+		}
+		if (count == 0)
+		{
+			//System.out.println("npcx : added new player ("+ event.getPlayer().getName()+")");
+			parent.universe.players.put(player.player.getName(), player);
+		}
 		
     }
 	
