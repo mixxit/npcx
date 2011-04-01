@@ -54,7 +54,6 @@ public class myZone {
 			PreparedStatement stmt = this.parent.parent.universe.conn.prepareStatement("UPDATE zone set name=? WHERE id = ?");
 			stmt.setString(1,string);
 			stmt.setInt(2,this.id);
-			stmt.setInt(3,this.id);
 			
 			stmt.executeUpdate();
 			stmt.close();

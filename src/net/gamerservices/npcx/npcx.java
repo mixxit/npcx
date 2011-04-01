@@ -740,6 +740,19 @@ public class npcx extends JavaPlugin {
 	            			return false;
 						}
 						int count = 0;
+						
+						String fullname = "";
+            			int current = 2;
+            			while (current <=  args.length)
+            			{
+            				fullname = fullname + args[current-1]+" ";
+            				current++;
+            			}
+            			
+            			fullname = fullname.substring(0,fullname.length()-1);
+            			
+            			
+						
 						player.sendMessage("Searching for zones...");
 						
 						for (myZone z : this.universe.zones)
@@ -752,9 +765,7 @@ public class npcx extends JavaPlugin {
 								if (z.ownername.equals(player.getName()))
 								{
 									player.sendMessage("You are the owner");
-
-									
-									this.universe.setZoneName(z.id,args[1]);
+									this.universe.setZoneName(z.id,fullname);
 									player.sendMessage("Zone name set!!");
 									
 									return true;
