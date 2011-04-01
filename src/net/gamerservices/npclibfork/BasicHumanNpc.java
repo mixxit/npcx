@@ -44,7 +44,7 @@ public class BasicHumanNpc extends BasicNpc {
 	public double seekyaw;
 	public double seekpitch;
 	public Block lastloc;
-	
+	public int stuck;
     public CHumanNpc mcEntity;
     private static final Logger logger = Logger.getLogger("Minecraft");
     public myNPC parent;
@@ -66,6 +66,34 @@ public class BasicHumanNpc extends BasicNpc {
 
     protected CHumanNpc getMCEntity() {
         return this.mcEntity;
+    }
+    
+    public void checkNotStuck()
+    {
+    	if (stuck > 50000)
+    	{
+    		this.follow = null;
+    		this.aggro = null;
+    		this.stuck = 0;
+    		
+    	} else {
+    		if (stuck == 0)
+    		{
+    			// do nothing im fine
+    		}else {
+    			// am i away from spawn?
+    			double x = this.getBukkitEntity().getLocation().getX();
+    			double y = this.getBukkitEntity().getLocation().getY();
+    			double z = this.getBukkitEntity().getLocation().getZ();
+    			
+    			if (x != spawnx || y != spawny || z != spawnz)
+    			{
+    				stuck++;
+    			}
+    			
+    		}
+    		
+    	}
     }
     
     public void doThinkGreater()
@@ -231,6 +259,7 @@ public class BasicHumanNpc extends BasicNpc {
     
     public void doThinkLesser()
     {
+    	
     	if (this.parent != null)
     	{
     		Debug(1,"doThinkLesser:Checking if pathgroup is not null");
@@ -241,6 +270,9 @@ public class BasicHumanNpc extends BasicNpc {
 				doPathgroups();
 			}
     	}
+    	
+    	// How long have i been away from spawn?
+    	checkNotStuck();
     }
     
     
