@@ -2193,7 +2193,7 @@ public class myUniverse {
 	{
 		for (myNPC n : this.npcs.values())
 		{
-			if (n.npc == e)
+			if (n.npc.getBukkitEntity() == e)
 			{
 				return true;
 			}

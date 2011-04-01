@@ -778,12 +778,12 @@ public class BasicHumanNpc extends BasicNpc {
 		this.parent.onClosestPlayer(p);
 	}
 
-	public void onDeath(LivingEntity p) {
+	public void onDeathFromPlayer(LivingEntity p) {
 		if (this.dead != true)
 		{
 			// TODO Auto-generated method stub
 			this.dead = true;
-			this.parent.onDeath(p);
+			this.parent.onDeathFromPlayer(p);
 		}
 		
 	}
@@ -826,7 +826,7 @@ public class BasicHumanNpc extends BasicNpc {
         		anpc.npc.aggro = null;
         		
         		//System.out.println("I just died!!");		            		
-        		this.onDeath(anpc.npc.getBukkitEntity());
+        		this.onDeathFromNPC(anpc.npc.getBukkitEntity());
         		this.parent.parent.onNPCDeath(this);
         		
         	}
@@ -837,6 +837,15 @@ public class BasicHumanNpc extends BasicNpc {
         	this.aggro = null;
         	e.printStackTrace();
         }
+	}
+
+	private void onDeathFromNPC(HumanEntity bukkitEntity) {
+		if (this.dead != true)
+		{
+			// TODO Auto-generated method stub
+			this.dead = true;
+			this.parent.onDeath();
+		}
 	}
 
 	public void onDamage(EntityDamageEvent event) {
@@ -885,7 +894,7 @@ public class BasicHumanNpc extends BasicNpc {
 			            	{
 			            		
 			            		//System.out.println("I just died!!");		            		
-			            		this.onDeath((LivingEntity)p);
+			            		this.onDeathFromPlayer((LivingEntity)p);
 			            		this.parent.parent.onNPCDeath(this);
 			            		
 			            	}

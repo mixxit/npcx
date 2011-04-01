@@ -1506,7 +1506,7 @@ public class myNPC {
 
 	
 	
-	public void onDeath(LivingEntity p) {
+	public void onDeathFromPlayer(LivingEntity p) {
 		// TODO Auto-generated method stub
 	
 		if (this.parent.universe.isLivingEntityAnNPC(p))
@@ -1698,6 +1698,11 @@ public class myNPC {
 			
 		}
 		return damage;
+		
+	}
+
+	public void onDeath() {
+		// TODO Auto-generated method stub
 		
 	}
 }
