@@ -1360,7 +1360,7 @@ public class myNPC {
 			if (count2 == 0)
 			{
 				// If i dont have a triggerword, respond with
-				((Player) ent).sendMessage(npc.getName() + " says to you, 'Not a strong as I thought'");
+				((Player) ent).sendMessage(npc.getName() + " says to you, 'Not as strong as I thought'");
 			}
 			
 			

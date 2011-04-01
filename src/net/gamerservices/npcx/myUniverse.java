@@ -122,6 +122,10 @@ public class myUniverse {
 		 	{
 		 		System.out.println("*****************************************");
 		 		System.out.println("npcx : ERROR - Cannot find MySQL Library!");
+		 		System.out.println(" This error typically means you forgot   *");
+		 		System.out.println(" to put the exact named mysql connector  ");
+		 		System.out.println("   into your bukkit/lib folder (5.1.6)   *");
+		 		System.out.println("*  You can get this from the README      *");
 		 		System.out.println("*****************************************");
 		 		return false;
 		 	}
@@ -131,9 +135,12 @@ public class myUniverse {
 		 		conn = DriverManager.getConnection (dsn, dbuser, dbpass);
 		 	} catch (SQLException e)
 		 	{
-		 		System.out.println("*****************************************");
-		 		System.out.println("npcx : ERROR - Error during MySQL login ");
-		 		System.out.println("*****************************************");
+		 		System.out.println("*******************************************");
+		 		System.out.println("  npcx : ERROR - Error during MySQL login *");
+		 		System.out.println(" This generally means that you forgot to  *");
+		 		System.out.println(" create a MySQL user and database the same*");
+		 		System.out.println(" as defined in your npcx.properties file  *");
+		 		System.out.println("*******************************************");
 		 		e.printStackTrace();
 		 		return false;
 		 	}

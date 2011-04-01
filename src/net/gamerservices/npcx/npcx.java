@@ -983,10 +983,24 @@ public class npcx extends JavaPlugin {
 							if (z.x == playerx && z.z == playerz)
 							{
 								player.sendMessage("["+ChatColor.LIGHT_PURPLE+""+z.x+","+z.z+""+ChatColor.WHITE+"] "+ChatColor.YELLOW+""+z.name);
+								player.sendMessage("Owner: "+ChatColor.YELLOW+""+z.ownername);
+								
+								for (myZoneMember ze : this.universe.zonemembers.values())
+								{
+									if (ze.zoneid == z.id)
+									{
+										player.sendMessage("["+ChatColor.LIGHT_PURPLE+""+ze.playename+""+ChatColor.WHITE+" - member");
+									} else {
+										// zone not in list
+									}
+								}
+								
 							} else {
 								// zone not in list
 							}
 						}
+						
+						
 					}
 			
 		        }

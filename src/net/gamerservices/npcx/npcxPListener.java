@@ -58,9 +58,9 @@ public class npcxPListener extends PlayerListener {
 					{
 						if (lastname != null)
 						{
-							if (!zone.name.matches(lastname))
+							if (!zone.name.equals(lastname))
 							{
-								if (zone.ownername.matches(""))
+								if (zone.ownername.equals(""))
 								{
 									event.getPlayer().sendMessage("Zone: ["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] - "+ChatColor.YELLOW+"for sale");
 									
