@@ -735,7 +735,7 @@ public class npcx extends JavaPlugin {
 					
 					if (subCommand.equals("toggle"))
 		            {
-						player.sendMessage("* Toggled zone info to is: " + this.universe.togglePlayerZoneInfo(player));
+						player.sendMessage("* Toggled zone display to: " + this.universe.togglePlayerZoneInfo(player));
 					}
 					
 					if (subCommand.equals("name"))

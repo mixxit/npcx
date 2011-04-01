@@ -60,14 +60,18 @@ public class npcxPListener extends PlayerListener {
 						{
 							if (!zone.name.equals(lastname))
 							{
-								if (zone.ownername.equals(""))
+								if (this.parent.universe.getPlayerToggle(event.getPlayer()))
 								{
-									event.getPlayer().sendMessage("Zone: ["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] - "+ChatColor.YELLOW+"for sale");
-									
-								} else {
-									event.getPlayer().sendMessage("["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] "+ChatColor.LIGHT_PURPLE +""+zone.name + ""+ChatColor.WHITE+" Owner: "+ChatColor.YELLOW+""+zone.ownername);
-								}
 								
+									if (zone.ownername.equals(""))
+									{
+										event.getPlayer().sendMessage("Zone: ["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] - "+ChatColor.YELLOW+"for sale");
+										
+									} else {
+										event.getPlayer().sendMessage("["+ChatColor.LIGHT_PURPLE+""+xchunkloc+":"+zchunkloc+""+ChatColor.WHITE+"] "+ChatColor.LIGHT_PURPLE +""+zone.name + ""+ChatColor.WHITE+" Owner: "+ChatColor.YELLOW+""+zone.ownername);
+									}
+								
+								}
 								this.parent.universe.setPlayerLastChunkX(event.getPlayer(),xchunkloc);
 								this.parent.universe.setPlayerLastChunkZ(event.getPlayer(),zchunkloc);
 								this.parent.universe.setPlayerLastChunkName(event.getPlayer(),zone.name);

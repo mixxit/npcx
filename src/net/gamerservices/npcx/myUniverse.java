@@ -2291,5 +2291,11 @@ public class myUniverse {
 		
 	}
 
+	public boolean getPlayerToggle(Player player) {
+		// TODO Auto-generated method stub
+		myPlayer myplayer = this.findmyPlayerByPlayer(player);
+		return myplayer.toggle;
+	}
+
 	
 }
