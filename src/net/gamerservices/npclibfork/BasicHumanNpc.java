@@ -93,7 +93,7 @@ public class BasicHumanNpc extends BasicNpc {
 			    		int ydist = (int) (y1 - y2);
 			    		int zdist = (int) (z1 - z2);
 			    		
-			    		if ((xdist < -1 || xdist > 1) || (ydist < -1 || ydist > 1) || (zdist < -1 || zdist > 1))
+			    		if ((xdist < -3 || xdist > 3) || (ydist < -3 || ydist > 3) || (zdist < -3 || zdist > 3))
 			    		{
 			    			Debug(1,"player out of range, removing target");
 				    		p.target = null;

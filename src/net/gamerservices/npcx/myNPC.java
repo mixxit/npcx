@@ -1054,12 +1054,40 @@ public class myNPC {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
+	
+	
+	
 
 	public void onRightClick(Player p) {
 		// TODO Auto-generated method stub
 		for (myPlayer player : parent.universe.players.values()){
 			if (player.player == p)
 			{
+
+	    		double x1 = p.getLocation().getX();
+	    		double y1 = p.getLocation().getY();
+	    		double z1 = p.getLocation().getZ();
+	    		
+	    		double x2 = this.npc.getBukkitEntity().getLocation().getX();
+	    		double y2 = this.npc.getBukkitEntity().getLocation().getY();
+	    		double z2 = this.npc.getBukkitEntity().getLocation().getZ();
+	    		int xdist = (int) (x1 - x2);
+	    		int ydist = (int) (y1 - y2);
+	    		int zdist = (int) (z1 - z2);
+	    		
+	    		if ((xdist < -3 || xdist > 2) || (ydist < -3 || ydist > 3) || (zdist < -3 || zdist > 3))
+	    		{
+	    			// out of range to do this
+	    			
+	    			 p.sendMessage("You are too far away from this npc");
+	                 player.target = null;
+	                 return;
+	    		}
+				
+				
+				
 				if (player.target != null)
 				{
                     p.sendMessage("* Target cleared!");
