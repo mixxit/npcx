@@ -106,9 +106,11 @@ Begin creating your first spawn group at your location with
 
 Code:
 /npcx spawngroup create myfirstgroup
+* REMEMBER THE SPAWNGROUP ID THIS GIVES YOU
 Now create an npc called Guard
 Code:
 /npcx npc create Guard
+* REMEMBER THE NPCID THIS GIVES YOU
 Now add guard's id to your spawn group number
 Code:
 /npcx spawngroup add 1 1

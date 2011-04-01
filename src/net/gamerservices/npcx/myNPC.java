@@ -33,7 +33,6 @@ public class myNPC {
 	public myFaction faction;
 	public mySpawngroup spawngroup;
 	public myLoottable loottable;
-	public List< myShopItem > shop = new CopyOnWriteArrayList< myShopItem >();
 	public myMerchant merchant;
 	public int coin = 250000;
 	public HashMap<String, myTriggerword> triggerwords = new HashMap<String, myTriggerword>();
@@ -368,19 +367,13 @@ public class myNPC {
 	public void onPlayerChat(myPlayer myplayer, String message, String category)
 	{
 		parseChatGlobalCommands(myplayer, message);
-		if (category.matches("shop"))
+		if (category.matches("merchant"))
 		{
+			parseMerchant(myplayer, message);
 			parseChat(myplayer,message);
-			parseShop(myplayer, message);
 		
 		} else {
-			if (category.matches("merchant"))
-			{
-				parseChat(myplayer,message);
-				parseMerchant(myplayer, message);
-			} else {
-				parseChat(myplayer,message);
-			}
+			parseChat(myplayer,message);
 		}
 		
 		
@@ -441,9 +434,9 @@ public class myNPC {
 									{
 										if (!this.merchant.category.equals("nolimit"))
 										{
-											say(player,ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " x " + item.amount + " S: " + ChatColor.YELLOW + "$"+ item.pricesell + ChatColor.WHITE + " B: $" + ChatColor.YELLOW+ "$"+ item.pricebuy);
+											player.player.sendMessage(ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " x " + item.amount + " S: " + ChatColor.YELLOW + "$"+ item.pricesell + ChatColor.WHITE + " B: $" + ChatColor.YELLOW+ "$"+ item.pricebuy);
 										} else {
-											say(player,ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " S:" + ChatColor.YELLOW + "$" + item.pricesell + ChatColor.WHITE + " B:" + ChatColor.YELLOW + "$" + item.pricebuy);
+											player.player.sendMessage(ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(aMsg[1]) + ChatColor.WHITE + " S:" + ChatColor.YELLOW + "$" + item.pricesell + ChatColor.WHITE + " B:" + ChatColor.YELLOW + "$" + item.pricebuy);
 											
 										}
 									}
@@ -458,12 +451,12 @@ public class myNPC {
 									{
 										if (!this.merchant.category.equals("nolimit"))
 										{
-											say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") x " + item.amount + " S: " + ChatColor.YELLOW + "$" + item.pricesell + ChatColor.WHITE + " B: " + ChatColor.YELLOW+"$" + item.pricebuy);
+											player.player.sendMessage(item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") x " + item.amount + " S: " + ChatColor.YELLOW + "$" + item.pricesell + ChatColor.WHITE + " B: " + ChatColor.YELLOW+"$" + item.pricebuy);
 										} else {
-											say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") S:" + ChatColor.YELLOW +"$" + item.pricesell + ChatColor.WHITE + " B:" + ChatColor.YELLOW +"$" + item.pricebuy);
+											player.player.sendMessage(item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+ Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE +") S:" + ChatColor.YELLOW +"$" + item.pricesell + ChatColor.WHITE + " B:" + ChatColor.YELLOW +"$" + item.pricebuy);
 										}
 									} else {
-										say(player,item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE+") x " + item.amount + " S:" + ChatColor.YELLOW + "$" +item.pricesell + ChatColor.WHITE + " B:" + ChatColor.YELLOW + "$" +item.pricebuy);
+										player.player.sendMessage(item.itemid + "("+ChatColor.LIGHT_PURPLE + ""+Material.matchMaterial(Integer.toString(item.itemid)).toString()+ ChatColor.WHITE+") x " + item.amount + " S:" + ChatColor.YELLOW + "$" +item.pricesell + ChatColor.WHITE + " B:" + ChatColor.YELLOW + "$" +item.pricebuy);
 									}
 								}
 							}
@@ -471,7 +464,7 @@ public class myNPC {
 						
 					}
 				}
-				say(player,ChatColor.LIGHT_PURPLE + "" + count + ChatColor.WHITE + " items in the Merchant.'");
+				player.player.sendMessage(ChatColor.LIGHT_PURPLE + "" + count + ChatColor.WHITE + " items in the Merchant.");
 				
 				return;
 			}
@@ -1025,281 +1018,6 @@ public class myNPC {
 		
 	}
 
-
-
-	public void parseShop(myPlayer player, String message) 
-	{
-		// TODO Auto-generated method stub
-		//myplayer.player.sendMessage("Parsing:" + message + ":" + Integer.toString(this.triggerwords.size()));
-		String message2=message+" ";
-		String[] aMsg = message.split(" ");
-		int size = aMsg.length;
-		//player.player.sendMessage("DEBUG: " + size);
-		if (aMsg[0].toLowerCase().matches("help"))
-		{
-						
-			say(player,"What do you need? "+ChatColor.LIGHT_PURPLE+"[list]"+ChatColor.WHITE+", "+ChatColor.LIGHT_PURPLE+"[sell]"+ChatColor.WHITE+" or "+ChatColor.LIGHT_PURPLE+"[buy]"+ChatColor.WHITE);
-			return;
-		}
-		
-		if (aMsg[0].toLowerCase().matches("list"))
-		{
-			boolean match = false;
-			
-			
-			if (size == 2)
- 		    {
-				match = true;
- 		    }
-				
-			int count = 0;
-			for (myShopItem item : shop)
-			{
-				count++;
-				if (match == true)
-				{
-					if (item.item.getType().name().contains(aMsg[1]))
-					{
-						say(player,item.item.getType().name() + " x " + item.item.getAmount() + " COST:" + ChatColor.YELLOW + "$" + (float)checkHints(item.item.getTypeId()) + ChatColor.WHITE + " before commision");
-					}
-				} else {
-					say(player,item.item.getType().name() + " x " + item.item.getAmount() + " COST: " + ChatColor.YELLOW +"$"+(float)checkHints(item.item.getTypeId()) + ChatColor.WHITE + " before commision");
-				}
-			}
-			say(player,ChatColor.LIGHT_PURPLE + "" + count + ChatColor.WHITE + " items in the shop.'");
-			
-			return;
-
-			
-		}
-		if (aMsg[0].toLowerCase().matches("sell"))
-		{
-			if (aMsg.length < 3)
-			{		
-				say(player,"sell "+ ChatColor.LIGHT_PURPLE + "[itemid] [amount]"+ ChatColor.WHITE);
-				return;
-			} else {
-				
-				myShopItem shopitem = new myShopItem();
-				ItemStack item = new ItemStack(0);
-				shopitem.item = item;
-				// todo price
-				
-				
-				try 
-				{
-					item.setTypeId(Material.matchMaterial(aMsg[1]).getId());
-				} catch (NullPointerException e)
-				{
-					// lol
-					this.parent.sendPlayerItemList(player.player);
-					say(player,"Hmm try another item similar named to "+ChatColor.LIGHT_PURPLE + aMsg[1]+ ChatColor.WHITE + " and i might be interested.");
-					//e.printStackTrace();
-					return;
-				
-				} catch (Exception e)
-				{
-					this.parent.sendPlayerItemList(player.player);
-					say(player,"Hmm try another item similar named to "+ChatColor.LIGHT_PURPLE+aMsg[1]+ChatColor.WHITE+" and i might be interested.");
-					//e.printStackTrace();
-					return;
-					
-				}
-				try
-				{
-					
-				item.setAmount(Integer.parseInt(aMsg[2]));
-				} catch (NumberFormatException e) {
-					
-					say(player,"That is not a valid amount.");
-					//e.printStackTrace();
-					return;
-				}
-				int count = 0;
-				for (ItemStack curitem : player.player.getInventory().getContents())
-				{
-					if (curitem.getTypeId() == item.getTypeId())
-					{
-						count = count + curitem.getAmount();
-						//player.player.sendMessage(npc.getName() + " says to you, '"+ curitem.getTypeId() +"/"+curitem.getAmount() +"'");
-					}
-					
-					
-				}
-				
-				if (count >= item.getAmount())
-				{
-					
-					say(player,"Ok thats "+ ChatColor.YELLOW + item.getAmount() + ChatColor.WHITE +" out of your "+count +".");
-					int totalcoins = 0;
-					totalcoins = (int) (item.getAmount() * checkHints(shopitem.item.getTypeId()) * 1);
-					
-					if (this.coin >= totalcoins)
-					{
-						player.player.getInventory().removeItem(item);
-						shop.add(shopitem);
-						say(player,"Thanks! Heres your " + ChatColor.YELLOW + totalcoins + ChatColor.WHITE + " coins.");
-						
-						this.coin = this.coin - totalcoins;
-						player.addPlayerBalance(player.player,totalcoins);
-					} else {
-						say(player,"Sorry, I only have: "+ ChatColor.YELLOW + this.coin+ ChatColor.WHITE + " and thats worth "+ ChatColor.YELLOW + totalcoins + ChatColor.WHITE +"!");
-					}
-				} else {
-					
-					say(player,"Sorry, you only have: "+ChatColor.YELLOW + count+ ChatColor.WHITE + " !");
-				}
-			}
-			return;
-		}
-		
-		
-		if (aMsg[0].toLowerCase().matches("buy"))
-		{
-			if (aMsg.length < 3)
-			{
-				say(player,"buy " + ChatColor.LIGHT_PURPLE + "[itemid] [amount]");
-				return;
-			} else {
-				
-				try
-				{
-				int a = Integer.parseInt(aMsg[2]);
-				} catch (NumberFormatException e)
-				{
-					say(player,"That is not a valid amount.");
-					return;
-				}
-				
-				if (Integer.parseInt(aMsg[2]) > 0)
-				{
-					int amount = Integer.parseInt(aMsg[2]);
-					int originalamount = Integer.parseInt(aMsg[2]);
-					int found = 0;
-					int totalcost = 0;
-					List< myShopItem > basket = new CopyOnWriteArrayList< myShopItem >();
-					if (shop.size() > 0)
-					{
-						
-						for (myShopItem item : shop)
-						{
-							try 
-							{
-							
-								if (item.item.getTypeId() == Material.matchMaterial(aMsg[1]).getId())
-								{
-									
-									//player.player.sendMessage(npc.getName() + " says to you, 'Hmm: " + item.item.getTypeId() + " is worth "+ (item.price+item.price*0.10) +" coin each'");
-									
-										found++;
-										
-										
-										int cost = (int) ((checkHints(item.item.getTypeId()) * 1.6) * item.item.getAmount());
-										if (cost > 0)
-										{
-											if (amount != 0)
-											{
-											
-												if (item.item.getAmount() <= amount)
-												{
-													this.coin = this.coin + cost;
-													totalcost = totalcost + cost;
-													amount = amount - item.item.getAmount();
-													
-													shop.remove(item);
-													basket.add(item);
-													
-													say(player,ChatColor.YELLOW + ""+  cost + "" + ChatColor.WHITE + " coins for this stack.");
-												} else {
-													this.coin = this.coin + cost;
-													totalcost = totalcost + ((cost/item.item.getAmount())*amount);
-													
-													myShopItem i = new myShopItem();
-													i.price = ((cost/item.item.getAmount())*amount);
-													ItemStack is = new ItemStack(item.item.getType());
-													i.item = is;
-													is.setAmount(amount);
-													is.setTypeId(item.item.getTypeId());
-													
-													amount = 0;
-													basket.add(i);
-													item.item.setAmount(item.item.getAmount()-i.item.getAmount());
-													say(player,ChatColor.YELLOW + "" + cost + "" + ChatColor.WHITE + " coins for this stack.");
-													
-													
-												}
-											}
-										}
-										
-									
-								} else {
-									// ignore this type
-									
-								}
-							
-							} catch (NullPointerException e)
-							{
-								this.parent.sendPlayerItemList(player.player);
-								say(player,"Hmm try another item similar named to "+ ChatColor.LIGHT_PURPLE + aMsg[1]+ ChatColor.WHITE + " and i might be interested");
-								return;
-							}
-						}
-						
-						if (found < 1)
-						{
-							// nothing was ever placed in a basketm, can return
-							say(player,"Sorry, out of stock in that item.");
-							return;
-						}
-						
-						if (totalcost > 0)
-						{
-							
-							if (player.hasPlayerEnoughPlayerBalance(player.player,totalcost))
-							{
-								for (myShopItem i : basket)
-								{
-									player.player.getInventory().addItem(i.item);
-									basket.remove(i);
-								}
-								
-								say(player,"Thanks, " + ChatColor.YELLOW + totalcost + ChatColor.WHITE + " coins.");
-								player.subtractPlayerBalance(player.player,totalcost);
-								int each = totalcost / originalamount;
-															
-								// update hints
-								updateHints(Material.matchMaterial(aMsg[1]).getId(),each);
-								return;
-							} else {
-								for (myShopItem i : basket)
-								{
-									shop.add(i);
-									basket.remove(i);
-								}
-								say(player,"Sorry, you don't have enough (" + ChatColor.YELLOW + "" + totalcost + "" + ChatColor.WHITE + ") coins).");
-								return;
-
-							}
-						}
-						
-					} else {
-						say(player,"Sorry, totally out of stock!");
-						return;
-					}
-				
-				}
-			}
-		}
-		
-		// Unknown command
-		say(player,"Sorry, can i " + ChatColor.LIGHT_PURPLE + " [help]+"+ChatColor.WHITE +" you?");
-		
-		return;
-			
-	}
-
-
-
 	private void updateHints(int parseInt, int each) {
 		// TODO Auto-generated method stub
 		
@@ -1383,21 +1101,15 @@ public class myNPC {
                     {
                     	// check what type (category) of npc this is
                     	
-                        if (player.target.parent.category.matches("shop"))
+                    	if (player.target.parent.category.matches("merchant"))
     					{
-                        	// shop
-                            onPlayerChat(player, "Hello!","shop");
-    	
-                        } else {
-                        	if (player.target.parent.category.matches("merchant"))
-        					{
-                        		// merchant
-                                onPlayerChat(player, "Hello!","merchant");
-        					} else {
-        						// normal
-        						onPlayerChat(player, "Hello!","");
-        					}
-                        }
+                    		// merchant
+                            onPlayerChat(player, "Hello!","merchant");
+    					} else {
+    						// normal
+    						onPlayerChat(player, "Hello!","");
+    					}
+                    	
                     } else {
                     	onPlayerChat(player, "Hello!","");
                     }
