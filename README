@@ -320,6 +320,41 @@ Code:
 /npcx spawngroup pathgroup SPAWNGROUPID PATHGROUPID
 
 
+Civilisations
+============================
+
+This section of the mod is a toggleable option that allows players to purchase areas of the game and protect it for themselves.  My hope with this extension is to allow players to buy town guards, shops they can load with items and also other features like a research/tech tree that players can work on to unlock new features.  
+
+Because this mod has always been about bots it's important to note that this option is false by default. Protection is a big thing for any server admin and I am currently only running this on my server. If you want to try it out feel free but by no-means don't drop your tried and trusted protection system for this one.
+
+This option is enabled via the npcx.properties file
+
+nations=true
+
+This enables players to purchase areas of the world for themselves and grant other players to build in it.
+
+If you do not have iConomy installed, it will fall back on the internal NPCX economy that the bots and banker events use
+
+To compliment this area of the mod you may find the following settings useful
+
+nocreeper=true - no creeper explosions
+nowild=true - no building in the wild <-- needs to be tested
+nospread=true - no fire spread or lighter usage
+
+Commands
+-----------------------
+/civ buy - buys a land area for 25000 coin
+/civ add playername - adds a new player to your land area
+/civ balance  - returns your iconomy balance or npcx balance
+/civ here - returns the name and location of the area you are standing in 
+/civ abandon - abandons the area returning 5000 coin
+/civ pay playername amount - pays playername amount
+
+Op Commands
+/npcx civ givemoney playername - adds money to player
+/npcx civ money playername - returns playernames balance
+/npcx civ unclaim - unclaims an area
+
 
 FAQ
 =============================================
