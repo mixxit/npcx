@@ -2250,6 +2250,8 @@ public class myUniverse {
 			} catch (Exception e)
 			{
 				System.out.println("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
+				e.printStackTrace();
+				player.kickPlayer("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
 				// Kick?
 			}
 		}
