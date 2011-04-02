@@ -93,6 +93,7 @@ public class myNPC {
 	
 	public void parseChat(myPlayer myplayer, String message)
 	{
+		//System.out.println("Parsing: "+message);
 		int count = 0;
 		int size = 0;
 		//myplayer.player.sendMessage("Parsing:" + message + ":" + Integer.toString(this.triggerwords.size()));
@@ -1252,7 +1253,8 @@ public class myNPC {
 					{
 						if (p == player.player)
 						{
-							say(player,send + "'");
+							onPlayerChat(player, "event_close","");
+							
 						}
 					}
 					
@@ -1296,7 +1298,8 @@ public class myNPC {
 				{
 					if (p == player.player)
 					{
-						say(player,send + "'");
+						onPlayerChat(player, "event_bounce","");
+						
 					}
 				}
 				
@@ -1397,7 +1400,7 @@ public class myNPC {
 					{
 						if (ent == player.player)
 						{
-							say(player,send + "'");
+							say(player,send);
 						}
 					}
 					count2++;
