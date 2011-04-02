@@ -2628,6 +2628,12 @@ public class myUniverse {
 	        
 	        while (rs1.next ())
 	        {
+	        	
+	        	if (rs1.getInt("player_flags.value") == 1)
+	        	{
+	        		this.parent.getServer().broadcastMessage(ChatColor.YELLOW + " * " + rs1.getString("player_flags.playername") + " has completed " + rs1.getString("flag.name"));
+	        	}
+	        	
 	        	tickPlayerFlagID(rs1.getInt("player_flags.id"));
 	    		
 	        	
