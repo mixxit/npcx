@@ -1920,7 +1920,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName() == player.getName())
+			if (p.player.getName().equals(player.getName()))
 			{
 				p.lastchunkx = x;
 			}
@@ -1932,7 +1932,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName() == player.getName())
+			if (p.player.getName().equals(player.getName()))
 			{
 				return p.lastchunkz;
 			}
@@ -1944,7 +1944,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName() == player.getName())
+			if (p.player.getName().equals(player.getName()))
 			{
 				p.lastchunkz = z;
 			}
