@@ -1884,7 +1884,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName() == player.getName())
+			if (p.player.getName().equals(player.getName()))
 			{
 				p.lastmyzone = myzone;
 			}
@@ -1895,7 +1895,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName() == player.getName())
+			if (p.player.getName().equals(player.getName()))
 			{
 				return p.lastmyzone;
 			}
@@ -1907,7 +1907,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName() == player.getName())
+			if (p.player.getName().equals(player.getName()))
 			{
 				return p.lastchunkx;
 			}
