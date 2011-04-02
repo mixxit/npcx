@@ -1125,7 +1125,10 @@ public class myNPC {
 
 	public void onRightClick(Player p) {
 		// TODO Auto-generated method stub
-		for (myPlayer player : parent.universe.players.values()){
+		myPlayer player = this.parent.universe.getmyPlayer(p);
+		
+		if (player != null)
+		{
 			if (player.player == p)
 			{
 
@@ -1211,11 +1214,16 @@ public class myNPC {
 			} else {
 				if (player.name == p.getName())
 				{
+					this.parent.fixDead();
+
 					p.sendMessage("Error, your player is out of sync");
 					
 				}
 				
 			}
+		} else {
+				p.sendMessage("Error, your player is out of sync");
+				this.parent.fixDead();
 		}
 		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation(),true));
 
