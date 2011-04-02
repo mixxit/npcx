@@ -482,7 +482,8 @@ public class npcxPListener extends PlayerListener {
 				this.parent.informNpcDeadPlayer(event.getPlayer());
 				
 				//System.out.println("npcx : removed player ("+ player.player.getName()+")");
-				parent.universe.players.remove(player);
+				// not needed
+				//parent.universe.players.remove(player);
 			}
 		}
 		
