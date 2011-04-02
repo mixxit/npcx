@@ -10,15 +10,21 @@ public class npcxBListener extends BlockListener {
     public npcxBListener(npcx parent) {
         this.parent = parent;
     }
+    
     public void onBlockIgnite(BlockIgniteEvent event) {
-    	String cause = event.getCause().toString();
-    	if(cause.equals("SPREAD"))
+    	if (this.parent.universe.nospread.equals("true"))
     	{
-    		event.setCancelled(true);
-    	}
-    	if(cause.equals("FLINT_AND_STEEL"))
-    	{
-    		event.setCancelled(true);
+	    	
+	    	String cause = event.getCause().toString();
+	    	if(cause.equals("SPREAD"))
+	    	{
+	    		event.setCancelled(true);
+	    	}
+	    	if(cause.equals("FLINT_AND_STEEL"))
+	    	{
+	    		event.setCancelled(true);
+	    	}
+    	
     	}
     }
 }

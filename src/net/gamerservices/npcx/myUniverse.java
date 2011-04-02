@@ -48,9 +48,9 @@ public class myUniverse {
 	// db
 	public String dsn;
 	public Connection conn = null;
-	public String nowild;
-	public String nospread;	
-	public String nocreeper;
+	public String nowild = "false";
+	public String nospread = "false";	
+	public String nocreeper = "false";
 	public String nations = "false";
 	public String dbhost;
 	public String update;
