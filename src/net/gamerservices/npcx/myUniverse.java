@@ -2239,7 +2239,7 @@ public class myUniverse {
 			try
 			{
 				// Seek the player and mark it as dead
-				if (p.name.equals(p.player.getName()))
+				if (p.name.equals(player.getName()))
 				{
 					p.player = null;
 					p.dead = true;
@@ -2250,6 +2250,7 @@ public class myUniverse {
 			} catch (Exception e)
 			{
 				System.out.println("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
+				// Kick?
 			}
 		}
 		System.out.println("***************************************");
