@@ -331,6 +331,7 @@ public class npcxPListener extends PlayerListener {
 							}
 							
 							// Can't find player so assume they cant change
+							this.parent.fixDead();
 							event.getPlayer().sendMessage(ChatColor.RED+"No player located, you have been denied");
 							event.setCancelled(true);
 							return;
