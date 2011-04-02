@@ -153,177 +153,202 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerInteract(PlayerInteractEvent event)
 	{
-		if (!event.getPlayer().isOp())
+		if (this.parent.universe.nations != null)
 		{
-			if (this.parent.universe.nowild != null)
-			{
-				if (this.parent.universe.nowild.matches("true"))
+			if (this.parent.universe.nations.equals("true"))
+			{			
+			
+				if (!event.getPlayer().isOp())
 				{
-					try
+					if (this.parent.universe.nowild != null)
 					{
-						for (myPlayer player : parent.universe.players.values())
+						if (this.parent.universe.nowild.matches("true"))
 						{
-							if (player.player == event.getPlayer())
+							try
 							{
-								
-								
-								Location loc = event.getClickedBlock().getLocation();
-								Chunk chunk = loc.getWorld().getChunkAt(loc);
-								int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
-								int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
-								String owner = "";
-								int zoneid = 0;
-								for (myZone zone : this.parent.universe.zones)
+								for (myPlayer player : parent.universe.players.values())
 								{
-									if (zone.x == x && zone.z == z)
+									if (player.player == event.getPlayer())
 									{
-										owner = zone.ownername;
-										zoneid = zone.id;
-									}
-								}
-								
-								if (player.player.getName().matches(owner))
-								{
-									return;
-								} else {
-									// Are they a member?
-									if (zoneid != 0)
-									{
-										if (this.parent.universe.isZoneMember(zoneid, event.getPlayer().getName()))
+										
+										
+										Location loc = event.getClickedBlock().getLocation();
+										Chunk chunk = loc.getWorld().getChunkAt(loc);
+										int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
+										int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
+										String owner = "";
+										int zoneid = 0;
+										for (myZone zone : this.parent.universe.zones)
 										{
-											return;
-										}
-									}
-									event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
-									event.setCancelled(true);
-								}
-							}
-						}
-					} catch (Exception e)
-					{
-						// locked table
-						event.setCancelled(true);
-					}
-				
-				} else {
-					// False -  we dont want to our wild areas or are using some other system
-					
-					try
-					{
-						for (myPlayer player : parent.universe.players.values())
-						{
-							if (player.player == event.getPlayer())
-							{
-								
-								
-								Location loc = event.getClickedBlock().getLocation();
-								Chunk chunk = loc.getWorld().getChunkAt(loc);
-								int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
-								int zoneid = 0;
-								
-								int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
-								String owner = "";
-								for (myZone zone : this.parent.universe.zones)
-								{
-									if (zone.x == x && zone.z == z)
-									{
-										owner = zone.ownername;
-										zoneid = zone.id;
-									}
-								}
-								
-								if (player.player.getName().matches(owner))
-								{
-									return;
-								} else {
-									if (owner.matches(""))
-									{
-										// wild is ok
-										//event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
-										return;
-									} else {
-										// Are they a member?
-										if (zoneid != 0)
-										{
-											if (this.parent.universe.isZoneMember(zoneid, event.getPlayer().getName()))
+											if (zone.x == x && zone.z == z)
 											{
-												return;
+												owner = zone.ownername;
+												zoneid = zone.id;
 											}
 										}
-										event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
-										event.setCancelled(true);
-									}
-								}
-							}
-						}
-					} catch (Exception e)
-					{
-						// locked table
-						event.setCancelled(true);
-					}
-				}
-				
-				
-			} else {
-				// No setting, assume we dont want to protect or are using some other system
-				try
-				{
-					for (myPlayer player : parent.universe.players.values())
-					{
-						if (player.player == event.getPlayer())
-						{
-							
-							
-							Location loc = event.getClickedBlock().getLocation();
-							Chunk chunk = loc.getWorld().getChunkAt(loc);
-							int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
-							int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
-							String owner = "";
-							int zoneid = 0;
-							for (myZone zone : this.parent.universe.zones)
-							{
-								if (zone.x == x && zone.z == z)
-								{
-									owner = zone.ownername;
-									zoneid = zone.id;
-								}
-							}
-							
-							if (player.player.getName().matches(owner))
-							{
-								return;
-							} else {
-								if (owner.matches(""))
-								{
-									// wild is ok
-									return;
-								} else {
-									// Are they a member?
-									if (zoneid != 0)
-									{
-										if (this.parent.universe.isZoneMember(zoneid, event.getPlayer().getName()))
+										
+										if (player.player.getName().matches(owner))
 										{
 											return;
+										} else {
+											// Are they a member?
+											if (zoneid != 0)
+											{
+												if (this.parent.universe.isZoneMember(zoneid, event.getPlayer().getName()))
+												{
+													return;
+												}
+											}
+											event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
+											event.setCancelled(true);
+										}
+									}
+								}
+							} catch (Exception e)
+							{
+								// locked table
+								event.setCancelled(true);
+							}
+						
+						} else {
+							// False -  we dont want to our wild areas or are using some other system
+							
+							try
+							{
+								for (myPlayer player : parent.universe.players.values())
+								{
+									if (player.player == event.getPlayer())
+									{
+										
+										
+										Location loc = event.getClickedBlock().getLocation();
+										Chunk chunk = loc.getWorld().getChunkAt(loc);
+										int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
+										int zoneid = 0;
+										
+										int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
+										String owner = "";
+										for (myZone zone : this.parent.universe.zones)
+										{
+											if (zone.x == x && zone.z == z)
+											{
+												owner = zone.ownername;
+												zoneid = zone.id;
+											}
+										}
+										
+										if (player.player.getName().matches(owner))
+										{
+											return;
+										} else {
+											if (owner.matches(""))
+											{
+												// wild is ok
+												//event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
+												return;
+											} else {
+												// Are they a member?
+												if (zoneid != 0)
+												{
+													if (this.parent.universe.isZoneMember(zoneid, event.getPlayer().getName()))
+													{
+														return;
+													}
+												}
+												event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
+												event.setCancelled(true);
+											}
+										}
+									}
+								}
+								
+								// Can't find player so assume they cant change
+								event.getPlayer().sendMessage(ChatColor.RED+"No player located, you have been denied");
+								event.setCancelled(true);
+								
+								
+							} catch (Exception e)
+							{
+								// locked table
+								event.setCancelled(true);
+							}
+						}
+						
+						
+					} else {
+						// No setting NOWILD found, assume we dont want to protect or are using some other system
+						try
+						{
+							for (myPlayer player : parent.universe.players.values())
+							{
+								if (player.player == event.getPlayer())
+								{
+									
+									
+									Location loc = event.getClickedBlock().getLocation();
+									Chunk chunk = loc.getWorld().getChunkAt(loc);
+									int x = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getX());
+									int z = this.parent.universe.getZoneCoord(event.getPlayer().getLocation().getZ());
+									String owner = "";
+									int zoneid = 0;
+									for (myZone zone : this.parent.universe.zones)
+									{
+										if (zone.x == x && zone.z == z)
+										{
+											owner = zone.ownername;
+											zoneid = zone.id;
 										}
 									}
 									
-									event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
-									event.setCancelled(true);
+									if (player.player.getName().matches(owner))
+									{
+										return;
+									} else {
+										if (owner.matches(""))
+										{
+											// wild is ok
+											return;
+										} else {
+											// Are they a member?
+											if (zoneid != 0)
+											{
+												if (this.parent.universe.isZoneMember(zoneid, event.getPlayer().getName()))
+												{
+													// member is ok
+													return;
+												}
+											}
+											// not member is denied
+											event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
+											event.setCancelled(true);
+										}
+									}
 								}
 							}
+							
+							// Can't find player so assume they cant change
+							event.getPlayer().sendMessage(ChatColor.RED+"No player located, you have been denied");
+							event.setCancelled(true);
+		
+						} catch (Exception e)
+						{
+							// locked table
+							event.setCancelled(true);
 						}
+						return;
 					}
-				} catch (Exception e)
-				{
-					// locked table
-					event.setCancelled(true);
+				} else {
+					// Is an Operator
+					return;
 				}
-				return;
 			}
-		} else {
-			// Is an Operator
+			// is not running Nations
+			//event.setCancelled(true);
 			return;
+		
 		}
+		return;
+	
 		// is not running Nations
 		//event.setCancelled(true);
 		
