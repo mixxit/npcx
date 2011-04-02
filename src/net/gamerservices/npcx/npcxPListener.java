@@ -153,6 +153,7 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerInteract(PlayerInteractEvent event)
 	{
+		
 		if (this.parent.universe.nations != null)
 		{
 			if (this.parent.universe.nations.equals("true"))
@@ -264,6 +265,7 @@ public class npcxPListener extends PlayerListener {
 								
 								// Can't find player so assume they cant change
 								event.getPlayer().sendMessage(ChatColor.RED+"No player located, you have been denied");
+								this.parent.fixDead();
 								event.setCancelled(true);
 								
 								
