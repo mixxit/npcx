@@ -2563,7 +2563,7 @@ public class myUniverse {
 	{
 		try
 		{
-		PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO flags (name) VALUES (?) ON DUPLICATE KEY UPDATE value=VALUES(value) ",Statement.RETURN_GENERATED_KEYS);
+		PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO flags (name) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
 		stmt.setString(1,"RESEARCH__"+name+":"+prereq+":"+time+":"+cost);
 		
 		stmt.executeUpdate();
