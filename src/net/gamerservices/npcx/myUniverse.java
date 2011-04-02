@@ -2235,8 +2235,8 @@ public class myUniverse {
 		
 		// at this point no entity on the list matched player
 		
-		System.out.println("***************************************");
-		System.out.println(player.getName()+"("+player.getEntityId()+") was missing from the list:");
+		//System.out.println("***************************************");
+		//System.out.println(player.getName()+"("+player.getEntityId()+") was missing from the list:");
 		String playerlist = "";
 		for (myPlayer p : this.players.values())
 		{
@@ -2247,21 +2247,21 @@ public class myUniverse {
 	
 					if (p.name.equals(player.getName()))
 					{
-						System.out.println("Found the player, marked him as dead");
+						//System.out.println("Found the player, marked him as dead");
 						p.player = null;
 						p.dead = true;
 						
 					}
 				} else {
 					System.out.println("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
-					player.kickPlayer("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
+					//player.kickPlayer("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
 					// Kick?
 				}
 		}
 		
-		System.out.println("***************************************");
-		System.out.println(playerlist);
-		System.out.println("***************************************");
+		//System.out.println("***************************************");
+		//System.out.println(playerlist);
+		//System.out.println("***************************************");
 		this.parent.fixDead();
 
 		
