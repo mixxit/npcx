@@ -2238,7 +2238,15 @@ public class myUniverse {
 		{
 			try
 			{
-			playerlist += p.name+"["+p.player.getName()+"], ";
+				// Seek the player and mark it as dead
+				if (p.name.equals(p.player.getName()))
+				{
+					p.player = null;
+					p.dead = true;
+					this.parent.fixDead();
+				}
+				
+				playerlist += p.name+"["+p.player.getName()+"], ";
 			} catch (Exception e)
 			{
 				System.out.println("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
