@@ -61,7 +61,7 @@ public class npcx extends JavaPlugin {
 	private npcxWListener mWorldListener;
 	private npcxBListener mBlockListener;
 	public myUniverse universe;
-	
+	int tickx = 1000000;
 	// iconomy
 	private static PluginListener PluginListener = null;
     private static iConomy iConomy = null;
@@ -140,6 +140,15 @@ public class npcx extends JavaPlugin {
 	
 	public void think()
 	{
+		tickx--;
+		if (tickx == 0)
+		{
+			this.getServer().broadcastMessage("It is the end of the turn, your research has moved on one point!");
+			this.tickx = 1000000;
+			this.universe.processResearchTick();
+		}
+		
+		
 		// check fhunks
 		if (this.checkchunks == true)
 		{
@@ -732,6 +741,7 @@ public class npcx extends JavaPlugin {
 		            	player.sendMessage("/civ buy  - buys a civilisations area");
 		            	player.sendMessage("/civ add playername - adds a player to a civilisation area");
 		            	player.sendMessage("/civ balance - lists your bank balance");
+		            	player.sendMessage("/civ research - lists available research");
 		            	player.sendMessage("/civ here - lists info about the civilisation area you are at");
 		            	player.sendMessage("/civ abandon - abandons the civilisation area");
 		            	player.sendMessage("/civ pay playername amount - pays a player an amount");
@@ -743,6 +753,60 @@ public class npcx extends JavaPlugin {
 		            	return false;
 		            }
 					String subCommand = args[0].toLowerCase();
+					
+					if (subCommand.equals("research"))
+		            {
+						int playerx = this.universe.getZoneCoord(player.getLocation().getX());
+						int playerz = this.universe.getZoneCoord(player.getLocation().getZ());
+						if (args.length < 2) {
+	            			player.sendMessage("Insufficient arguments /civ research list");
+	            			player.sendMessage("Insufficient arguments /civ research start researchname");
+	            			player.sendMessage("Insufficient arguments /civ research cancel researchname");
+	            			return false;
+						}
+						
+						if (args[1].equals("start")) {
+		            		if (args.length < 3) {
+		            			player.sendMessage("Insufficient arguments /civ research start researchname");
+		                    	
+		            		} else {
+		            			try
+		            			{
+		            			int researchid = this.universe.getResearchID(args[2]);
+		            			this.universe.startResearch(player,researchid);
+		            			} catch (Exception e)
+		            			{
+		            				player.sendMessage("Incorrect research name");
+		            				return false;
+		            			}
+		            		}
+						}
+						
+						if (args[1].equals("cancel")) {
+		            		if (args.length < 3) {
+		            			player.sendMessage("Insufficient arguments /civ research cancel researchname");
+		                    	
+		            		} else {
+		            			try
+		            			{
+		            				int researchid = this.universe.getResearchID(args[2]);
+		            			this.universe.cancelResearch(player,researchid);
+		            			} catch (Exception e)
+		            			{
+		            				player.sendMessage("Incorrect research name");
+		            				return false;
+		            			}
+		            		}
+						}
+						
+						if (args[1].equals("list")) {
+		            		this.universe.sendResearchList(player);
+						}
+						
+				
+            			
+		            }
+					
 					
 					if (subCommand.equals("toggle"))
 		            {
@@ -1073,6 +1137,27 @@ public class npcx extends JavaPlugin {
             if (subCommand.equals("debug"))
             {
             	
+            	
+            	
+				
+            
+            }
+            
+            
+            if (subCommand.equals("research"))
+            {
+            	
+        		if (args.length < 3) {
+        			player.sendMessage("Insufficient arguments /npcx research create researchname prereqresearchname hourstocomplete");
+        			return false;
+        			
+        		} else {
+        		
+        			this.universe.createResearch(args[2], args[3], args[4]);
+        			player.sendMessage("debug: created");
+        			return true;
+        		}
+				
             
             }
             

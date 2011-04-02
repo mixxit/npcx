@@ -15,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.gamerservices.npclibfork.CHumanNpc;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -84,6 +85,8 @@ public class myUniverse {
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
 	public List< Monster > monsters = new CopyOnWriteArrayList< Monster >();
 	public HashMap<String, myPlayer_factionentry> playerfactions = new HashMap<String, myPlayer_factionentry>();
+
+	public List< myResearch > research = new CopyOnWriteArrayList< myResearch >();
 	
 	public myUniverse(npcx parent)
 	{
@@ -1160,6 +1163,7 @@ public class myUniverse {
 		loadPlayerFactions();
 		loadNpcFactions();
 
+		loadResearch();
 		loadZones();
 		loadMerchants();
 		loadFactions();
@@ -1168,6 +1172,35 @@ public class myUniverse {
 		loadSpawngroups();
 	}
 	
+	private void loadResearch() {
+		// TODO Auto-generated method stub
+		// Load faction_list
+		try 
+		{
+	        Statement s1 = conn.createStatement ();
+	        s1.executeQuery ("SELECT * FROM flags WHERE name like 'RESEARCH__%'");
+	        ResultSet rs1 = s1.getResultSet ();
+	        int countresearch = 0;
+	        while (rs1.next ())
+	        {
+	        	String data = rs1.getString("name").replace("RESEARCH__","");
+	        	String research[] = data.split(":");
+	        	myResearch rs = new myResearch(rs1.getInt("id"),research[0],research[1],research[2]);
+	        	this.research.add(rs);
+	
+	        	countresearch++;
+	        }
+	        System.out.println("npcx : Loaded " + countresearch + " research.");
+	        
+	        rs1.close();
+	        s1.close();
+		} catch (SQLException e)
+		{
+			System.out.println("npcx : Error loaded research.");
+		}
+        
+	}
+
 	public void commitPlayerFactions() {
 		// TODO Auto-generated method stub
 		try 
@@ -2325,6 +2358,302 @@ public class myUniverse {
 			return "null";
 		}
 		return "null";
+	}
+
+	public void startResearch(Player player, int researchid) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		// scan factions 
+		int count = 0;
+		for (myResearch f : this.research)
+		{
+			if (researchid == f.id)
+			{
+				if (!hasResearch(player.getName(), researchid))
+				{	
+					if (hasPrereqResearch(player.getName(), researchid))
+					{
+						try
+						{
+							PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO player_flags (playername,flagid,value) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value=VALUES(value) ",Statement.RETURN_GENERATED_KEYS);
+							stmt.setString(1,player.getName());
+							
+							stmt.setInt(2,researchid);
+							stmt.setInt(3,getResearchTime(researchid));
+							
+							stmt.executeUpdate();
+							ResultSet keyset = stmt.getGeneratedKeys();
+							int key = 0;
+							if ( keyset.next() ) {
+							    // Retrieve the auto generated key(s).
+							    key = keyset.getInt(1);
+							}
+							player.getServer().broadcastMessage(ChatColor.YELLOW + " * " + player.getName() + " has begun researching " + f.name + " ("+f.time+" turns)");
+							player.sendMessage("Research started!");
+							
+							stmt.close();
+						} catch (SQLException e)
+						{
+							player.sendMessage("Incorrect research id!");
+							e.printStackTrace();
+						}
+					} else {
+						player.sendMessage("Cannot start research, you do not have the pre-requisite.");
+					}
+			
+					
+				} else {
+					player.sendMessage("Cannot start research, you already have it or are researching it.");
+				}
+				count++;
+			}
+			// skip
+		}
+		if (count ==0)
+		{
+			player.sendMessage("Research does not exist");
+		}
+		
+		
+	}
+
+	private int getResearchTime(int researchid) {
+		// TODO Auto-generated method stub
+		for (myResearch r : this.research)
+		{
+			if (r.id == researchid)
+			{
+				return Integer.parseInt(r.time);
+			}
+		}
+		return -1;
+	}
+
+	private boolean hasPrereqResearch(String playername, int researchid) {
+		// TODO Auto-generated method stub
+		
+		for (myResearch r : this.research)
+		{
+			if (r.id == researchid)
+			{
+				if (r.prereq.equals(""))
+				{
+					return true;
+				} else {
+					for (myResearch r2 : this.research)
+					{
+						if (r2.name.equals(r.prereq))
+						{
+							int r2id = r2.id;
+							if (hasResearch(playername,r2id))
+							{
+								return true;
+							} else {
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+
+	public boolean hasResearch(String playername, int researchid)
+	{
+		try 
+		{
+	        
+	        String sql = "SELECT * FROM player_flags WHERE flagid = ? AND playername = ?";
+	        PreparedStatement s1 = conn.prepareStatement (sql);
+	        s1.setString(2, playername);
+	        s1.setInt(1, researchid);
+	        
+	        ResultSet rs1 = s1.executeQuery();
+	        
+	        int countflag = 0;
+	        int status = 0;
+	        while (rs1.next ())
+	        {
+	        	status = Integer.parseInt(rs1.getString("value"));
+	        	
+	        }
+
+	        rs1.close();
+	        s1.close();
+	        
+	        if (countflag > 0)
+	        {
+	        	// has it but is it done?
+	        	if (status == 0)
+	        	{
+	        		return true;
+	        	}
+	        		
+	        }
+	        return false;
+		} catch (SQLException e)
+		{
+			return false;
+		}
+	}
+	
+	public int hasResearchTimeLeft(String playername, int researchid)
+	{
+		int status = -1;
+		try 
+		{
+	        
+	        String sql = "SELECT * FROM player_flags WHERE flagid = ? AND playername = ?";
+	        PreparedStatement s1 = conn.prepareStatement (sql);
+	        s1.setString(2, playername);
+	        s1.setInt(1, researchid);
+	        
+	        ResultSet rs1 = s1.executeQuery();
+	        
+	        
+	        while (rs1.next ())
+	        {
+	        	status = Integer.parseInt(rs1.getString("value"));
+	        	
+	        }
+	        rs1.close();
+	        s1.close();
+  
+	        
+	        return status;
+		} catch (SQLException e)
+		{
+			return status;
+		}
+	}
+
+	public void cancelFlag(Player player, int flagid) {
+		try
+		{
+		PreparedStatement stmt = this.parent.universe.conn.prepareStatement("DELETE FROM player_flags WHERE playername = ? AND flagid = ?");
+		stmt.setString(1,player.getName());
+		stmt.setInt(2,flagid);
+		
+		stmt.executeUpdate();
+		stmt.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void cancelResearch(Player player, int researchid) {
+		cancelResearch(player,researchid);
+		player.sendMessage("Research cancelled!");
+	}
+
+	public int getResearchID(String name)
+	{
+		for (myResearch r : this.research)
+		{
+			return r.id;
+		}
+		return -1;
+		
+	}
+	
+	public void createResearch(String name, String prereq, String time )
+	{
+		try
+		{
+		PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO flags (name) VALUES (?) ON DUPLICATE KEY UPDATE value=VALUES(value) ",Statement.RETURN_GENERATED_KEYS);
+		stmt.setString(1,"RESEARCH__"+name+":"+prereq+":"+time);
+		
+		stmt.executeUpdate();
+		ResultSet keyset = stmt.getGeneratedKeys();
+		int key = 0;
+		if ( keyset.next() ) {
+		    // Retrieve the auto generated key(s).
+		    key = keyset.getInt(1);
+		}
+		
+		if (key != 0)
+		{
+			myResearch r = new myResearch(key, name, prereq, time);
+			this.research.add(r);
+		}
+		
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	public void sendResearchList(Player player) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		int count = 0;
+		for (myResearch r : research)
+		{
+			if (this.hasResearch(player.getName(), r.id))
+			{
+				player.sendMessage(ChatColor.LIGHT_PURPLE + " * " + ChatColor.YELLOW + "[Researching] " + r.name+ ChatColor.LIGHT_PURPLE + " - " + ChatColor.YELLOW + hasResearchTimeLeft(player.getName(),r.id) + ChatColor.LIGHT_PURPLE + " turns to complete");
+			} else {
+				if (this.hasPrereqResearch(player.getName(), r.id))
+				{
+					player.sendMessage(ChatColor.LIGHT_PURPLE + " * " + ChatColor.YELLOW +  r.name+ ChatColor.LIGHT_PURPLE + " Requires: [" + ChatColor.YELLOW + r.prereq+ ChatColor.LIGHT_PURPLE + "] " + ChatColor.YELLOW + r.time + ChatColor.LIGHT_PURPLE + " turns to complete");
+					
+				} else {
+					count++;
+				}
+				
+			}
+			
+		}
+		if (count == 0)
+		{
+			player.sendMessage(ChatColor.YELLOW + "* There is some research you have not unlocked");
+		}
+		
+			
+	}
+
+	public void processResearchTick() {
+		// TODO Auto-generated method stub
+		try {
+			String sql = "SELECT flag.id,flag.name,player_flags.playername,player_flags.flagid,player_flags.value FROM flags,player_flags WHERE player_flagid = flags.id AND flags.name LIKE 'RESEARCH__%' AND player_flags.value != '0' ";
+	        PreparedStatement s1 = conn.prepareStatement (sql);
+	       
+	        ResultSet rs1 = s1.executeQuery();
+	        
+	        
+	        while (rs1.next ())
+	        {
+	        	tickPlayerFlagID(rs1.getInt("player_flags.id"));
+	    		
+	        	
+	        	
+	        }
+	        rs1.close();
+	        s1.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void tickPlayerFlagID(int int1) {
+		// TODO Auto-generated method stub
+		try
+		{
+			PreparedStatement stmt2 = this.parent.universe.conn.prepareStatement("UPDATE player_flags SET value = value - 1 WHERE id = ?");
+			stmt2.setInt(1,int1);
+			
+			stmt2.executeUpdate();
+			stmt2.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	
