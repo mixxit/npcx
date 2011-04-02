@@ -1492,4 +1492,18 @@ public class myNPC {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void requipArmour() {
+		// TODO Auto-generated method stub
+		ItemStack iprimary = new ItemStack(weapon);
+		ItemStack ihelmet = new ItemStack(helmet);
+		ItemStack ichest = new ItemStack(chest);
+		ItemStack ilegs = new ItemStack(legs);
+		ItemStack iboots = new ItemStack(boots);
+        npc.getBukkitEntity().getInventory().setItemInHand(iprimary);
+        npc.getBukkitEntity().getInventory().setHelmet(ihelmet);
+        npc.getBukkitEntity().getInventory().setChestplate(ichest);
+        npc.getBukkitEntity().getInventory().setLeggings(ilegs);
+		npc.getBukkitEntity().getInventory().setBoots(iboots);
+	}
 }

@@ -182,6 +182,8 @@ public class BasicHumanNpc extends BasicNpc {
 		    	if (getFollow() == null && getAggro() == null)
 		    	{
 		    		//System.out.println("npcx : moving  ["+ spawnx + "] ["+ spawny + "] ["+ spawnz + "]");
+		    		// Requip my armour
+		    		this.parent.requipArmour();
 		    		
 		    		// not aggrod or following, time to go home :)
 		    		double x2 = this.getBukkitEntity().getLocation().getX();
@@ -199,6 +201,8 @@ public class BasicHumanNpc extends BasicNpc {
 		                Location loc = new Location(this.getBukkitEntity().getWorld(),spawnx,spawny,spawnz,yaw2.floatValue(),pitch2.floatValue());
 		                
 		                moveCloserToLocation(loc);
+		                
+		                
 		    		}
 		    	}
 			}
@@ -904,7 +908,8 @@ public class BasicHumanNpc extends BasicNpc {
         	// default npcvsnpc dmg
         	int dmgdone = 30;
         	this.hp = this.hp - dmgdone;
-
+        	this.parent.requipArmour();
+        	
         	if (this.hp < 1)
         	{
         		anpc.npc.setFollow(null);
@@ -936,7 +941,7 @@ public class BasicHumanNpc extends BasicNpc {
 	public void onDamage(EntityDamageEvent event) {
 		// TODO Auto-generated method stub
 			//System.out.println("onDamage called for entity"+event.getEntity().getEntityId());
-		
+			
 			if (event instanceof EntityDamageByEntityEvent)
 		    {
 				EntityDamageByEntityEvent edee = (EntityDamageByEntityEvent) event;
@@ -969,6 +974,8 @@ public class BasicHumanNpc extends BasicNpc {
 			            	
 			            	int dmgdone = this.parent.getDamageDone(this,(Player)p);
 			            	this.hp = this.hp - dmgdone;
+			            	
+			            	this.parent.requipArmour();
 		
 			            	if (this.hp < 1)
 			            	{
