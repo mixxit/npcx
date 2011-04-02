@@ -2224,6 +2224,7 @@ public class myUniverse {
 	
 	public myPlayer getmyPlayer(Player player) {
 		// TODO Auto-generated method stub
+		//System.out.println("getmyPlayer:Passed to me was; " + player.toString());
 		for (myPlayer p : this.players.values())
 		{
 			if (p.player == player)
@@ -2231,34 +2232,39 @@ public class myUniverse {
 				return p;
 			}
 		}
+		
+		// at this point no entity on the list matched player
+		
 		System.out.println("***************************************");
-		System.out.println(player.getName()+ " was missing from the list:");
+		System.out.println(player.getName()+"("+player.getEntityId()+") was missing from the list:");
 		String playerlist = "";
 		for (myPlayer p : this.players.values())
 		{
-			try
-			{
-				// Seek the player and mark it as dead
-				if (p.name.equals(player.getName()))
+				if (p.player != null)
 				{
-					p.player = null;
-					p.dead = true;
-					this.parent.fixDead();
+					// Seek the player and mark it as dead
+					playerlist += p.name+"["+p.player.getName()+"("+p.player.getEntityId()+")], ";
+	
+					if (p.name.equals(player.getName()))
+					{
+						System.out.println("Found the player, marked him as dead");
+						p.player = null;
+						p.dead = true;
+						
+					}
+				} else {
+					System.out.println("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
+					player.kickPlayer("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
+					// Kick?
 				}
-				
-				playerlist += p.name+"["+p.player.getName()+"], ";
-			} catch (Exception e)
-			{
-				System.out.println("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
-				e.printStackTrace();
-				player.kickPlayer("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
-				// Kick?
-			}
 		}
+		
 		System.out.println("***************************************");
 		System.out.println(playerlist);
 		System.out.println("***************************************");
+		this.parent.fixDead();
 
+		
 		return null;
 	}
 

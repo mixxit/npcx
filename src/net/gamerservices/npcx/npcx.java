@@ -155,8 +155,9 @@ public class npcx extends JavaPlugin {
 		
 		tick.schedule(new Tick(this), 1 * 500);
 		
-		fixDead();
 		// check npc logic
+		this.fixDead();
+		
 		try
 		{
 			//
@@ -572,15 +573,20 @@ public class npcx extends JavaPlugin {
 		{
 			if (player.dead == true)
 			{
+				//System.out.println("npcx : reestablishing player");
+				String list = "";
 				try
 				{
 					for (World w : getServer().getWorlds())
 					{
 						for (Player p : w.getPlayers())
 						{
-							if (player.name == p.getName())
+							list += p.getName() + ":" + p.getEntityId() + ",";
+							if (player.name.equals(p.getName()))
 							{
 								player.player = p;
+								//System.out.println("npcx : success!");
+
 								player.dead = false;
 								count++;
 							}
@@ -592,11 +598,15 @@ public class npcx extends JavaPlugin {
 					//we loop soon anyway
 					//System.out.println("npcx : FAILED establishing dead player");
 				}
+				if (count == 0)
+				{
+				//System.out.println("Searched but found 0 in: "+list);
+				}
 			}
 		}
 		if (count > 0)
 		{
-			//System.out.println("npcx : reestablished " + count + " dead players.");
+			System.out.println("npcx : reestablished " + count + " dead players.");
 		}
 		
 	}

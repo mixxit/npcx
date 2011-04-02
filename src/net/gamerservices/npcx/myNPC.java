@@ -1212,7 +1212,7 @@ public class myNPC {
 				}
 				
 			} else {
-				if (player.name == p.getName())
+				if (player.name.equals(p.getName()))
 				{
 					this.parent.fixDead();
 

@@ -190,7 +190,7 @@ public class myPlayer {
 			*/
 			for (myPlayer_factionentry f : this.parent.universe.playerfactions.values())
 			{
-				if (f.factionid == faction.id && f.playername.matches(this.player.getName()))
+				if (f.factionid == faction.id && f.playername.equals(this.player.getName()))
 				{
 					f.amount = f.amount - 1;
 					return true;
