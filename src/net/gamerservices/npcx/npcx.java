@@ -771,20 +771,18 @@ public class npcx extends JavaPlugin {
             			
             			
 						
-						player.sendMessage("Searching for zones...");
 						
 						for (myZone z : this.universe.zones)
 						{
 							if (z.x == playerx && z.z == playerz)
 							{
 								count++;
-								player.sendMessage("Located your zone.. checking privileges...");
 								// are they the owner?
 								if (z.ownername.equals(player.getName()))
 								{
-									player.sendMessage("You are the owner");
 									this.universe.setZoneName(z.id,fullname);
-									player.sendMessage("Zone name set!!");
+									player.sendMessage("Zone name set");
+									player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* The land [" + z.x + ":" + z.z+ "] shall be forever known as "+fullname+ " as decreed by "+player.getName());
 									
 									return true;
 									
@@ -925,7 +923,7 @@ public class npcx extends JavaPlugin {
 								{
 									z.setOwner(player.getName());
 									z.name = player.getName()+"s land";
-									player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* A new civilization has been settled at [" + z.x + ":" + z.z+ "] by "+player.getName()+"!");
+									player.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE+"* "+player.getName()+"'s civilisation borders have expanded at [" + z.x + ":" + z.z+ "]");
 									player.sendMessage("Thanks! That's " +ChatColor.YELLOW+ cost + ChatColor.WHITE+" total coins!");
 									mp.subtractPlayerBalance(player,cost);		
 									player.sendMessage("You just bought region: ["+ChatColor.LIGHT_PURPLE+z.x+","+z.z+""+ChatColor.WHITE+"]!");
