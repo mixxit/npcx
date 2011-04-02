@@ -106,7 +106,7 @@ public class myUniverse {
 			this.dbversion = "1";
 			this.nations = "false";
 			
-			dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
+			dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname + "?autoReconnect=true";
 	 	}
 	 
         try 
@@ -185,7 +185,7 @@ public class myUniverse {
 				
 				update = config.getProperty("update");
 				
-				dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
+				dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname + "?autoReconnect=true";
 				System.out.println(dsn);
 				
 				if (nospread == null || nocreeper == null || nowild == null || nations == null)
@@ -1115,7 +1115,7 @@ public class myUniverse {
 		            nations = config.getProperty("nations");
 		            dbversion = config.getProperty("db-version");
 		            
-		            dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname;
+		            dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname + "?autoReconnect=true";
 		            defaultworld = config.getProperty("world");
 		            
 					config.setProperty(PROP_NOWILD,nowild);
@@ -1331,8 +1331,7 @@ public class myUniverse {
 	{
 			try
 			{
-				Class.forName ("com.mysql.jdbc.Driver").newInstance ();
-				conn = DriverManager.getConnection (dsn, dbuser, dbpass);
+				
 		        PreparedStatement s11 = conn.prepareStatement("SELECT pathgroupid FROM spawngroup WHERE id = ?",Statement.RETURN_GENERATED_KEYS);
 		        s11.setInt(1, id);
 		        s11.executeQuery();
@@ -1349,6 +1348,9 @@ public class myUniverse {
 		        		}
 		        	}
 		        	
+		        	
+		        	rs11.close();
+		        	s11.close();
 		        }
 			} catch (Exception e)
 			{
