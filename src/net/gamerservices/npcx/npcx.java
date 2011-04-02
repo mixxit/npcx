@@ -1148,12 +1148,12 @@ public class npcx extends JavaPlugin {
             {
             	
         		if (args.length < 3) {
-        			player.sendMessage("Insufficient arguments /npcx research create researchname prereqresearchname hourstocomplete");
+        			player.sendMessage("Insufficient arguments /npcx research create researchname prereqresearchname hourstocomplete cost");
         			return false;
         			
         		} else {
         		
-        			this.universe.createResearch(args[2], args[3], args[4]);
+        			this.universe.createResearch(args[2], args[3], args[4],args[5]);
         			player.sendMessage("debug: created");
         			return true;
         		}

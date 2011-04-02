@@ -2559,12 +2559,12 @@ public class myUniverse {
 		
 	}
 	
-	public void createResearch(String name, String prereq, String time )
+	public void createResearch(String name, String prereq, String time, String cost )
 	{
 		try
 		{
 		PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO flags (name) VALUES (?) ON DUPLICATE KEY UPDATE value=VALUES(value) ",Statement.RETURN_GENERATED_KEYS);
-		stmt.setString(1,"RESEARCH__"+name+":"+prereq+":"+time);
+		stmt.setString(1,"RESEARCH__"+name+":"+prereq+":"+time+":"+cost);
 		
 		stmt.executeUpdate();
 		ResultSet keyset = stmt.getGeneratedKeys();
