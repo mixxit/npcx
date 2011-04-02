@@ -105,15 +105,15 @@ Step 6
 Begin creating your first spawn group at your location with
 
 Code:
-/npcx spawngroup create myfirstgroup
+/npcx spawngroup create myfirstgroup     <--- creates a spawngroup called myfirst group
 * REMEMBER THE SPAWNGROUP ID THIS GIVES YOU
 Now create an npc called Guard
 Code:
-/npcx npc create Guard
+/npcx npc create Guard      <----- creates a guard called Guard
 * REMEMBER THE NPCID THIS GIVES YOU
 Now add guard's id to your spawn group number
 Code:
-/npcx spawngroup add 1 1
+/npcx spawngroup add SPAWNGROUPID(NUMBER) NPCID(NUMBER)   <--- adds npc ID (number) to spawngroup ID (number)
 
 Guard should now spawn permanently at the spawngroups location.
 
@@ -134,8 +134,8 @@ Spawngroups are placed at any X Y Z co-ordinate and contain a group of npcs. Any
 Add npcs to the spawngroup by using the /npcx spawngroup add command. An npc out of this group will now spawn at the designated position.
 
 Code:
-/npcx spawngroup create spawngroupname - Adds a new blank spawngroup container at your position
-/npcx spawngroup add spawngroupid npcid - Adds an npc to the spawngroup container
+/npcx spawngroup create spawngroupname <----- Adds a new blank spawngroup container at your position
+/npcx spawngroup add spawngroupid(NUMBER) npcid(NUMBER) <------ Adds an npc to the spawngroup container
 /npcx spawngroup list - lists all spawngroups
 Overview:
 
@@ -155,9 +155,9 @@ Creating NPCs
 =============================================
 
 Code:
-/npcx npc spawn name - Temporarily spawns an npc at your spot
-/npcx npc create name - Creates a new npc (that needs to be added to a spawngroup)
-/npcx npc list Lists all npcs (this needs to support querying by name output limits)
+/npcx npc spawn name <---- Temporarily spawns an npc at your spot
+/npcx npc create name <---- Creates a new npc (that needs to be added to a spawngroup)
+/npcx npc list <---- Lists all npcs (this needs to support querying by name output limits)
 Overview:
 NPCs are just that, definitions of the mob you want to appear in game. There can be multiple of the same. They are temporary and do not return after death.
 
@@ -177,7 +177,7 @@ Adding NPCs to containers
 =============================================
 
 Code:
-/npcx spawngroup add groupid npcid
+/npcx spawngroup add spawngroupid(NUMBER) npcid(NUMBER)
 
 get these from spawngroup list and npc list
 
@@ -194,12 +194,12 @@ You can get an npc to respond to triggerwords with predefined responses which ad
 Syntax
 
 Code:
-/npcx npc triggerword add NPCID word response as long as you like
+/npcx npc triggerword add NPCID(number) wordtorespondon responsegoeshereandcan have spaces
 Adding a new triggerword called 'default' to an npc will override the npcs default response to unknown questions
 
 ie:
 Code:
-/npcx npc triggerword add 1 default My default response!
+/npcx npc triggerword add NPCID(number) default My default response!
 Note: An npc without any triggerwords will respond with 'Im sorry name im rather busy right now'
 Note: you cannot talk to temporary 'spawn' npcs as they have no responses configured
 
@@ -213,21 +213,21 @@ Added 'ATTACK' - Triggers when an npc becomes attacked by a player
 
 Events in responses
 -------------------
-Syntax: /npcx npc response
+Syntax: 
 Added 'NPCSUMMONPLAYER' event to triggerword responses <--- Summons player to npc
 Added 'NPCSUMMONZOMBIE' event to triggerword responses <--- Summons one zombie at npc
 Added 'NPCATTACK' event to triggerword responses - <--- Forces npc to attack player
 Added 'NPCSUMMONWOLF' event to triggerword responses - <--- Summons one wolf at the npc
 
 Code:
-/npcx npc triggerword add NPCID TRIGGERWORD NPCATTACK <--- attacks based on triggerword
+/npcx npc triggerword add NPCID(NUMBER) TRIGGERWORD NPCATTACK <--- attacks based on triggerword
 - then the npc will attack when spoken to.
 
 Or a scenario like this:
 Code:
-/npcx npc triggerword add 1 default Dont call me an idiot <--- when a player says anything it will return Dont call me an idiot
+/npcx npc triggerword add NPCID(NUMBER) default Dont call me an idiot <--- when a player says anything it will return Dont call me an idiot
 Code:
-/npcx npc triggerword add 1 idiot NPCATTACK <--- when a player says idiot it will attack him
+/npcx npc triggerword add NPCID(NUMBER) idiot NPCATTACK <--- when a player says idiot it will attack him
 
 Chat Variables in responses
 --------------------------
@@ -245,17 +245,17 @@ Merchants can also be configured with custom triggerwords, just like a normal NP
 
 To change an npc from a normal type into a merchant type
 Code:
-/npcx npc category NPCID mercahnt
+/npcx npc category NPCID(number) merchant   <--- Transforms the npc into a merchant
 Begin talking to the npc to buy and sell from it
 
 To load it with items as an admin create a merchant list
 
-/npcx merchant create merchantlistname
+/npcx merchant create merchantlistname  <---- creates a merchantlist named whatever
 add stuff to it like goldingots (id 266)
-/npcx merchant add MERCHANTLISTID ITEMID AMOUNT PRICETOBUYAT PRICETOSELLAT
+/npcx merchant add MERCHANTID(NUMBER) ITEMID AMOUNT PRICETOBUYAT PRICETOSELLAT <---- adds an item to a merchant list
 
 Attach the merchant list to an npcID
-/npcx npc merchant NPCID MERCHANTLISTID
+/npcx npc merchant NPCID MERCHANTID(NUMBER) <---- attachs a merchantlist to an npc
 
 NPC Combat
 =============================================
@@ -269,6 +269,7 @@ Making NPCs attack players
 =============================================
 
 First create a faction with a baseamount of anything lower than -1000
+
 Code:
 /npcx faction create -1000 Bandits
 Get the faction id with
@@ -276,7 +277,7 @@ Code:
 /npcx faction list
 Assign the faction to the npc, his faction will now be aggressive to anyone by default and he will now attack players.
 Code:
-/npcx npc faction FACTIONID
+/npcx npc faction FACTIONID(number)
 Adding loot to NPCs
 
 First create a loottable with a name to describe its content
@@ -287,10 +288,14 @@ Code:
 /npcx loottable list
 Now assign an item to the loottable
 Code:
-/npcx loottable add LOOTTABLEID ITEMID AMOUNT
+* YOU MUST USE ITEM NUMBERS FOR THE ITEM ID *
+* Reference here: http://www.minecraftwiki.net/wiki/Data_values *
+
+/npcx loottable add LOOTTABLEID(NUMBER) ITEMID(NUMBER) AMOUNT
+
 Now assign the loottable to the npc
 Code:
-/npcx npc loottable LOOTTABLEID
+/npcx npc loottable NPCID(number) LOOTTABLEID(number)
 
 Path Groups - (WIP)
 =============================================
@@ -310,15 +315,15 @@ Code:
 to get the ID
 Stand where you want position 1 to be
 Code:
-/npcx pathgroup add PATHGROUPID POSITIONNO
+/npcx pathgroup add PATHGROUPID(NUMBER) POSITIONNO(NUMBER)
 
 Stand where you want position 2 to be
 Code:
-/npcx pathgroup add PATHGROUPID POSITIONNO
+/npcx pathgroup add PATHGROUPID(NUMBER) POSITIONNO(NUMBER)
 
 Then assign the path to a spawngroup
 Code:
-/npcx spawngroup pathgroup SPAWNGROUPID PATHGROUPID
+/npcx spawngroup pathgroup SPAWNGROUPID(NUMBER) PATHGROUPID(NUMBER)
 
 
 Civilisations
