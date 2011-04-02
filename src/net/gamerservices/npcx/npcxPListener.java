@@ -258,6 +258,7 @@ public class npcxPListener extends PlayerListener {
 												}
 												event.getPlayer().sendMessage(ChatColor.RED+"You are not in the wild or in an area you own ("+x+":"+z+")!");
 												event.setCancelled(true);
+												return;
 											}
 										}
 									}
@@ -267,6 +268,7 @@ public class npcxPListener extends PlayerListener {
 								event.getPlayer().sendMessage(ChatColor.RED+"No player located, you have been denied");
 								this.parent.fixDead();
 								event.setCancelled(true);
+								return;
 								
 								
 							} catch (Exception e)
@@ -331,13 +333,14 @@ public class npcxPListener extends PlayerListener {
 							// Can't find player so assume they cant change
 							event.getPlayer().sendMessage(ChatColor.RED+"No player located, you have been denied");
 							event.setCancelled(true);
+							return;
 		
 						} catch (Exception e)
 						{
 							// locked table
 							event.setCancelled(true);
+							return;
 						}
-						return;
 					}
 				} else {
 					// Is an Operator
