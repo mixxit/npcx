@@ -1353,34 +1353,9 @@ public class myNPC {
 			}
 			
 			((Player) p).sendMessage("You have slain " + this.name + "!");
-			/*
-			for (myPlayer pl : this.parent.universe.players.values())
-			{
-				if (pl.player == (Player)p)
-				{
-					
-					pl.zomgcount++;
-					if (pl.zomgcount == 10)
-					{
-						((Player) p).getServer().broadcastMessage("&3"+((Player) p).getName() + " has become a legend spoken of by people all over the world! (Slayed 10)");
-						
-					}
-					
-					if (pl.zomgcount == 500)
-					{
-						((Player) p).getServer().broadcastMessage("&3"+((Player) p).getName() + " is an unstoppable juggernaught (Slayed 50)");
-						
-					}
-					
-					if (pl.zomgcount == 1000)
-					{
-						((Player) p).getServer().broadcastMessage("&3"+"The divine being " + ((Player) p).getName() + " walks among us (Slayed 100)");
-					}
-					
-				}
-				
-			}
-			*/
+			
+			
+			
 			if (this.faction != null)
 			{
 				try

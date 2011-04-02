@@ -464,17 +464,8 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerRespawn(PlayerRespawnEvent event)
 	{
-		for (myPlayer player : this.parent.universe.players.values())
-		{
-				// deal with player death changes
-				if (player.player == event.getPlayer())
-				{
-					//System.out.println("npcx : player about to respawn, assigning them to the dead list");
-					player.dead = true;
-					
-				}
-			
-		}
+		// moved to ondeath
+		
 		
 	}
 	

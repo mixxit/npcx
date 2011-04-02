@@ -759,6 +759,21 @@ public class BasicHumanNpc extends BasicNpc {
 	            		((Player) ent).sendMessage("You have been slaughtered by " + getName());
 	            		this.onKilled(ent);
 	            		
+	            		
+	            		// mark player dead
+	            		for (myPlayer player : this.parent.parent.universe.players.values())
+	        			{
+	        					// deal with player death changes
+	        					if (player.player == ent)
+	        					{
+	        						//System.out.println("npcx : player about to respawn, assigning them to the dead list");
+	        						player.dead = true;
+	        						((Player) ent).sendMessage("You have been slaughtered by " + getName());
+	        						
+	        					}
+	        				
+	        			}
+	            		
 	            	}
 	            } else {
 	            	if (ent instanceof Monster)
