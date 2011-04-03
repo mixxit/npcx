@@ -267,7 +267,7 @@ public class npcx extends JavaPlugin {
 									    	{
 									    		// Entities seem to be Y + 1
 									    		Location eloc = e.getLocation();
-									    		eloc.setY(eloc.getY()+1);
+									    		eloc.setY(eloc.getY());
 									    		
 									    		if (blockinsight == eloc.getBlock())
 									    		{
@@ -333,7 +333,7 @@ public class npcx extends JavaPlugin {
 									    	{
 									    		// Entities seem to be Y + 1
 									    		Location eloc = e.getLocation();
-									    		eloc.setY(eloc.getY()+1);
+									    		eloc.setY(eloc.getY());
 									    		
 									    		if (blockinsight == eloc.getBlock())
 									    		{
