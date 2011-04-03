@@ -2678,7 +2678,7 @@ public class myUniverse {
 	public void processResearchTick() {
 		// TODO Auto-generated method stub
 		try {
-			String sql = "SELECT flags.id,flags.name,player_flags.playername,player_flags.flagid,player_flags.value FROM flags,player_flags WHERE player_flags.flagid = flags.id AND flags.name LIKE 'RESEARCH__%' AND player_flags.value != '0' ";
+			String sql = "SELECT flags.id,flags.name,player_flags.playername,player_flags.flagid,player_flags.value,player_flags.id FROM flags,player_flags WHERE player_flags.flagid = flags.id AND flags.name LIKE 'RESEARCH__%' AND player_flags.value != '0' ";
 	        PreparedStatement s1 = conn.prepareStatement (sql);
 	       
 	        ResultSet rs1 = s1.executeQuery();
@@ -2689,7 +2689,10 @@ public class myUniverse {
 	        	
 	        	if (rs1.getInt("player_flags.value") == 1)
 	        	{
-	        		this.parent.getServer().broadcastMessage(ChatColor.YELLOW + " * " +ChatColor.LIGHT_PURPLE +  rs1.getString("player_flags.playername") + ChatColor.YELLOW + " has unlocked " + ChatColor.LIGHT_PURPLE + rs1.getString("flags.name"));
+	        		String[] rz = rs1.getString("flags.name").split(":");
+	        		String name = rz[0];
+	        		name = name.replace("RESEARCH__", "");
+	        		this.parent.getServer().broadcastMessage(ChatColor.YELLOW + " * " +ChatColor.LIGHT_PURPLE +  rs1.getString("player_flags.playername") + ChatColor.YELLOW + " has unlocked " + ChatColor.LIGHT_PURPLE + name);
 	        	}
 	        	
 	        	tickPlayerFlagID(rs1.getInt("player_flags.id"));
