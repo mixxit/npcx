@@ -2369,7 +2369,7 @@ public class myUniverse {
 		{
 			if (researchid == f.id)
 			{
-				if (!hasResearch(player.getName(), researchid))
+				if (!hasResearchInProgress(player.getName(), researchid))
 				{	
 					if (hasPrereqResearch(player.getName(), researchid))
 					{
@@ -2496,6 +2496,41 @@ public class myUniverse {
 	        	{
 	        		return true;
 	        	}
+	        		
+	        }
+	        return false;
+		} catch (SQLException e)
+		{
+			return false;
+		}
+	}
+	
+	public boolean hasResearchInProgress(String playername, int researchid)
+	{
+		try 
+		{
+	        
+	        String sql = "SELECT * FROM player_flags WHERE flagid = ? AND playername = ?";
+	        PreparedStatement s1 = conn.prepareStatement (sql);
+	        s1.setString(2, playername);
+	        s1.setInt(1, researchid);
+	        
+	        ResultSet rs1 = s1.executeQuery();
+	        
+	        int countflag = 0;
+	        int status = 0;
+	        while (rs1.next ())
+	        {
+	        	status = Integer.parseInt(rs1.getString("value"));
+	        	countflag++;
+	        }
+
+	        rs1.close();
+	        s1.close();
+	        
+	        if (countflag > 0)
+	        {
+	        	return true;
 	        		
 	        }
 	        return false;
