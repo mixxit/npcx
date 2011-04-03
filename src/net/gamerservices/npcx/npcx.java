@@ -140,12 +140,18 @@ public class npcx extends JavaPlugin {
 	
 	public void think()
 	{
-		tickx--;
-		if (tickx == 0)
+		if (this.universe.nations != null)
 		{
-			this.getServer().broadcastMessage(ChatColor.YELLOW + " * " +ChatColor.LIGHT_PURPLE + "It is the end of the turn, your research has moved on 1 point!");
-			this.tickx = 7200000;
-			this.universe.processResearchTick();
+			if( this.universe.nations.equals("true"))
+			{
+				tickx--;
+				if (tickx == 0)
+				{
+					this.getServer().broadcastMessage(ChatColor.YELLOW + " * " +ChatColor.LIGHT_PURPLE + "It is the end of the turn, your research has moved on 1 point!");
+					this.tickx = 7200000;
+					this.universe.processResearchTick();
+				}
+			}
 		}
 		
 		
