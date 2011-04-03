@@ -2689,7 +2689,7 @@ public class myUniverse {
 	        	
 	        	if (rs1.getInt("player_flags.value") == 1)
 	        	{
-	        		this.parent.getServer().broadcastMessage(ChatColor.YELLOW + " * " +ChatColor.LIGHT_PURPLE +  rs1.getString("player_flags.playername") + ChatColor.YELLOW + " has unlocked " + ChatColor.LIGHT_PURPLE + rs1.getString("flag.name"));
+	        		this.parent.getServer().broadcastMessage(ChatColor.YELLOW + " * " +ChatColor.LIGHT_PURPLE +  rs1.getString("player_flags.playername") + ChatColor.YELLOW + " has unlocked " + ChatColor.LIGHT_PURPLE + rs1.getString("flags.name"));
 	        	}
 	        	
 	        	tickPlayerFlagID(rs1.getInt("player_flags.id"));
