@@ -2483,7 +2483,7 @@ public class myUniverse {
 	        while (rs1.next ())
 	        {
 	        	status = Integer.parseInt(rs1.getString("value"));
-	        	
+	        	countflag++;
 	        }
 
 	        rs1.close();
@@ -2624,6 +2624,19 @@ public class myUniverse {
 		}
 		
 			
+	}
+	
+	
+	public void sendAllResearchList(Player player) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		
+		for (myResearch r : research)
+		{
+			player.sendMessage(ChatColor.LIGHT_PURPLE + " * " + ChatColor.YELLOW + "[Researching] " + r.name+ ChatColor.LIGHT_PURPLE + " - " + ChatColor.YELLOW + hasResearchTimeLeft(player.getName(),r.id) + ChatColor.LIGHT_PURPLE + " turns to complete");
+			
+		}
+		
 	}
 
 	public void processResearchTick() {
