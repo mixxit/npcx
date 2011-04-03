@@ -1185,7 +1185,7 @@ public class myUniverse {
 	        {
 	        	String data = rs1.getString("name").replace("RESEARCH__","");
 	        	String research[] = data.split(":");
-	        	myResearch rs = new myResearch(rs1.getInt("id"),research[0],research[1],research[2]);
+	        	myResearch rs = new myResearch(rs1.getInt("id"),research[0],research[1],research[2],research[3]);
 	        	this.research.add(rs);
 	
 	        	countresearch++;
@@ -2510,7 +2510,7 @@ public class myUniverse {
 		try 
 		{
 	        
-	        String sql = "SELECT * FROM player_flags WHERE flagid = ? AND playername = ?";
+	        String sql = "SELECT * FROM player_flags WHERE flagid = ? AND value > 0 AND playername = ?";
 	        PreparedStatement s1 = conn.prepareStatement (sql);
 	        s1.setString(2, playername);
 	        s1.setInt(1, researchid);
@@ -2620,7 +2620,7 @@ public class myUniverse {
 		
 		if (key != 0)
 		{
-			myResearch r = new myResearch(key, name, prereq, time);
+			myResearch r = new myResearch(key, name, prereq, time, cost);
 			this.research.add(r);
 		}
 		
@@ -2638,13 +2638,14 @@ public class myUniverse {
 		int count = 0;
 		for (myResearch r : research)
 		{
-			if (this.hasResearch(player.getName(), r.id))
+			if (this.hasResearchInProgress(player.getName(), r.id))
 			{
 				player.sendMessage(ChatColor.LIGHT_PURPLE + " * " + ChatColor.YELLOW + "[Researching] " + r.name+ ChatColor.LIGHT_PURPLE + " - " + ChatColor.YELLOW + hasResearchTimeLeft(player.getName(),r.id) + ChatColor.LIGHT_PURPLE + " turns to complete");
 			} else {
+				
 				if (this.hasPrereqResearch(player.getName(), r.id))
 				{
-					player.sendMessage(ChatColor.LIGHT_PURPLE + " * " + ChatColor.YELLOW +  r.name+ ChatColor.LIGHT_PURPLE + " Requires: [" + ChatColor.YELLOW + r.prereq+ ChatColor.LIGHT_PURPLE + "] " + ChatColor.YELLOW + r.time + ChatColor.LIGHT_PURPLE + " turns to complete");
+					player.sendMessage(ChatColor.LIGHT_PURPLE + " * " + ChatColor.YELLOW +  r.name+ ChatColor.LIGHT_PURPLE + " Requires: $" + r.cost + " [" + ChatColor.YELLOW + r.prereq+ ChatColor.LIGHT_PURPLE + "] " + ChatColor.YELLOW + r.time + ChatColor.LIGHT_PURPLE + " turns to complete");
 					
 				} else {
 					count++;
