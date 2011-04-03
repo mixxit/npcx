@@ -2388,7 +2388,7 @@ public class myUniverse {
 							    // Retrieve the auto generated key(s).
 							    key = keyset.getInt(1);
 							}
-							player.getServer().broadcastMessage(ChatColor.YELLOW + " * " + player.getName() + " has begun researching " + f.name + " ("+f.time+" turns)");
+							player.getServer().broadcastMessage(ChatColor.YELLOW + " * " + ChatColor.LIGHT_PURPLE +  player.getName() + ChatColor.YELLOW+" has begun researching " +ChatColor.LIGHT_PURPLE+ f.name + ChatColor.LIGHT_PURPLE+" ("+f.time+" turns)");
 							player.sendMessage("Research started!");
 							stmt.close();
 							
@@ -2689,7 +2689,7 @@ public class myUniverse {
 	        	
 	        	if (rs1.getInt("player_flags.value") == 1)
 	        	{
-	        		this.parent.getServer().broadcastMessage(ChatColor.YELLOW + " * " + rs1.getString("player_flags.playername") + " has completed " + rs1.getString("flag.name"));
+	        		this.parent.getServer().broadcastMessage(ChatColor.YELLOW + " * " +ChatColor.LIGHT_PURPLE +  rs1.getString("player_flags.playername") + ChatColor.YELLOW + " has unlocked " + ChatColor.LIGHT_PURPLE + rs1.getString("flag.name"));
 	        	}
 	        	
 	        	tickPlayerFlagID(rs1.getInt("player_flags.id"));
