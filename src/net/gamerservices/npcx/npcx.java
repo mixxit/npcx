@@ -143,7 +143,7 @@ public class npcx extends JavaPlugin {
 		tickx--;
 		if (tickx == 0)
 		{
-			this.getServer().broadcastMessage("It is the end of the turn, your research has moved on one point!");
+			this.getServer().broadcastMessage(ChatColor.YELLOW + " * " +ChatColor.LIGHT_PURPLE + "It is the end of the turn, your research has moved on 1 point!");
 			this.tickx = 100;
 			this.universe.processResearchTick();
 		}
