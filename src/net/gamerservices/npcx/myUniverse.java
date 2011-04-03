@@ -2725,5 +2725,16 @@ public class myUniverse {
 		}
 	}
 
+	public void sendUnlockedList(Player player) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		for (myResearch r : research)
+		{
+			if (this.hasResearch(player.getName(), r.id))
+			player.sendMessage(ChatColor.LIGHT_PURPLE + " * " + ChatColor.YELLOW +  r.name+ ChatColor.LIGHT_PURPLE + " Requires: $" + r.cost + " [" + ChatColor.YELLOW + r.prereq+ ChatColor.LIGHT_PURPLE + "] " + ChatColor.YELLOW + r.time + ChatColor.LIGHT_PURPLE + " turns to complete");
+		}
+	}
+
 	
 }

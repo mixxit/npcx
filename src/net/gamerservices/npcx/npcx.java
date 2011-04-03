@@ -762,6 +762,7 @@ public class npcx extends JavaPlugin {
 	            			player.sendMessage("Insufficient arguments /civ research list");
 	            			player.sendMessage("Insufficient arguments /civ research start researchname");
 	            			player.sendMessage("Insufficient arguments /civ research cancel researchname");
+	            			player.sendMessage("Insufficient arguments /civ research unlocked ");
 	            			return false;
 						}
 						
@@ -807,7 +808,9 @@ public class npcx extends JavaPlugin {
 						if (args[1].equals("list")) {
 		            		this.universe.sendResearchList(player);
 						}
-						
+						if (args[1].equals("unlocked")) {
+		            		this.universe.sendUnlockedList(player);
+						}
 				
             			
 		            }
