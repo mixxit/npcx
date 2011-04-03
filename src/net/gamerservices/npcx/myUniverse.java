@@ -2586,7 +2586,7 @@ public class myUniverse {
 	}
 
 	public void cancelResearch(Player player, int researchid) {
-		cancelResearch(player,researchid);
+		cancelFlag(player,researchid);
 		player.sendMessage("Research cancelled!");
 	}
 
