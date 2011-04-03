@@ -2678,7 +2678,7 @@ public class myUniverse {
 	public void processResearchTick() {
 		// TODO Auto-generated method stub
 		try {
-			String sql = "SELECT flag.id,flag.name,player_flags.playername,player_flags.flagid,player_flags.value FROM flags,player_flags WHERE player_flagid = flags.id AND flags.name LIKE 'RESEARCH__%' AND player_flags.value != '0' ";
+			String sql = "SELECT flags.id,flags.name,player_flags.playername,player_flags.flagid,player_flags.value FROM flags,player_flags WHERE player_flagid = flags.id AND flags.name LIKE 'RESEARCH__%' AND player_flags.value != '0' ";
 	        PreparedStatement s1 = conn.prepareStatement (sql);
 	       
 	        ResultSet rs1 = s1.executeQuery();
