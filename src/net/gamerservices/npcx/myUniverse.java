@@ -2235,9 +2235,12 @@ public class myUniverse {
 	{
 		for (myNPC n : this.npcs.values())
 		{
-			if (n.npc.getBukkitEntity() == e)
+			if (n.npc != null)
 			{
-				return true;
+				if (n.npc.getBukkitEntity() == e)
+				{
+					return true;
+				}
 			}
 		}
 		return false;
