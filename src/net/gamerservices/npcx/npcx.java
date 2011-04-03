@@ -61,7 +61,7 @@ public class npcx extends JavaPlugin {
 	private npcxWListener mWorldListener;
 	private npcxBListener mBlockListener;
 	public myUniverse universe;
-	int tickx = 100;
+	int tickx = 7200000;
 	// iconomy
 	private static PluginListener PluginListener = null;
     private static iConomy iConomy = null;
@@ -144,7 +144,7 @@ public class npcx extends JavaPlugin {
 		if (tickx == 0)
 		{
 			this.getServer().broadcastMessage(ChatColor.YELLOW + " * " +ChatColor.LIGHT_PURPLE + "It is the end of the turn, your research has moved on 1 point!");
-			this.tickx = 100;
+			this.tickx = 7200000;
 			this.universe.processResearchTick();
 		}
 		

@@ -2645,8 +2645,10 @@ public class myUniverse {
 				
 				if (this.hasPrereqResearch(player.getName(), r.id))
 				{
-					player.sendMessage(ChatColor.LIGHT_PURPLE + " * " + ChatColor.YELLOW +  r.name+ ChatColor.LIGHT_PURPLE + " Requires: $" + r.cost + " [" + ChatColor.YELLOW + r.prereq+ ChatColor.LIGHT_PURPLE + "] " + ChatColor.YELLOW + r.time + ChatColor.LIGHT_PURPLE + " turns to complete");
-					
+					if (!this.hasResearch(player.getName(), r.id))
+					{
+						player.sendMessage(ChatColor.LIGHT_PURPLE + " * " + ChatColor.YELLOW +  r.name+ ChatColor.LIGHT_PURPLE + " Requires: $" + r.cost + " [" + ChatColor.YELLOW + r.prereq+ ChatColor.LIGHT_PURPLE + "] " + ChatColor.YELLOW + r.time + ChatColor.LIGHT_PURPLE + " turns to complete");
+					}
 				} else {
 					count++;
 				}
