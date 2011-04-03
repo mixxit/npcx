@@ -155,7 +155,6 @@ Creating NPCs
 =============================================
 
 Code:
-/npcx npc spawn name <---- Temporarily spawns an npc at your spot
 /npcx npc create name <---- Creates a new npc (that needs to be added to a spawngroup)
 /npcx npc list <---- Lists all npcs (this needs to support querying by name output limits)
 Overview:

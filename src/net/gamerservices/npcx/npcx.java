@@ -1975,7 +1975,7 @@ public class npcx extends JavaPlugin {
             			
             		    
             			s2.executeUpdate();
-        	            player.sendMessage("Pathing Position ["+ args[3] + "] added to pathggroup ["+ args[2] + "]");
+        	            player.sendMessage("Pathing Position ["+ args[3] + "] added to pathgroup ["+ args[2] + "]");
             			
         	            // add to cached spawngroup
         	            for (myPathgroup pg : this.universe.pathgroups)
