@@ -2360,7 +2360,7 @@ public class myUniverse {
 		return "null";
 	}
 
-	public void startResearch(Player player, int researchid) {
+	public boolean startResearch(Player player, int researchid) {
 		// TODO Auto-generated method stub
 		// TODO Auto-generated method stub
 		// scan factions 
@@ -2390,20 +2390,23 @@ public class myUniverse {
 							}
 							player.getServer().broadcastMessage(ChatColor.YELLOW + " * " + player.getName() + " has begun researching " + f.name + " ("+f.time+" turns)");
 							player.sendMessage("Research started!");
-							
 							stmt.close();
+							
 						} catch (SQLException e)
 						{
 							player.sendMessage("Incorrect research id!");
 							e.printStackTrace();
 						}
+						
 					} else {
 						player.sendMessage("Cannot start research, you do not have the pre-requisite.");
+				
 					}
 			
 					
 				} else {
 					player.sendMessage("Cannot start research, you already have it or are researching it.");
+				
 				}
 				count++;
 			}
@@ -2412,6 +2415,9 @@ public class myUniverse {
 		if (count ==0)
 		{
 			player.sendMessage("Research does not exist");
+			return false;
+		} else {
+			return true;
 		}
 		
 		
@@ -2553,7 +2559,10 @@ public class myUniverse {
 	{
 		for (myResearch r : this.research)
 		{
-			return r.id;
+			if (r.name.matches(name))
+			{
+				return r.id;
+			} 
 		}
 		return -1;
 		

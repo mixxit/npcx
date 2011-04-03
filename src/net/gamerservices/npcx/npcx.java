@@ -773,7 +773,12 @@ public class npcx extends JavaPlugin {
 		            			try
 		            			{
 		            			int researchid = this.universe.getResearchID(args[2]);
-		            			this.universe.startResearch(player,researchid);
+		            			if ( this.universe.startResearch(player,researchid) ) 
+		            			{ 
+		            				
+		            			} else {
+		            				player.sendMessage("Incorrect research name");
+		            			}
 		            			} catch (Exception e)
 		            			{
 		            				player.sendMessage("Incorrect research name");
