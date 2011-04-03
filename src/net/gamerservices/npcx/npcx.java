@@ -203,7 +203,7 @@ public class npcx extends JavaPlugin {
 									    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), player.player.getLocation().getY());
 									    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), player.player.getLocation().getZ());
 									    
-									    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+									    if (distancex > -8 && distancey > -8 && distancez > -8 && distancex < 8 && distancey < 8 && distancez < 8)
 									    {
 									    		if (npc.parent != null)
 									    		{
@@ -249,7 +249,7 @@ public class npcx extends JavaPlugin {
 							    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
 							   
 						    	// HumanEntity in range?
-							    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+							    if (distancex > -8 && distancey > -8 && distancez > -8 && distancex < 8 && distancey < 8 && distancez < 8)
 							    {
 								    // monster in range but is it worth chasing?
 							    	myNPC targetnpc = this.universe.tryFactionVSNPCAttack(npc,(HumanEntity)e);
@@ -263,7 +263,7 @@ public class npcx extends JavaPlugin {
 								    	boolean foundresult = false;
 								    	try
 								    	{
-									    	for (Block blockinsight : npc.npc.getBukkitEntity().getLineOfSight(null, 5))
+									    	for (Block blockinsight : npc.npc.getBukkitEntity().getLineOfSight(null, 8))
 									    	{
 									    		// Entities seem to be Y + 1
 									    		Location eloc = e.getLocation();
@@ -318,7 +318,7 @@ public class npcx extends JavaPlugin {
 								    if (e instanceof Monster)
 								    {
 								    	// mosnter in range?
-									    if (distancex > -5 && distancey > -5 && distancez > -5 && distancex < 5 && distancey < 5 && distancez < 5)
+									    if (distancex > -8 && distancey > -8 && distancez > -8 && distancex < 8 && distancey < 8 && distancez < 8)
 									    {
 										    // monster in range but is it worth chasing?
 									    	
@@ -329,7 +329,7 @@ public class npcx extends JavaPlugin {
 									    	boolean foundresult = false;
 									    	
 									    	// retrieve all blocks in sight
-									    	for (Block blockinsight : npc.npc.getBukkitEntity().getLineOfSight(null, 5))
+									    	for (Block blockinsight : npc.npc.getBukkitEntity().getLineOfSight(null, 8))
 									    	{
 									    		// Entities seem to be Y + 1
 									    		Location eloc = e.getLocation();
