@@ -263,7 +263,7 @@ public class npcx extends JavaPlugin {
 								    	boolean foundresult = false;
 								    	try
 								    	{
-									    	for (Block blockinsight : e.getLineOfSight(null, 5))
+									    	for (Block blockinsight : npc.npc.getBukkitEntity().getLineOfSight(null, 5))
 									    	{
 									    		// Entities seem to be Y + 1
 									    		Location eloc = e.getLocation();
@@ -327,7 +327,9 @@ public class npcx extends JavaPlugin {
 									    	// line of site
 		
 									    	boolean foundresult = false;
-									    	for (Block blockinsight : e.getLineOfSight(null, 5))
+									    	
+									    	// retrieve all blocks in sight
+									    	for (Block blockinsight : npc.npc.getBukkitEntity().getLineOfSight(null, 5))
 									    	{
 									    		// Entities seem to be Y + 1
 									    		Location eloc = e.getLocation();
