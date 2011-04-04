@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.gamerservices.npclibfork.BasicHumanNpc;
 import net.gamerservices.npclibfork.CHumanNpc;
@@ -1034,36 +1036,46 @@ public class myNPC {
 		}
 		
 		
-		String newresponse = response;
+		if (response.contains("["))
+		{
+			
+			// we have at least one bracket in this message, lets colour it!
+			
+			// grab all of them individually
+			
+ 			for (String command : response.split(" "))
+ 			{
+ 				Pattern p = Pattern.compile("\\[\\w+\\]");
+ 				Matcher m = p.matcher(command);
+ 				if (m.matches())
+ 				{
+ 					response = response.replaceAll(p.quote(command),ChatColor.LIGHT_PURPLE + command + ChatColor.WHITE);
+ 				}
+ 			}
+		}
+		
 		if (response.contains("bankbalance"))
 		{
-			//System.out.println("Replacing bankbalance variable");
-			
-			newresponse = response.replaceAll("bankbalance", ChatColor.YELLOW+Integer.toString(balance)+ChatColor.WHITE);
+			response = response.replaceAll("bankbalance", ChatColor.YELLOW+Integer.toString(balance)+ChatColor.WHITE);
 		}
 		
 		if (response.contains("playerbalance"))
 		{
-			//System.out.println("Replacing bankbalance variable");
-			
-			newresponse = response.replaceAll("playerbalance", ChatColor.YELLOW+Integer.toString(balance)+ChatColor.WHITE);
+			response = response.replaceAll("playerbalance", ChatColor.YELLOW+Integer.toString(balance)+ChatColor.WHITE);
 		}
 		
 		if (response.contains("playerhealth"))
 		{
-			//System.out.println("Replacing bankbalance variable");
-			newresponse = response.replaceAll("playerhealth", Integer.toString(player.getHealth()));
+			response = response.replaceAll("playerhealth", Integer.toString(player.getHealth()));
 		}
 		
 		if (response.contains("playername"))
 		{
-			//System.out.println("Replacing bankbalance variable");
-			
-			newresponse = response.replaceAll("playername", player.getName());
+			response = response.replaceAll("playername", player.getName());
 		}
 
 		
-		return newresponse;
+		return response;
 	}
 	
 	public int checkHints(int id)
