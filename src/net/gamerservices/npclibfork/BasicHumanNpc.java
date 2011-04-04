@@ -62,22 +62,6 @@ public class BasicHumanNpc extends BasicNpc {
         this.mcEntity = entity;
     }
 
-    public List <Block> getLineOfSight(int amount)
-    {
-    	if (this.getBukkitEntity() != null)
-    	{
-    		List<Block> los = this.getBukkitEntity().getLineOfSight(null, amount);
-    		if (los != null)
-    		{
-    			return los;
-    		} else {
-    			return null;
-    		}
-    	} else {
-    		return null;
-    	}
-    }
-    
     
     public HumanEntity getBukkitEntity() {
         return (HumanEntity) this.mcEntity.getBukkitEntity();
@@ -319,7 +303,7 @@ public class BasicHumanNpc extends BasicNpc {
 			higherloc.setY(higherloc.getY()+1);
 			Block h = this.getBukkitEntity().getWorld().getBlockAt(higherloc);
 			
-			List < Block > list = this.getLineOfSight(8);
+			List < Block > list = this.getBukkitEntity().getLineOfSight(null,8);
 			if (list != null)
 			{
 		    	for (Block b : list)
