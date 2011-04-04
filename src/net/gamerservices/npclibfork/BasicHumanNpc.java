@@ -303,17 +303,23 @@ public class BasicHumanNpc extends BasicNpc {
 			higherloc.setY(higherloc.getY()+1);
 			Block h = this.getBukkitEntity().getWorld().getBlockAt(higherloc);
 			
-			List < Block > list = this.getBukkitEntity().getLineOfSight(null,8);
-			if (list != null)
+			try 
 			{
-		    	for (Block b : list)
-		    	{
-		    		if (b == h)
-		    		{
-		    			return true;
-		    		} 
-		    	}
-			} 
+				List < Block > list = this.getBukkitEntity().getLineOfSight(null,8);
+				if (list != null)
+				{
+			    	for (Block b : list)
+			    	{
+			    		if (b == h)
+			    		{
+			    			return true;
+			    		} 
+			    	}
+				} 
+			} catch (IllegalStateException e)
+			{
+				return false;
+			}
     	}
     	
 		return false;
