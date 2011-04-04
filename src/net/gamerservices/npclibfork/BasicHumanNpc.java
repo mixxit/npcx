@@ -66,7 +66,13 @@ public class BasicHumanNpc extends BasicNpc {
     {
     	if (this.getBukkitEntity() != null)
     	{
-    		return this.getBukkitEntity().getLineOfSight(null, amount);
+    		List<Block> los = this.getBukkitEntity().getLineOfSight(null, amount);
+    		if (los != null)
+    		{
+    			return los;
+    		} else {
+    			return null;
+    		}
     	} else {
     		return null;
     	}
