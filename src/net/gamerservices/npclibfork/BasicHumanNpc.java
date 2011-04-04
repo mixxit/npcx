@@ -313,13 +313,17 @@ public class BasicHumanNpc extends BasicNpc {
 			higherloc.setY(higherloc.getY()+1);
 			Block h = this.getBukkitEntity().getWorld().getBlockAt(higherloc);
 			
-	    	for (Block b : this.getLineOfSight(8))
-	    	{
-	    		if (b == h)
-	    		{
-	    			return true;
-	    		} 
-	    	}
+			List < Block > list = this.getLineOfSight(8);
+			if (list != null)
+			{
+		    	for (Block b : list)
+		    	{
+		    		if (b == h)
+		    		{
+		    			return true;
+		    		} 
+		    	}
+			} 
     	}
     	
 		return false;

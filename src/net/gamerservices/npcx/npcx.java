@@ -262,8 +262,6 @@ public class npcx extends JavaPlugin {
 								    	// line of site
 							    		//System.out.println("I can hear one but can i see it");
 							    		npc.npc.getFaceLocationFromMe(e.getLocation());
-							    		
-								    
 									    // Entities seem to be Y + 1
 									    Location eloc = e.getLocation();
 									    eloc.setY(eloc.getY()+1);
