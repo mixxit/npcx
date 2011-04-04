@@ -251,48 +251,26 @@ public class npcx extends JavaPlugin {
 						    	// HumanEntity in range?
 							    if (distancex > -8 && distancey > -8 && distancez > -8 && distancex < 8 && distancey < 8 && distancez < 8)
 							    {
+						    		npc.npc.getFaceLocationFromMe(e.getLocation());
 								    // monster in range but is it worth chasing?
 							    	myNPC targetnpc = this.universe.tryFactionVSNPCAttack(npc,(HumanEntity)e);
 							    	if (targetnpc != null)
 							    	{
 								    	
-							    	// face direction
+							    		// face direction
 							    		dbg(1,"npcx:think:NPCVSNPC:ATTK"+entity.toString());
 								    	// line of site
-		
-								    	boolean foundresult = false;
-								    	try
-								    	{
-									    	for (Block blockinsight : npc.npc.getBukkitEntity().getLineOfSight(null, 8))
-									    	{
-									    		// Entities seem to be Y + 1
-									    		Location eloc = e.getLocation();
-									    		eloc.setY(eloc.getY());
-									    		
-									    		if (blockinsight == eloc.getBlock())
-									    		{
-									    			foundresult = true;
-										    		npc.npc.setAggro(e);
-										    		npc.npc.setFollow(e);
-										    		targetnpc.npc.onNpcVsNpcDamage(npc);
-									    		}
-									    	}
-									    	
-									    	if (foundresult == false)
-									    	{
-									    		//System.out.println("I can hear one but can't see it");
-									    		npc.npc.faceLocation(e.getLocation());
-									    		npc.npc.setAggro(null);
-									    		npc.npc.setFollow(null);
-									    		
-									    	}
-								    	} catch (NullPointerException ex)
-								    	{
-								    		// unable to retrieve blocks in area, lets go home
-								    		// skip
-								    		
-								    	}
-								    	
+							    		//System.out.println("I can hear one but can i see it");
+							    		npc.npc.getFaceLocationFromMe(e.getLocation());
+							    		
+								    
+									    // Entities seem to be Y + 1
+									    Location eloc = e.getLocation();
+									    eloc.setY(eloc.getY()+1);
+						    			
+							    		npc.npc.setAggro(e);
+							    		npc.npc.setFollow(e);
+							    		targetnpc.npc.onNpcVsNpcDamage(npc);
 							    	}
 		
 							    	
@@ -311,47 +289,20 @@ public class npcx extends JavaPlugin {
 							{
 								if (e.getHealth() > 0)
 						    	{
-									double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
-								    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
-								    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
-							
 								    if (e instanceof Monster)
 								    {
+								    	double distancex = getDistance(npc.npc.getBukkitEntity().getLocation().getX(), e.getLocation().getX());
+									    double distancey = getDistance(npc.npc.getBukkitEntity().getLocation().getY(), e.getLocation().getY());
+									    double distancez = getDistance(npc.npc.getBukkitEntity().getLocation().getZ(), e.getLocation().getZ());
+									    
+								    	
 								    	// mosnter in range?
 									    if (distancex > -8 && distancey > -8 && distancez > -8 && distancex < 8 && distancey < 8 && distancez < 8)
 									    {
-										    // monster in range but is it worth chasing?
 									    	
-									    	// face direction
-		
-									    	// line of site
-		
-									    	boolean foundresult = false;
-									    	
-									    	// retrieve all blocks in sight
-									    	for (Block blockinsight : npc.npc.getBukkitEntity().getLineOfSight(null, 8))
-									    	{
-									    		// Entities seem to be Y + 1
-									    		Location eloc = e.getLocation();
-									    		eloc.setY(eloc.getY());
-									    		
-									    		if (blockinsight == eloc.getBlock())
-									    		{
-									    			foundresult = true;
-										    		npc.npc.setAggro(e);
-										    		npc.npc.setFollow(e);
-									    		}
-									    	}
-									    	if (foundresult == false)
-									    	{
-									    		//System.out.println("I can hear one but can't see it");
-									    		npc.npc.faceLocation(e.getLocation());
-									    		npc.npc.setAggro(null);
-									    		npc.npc.setFollow(null);
-									    		
-									    	}
-		
-									    	
+
+									    	npc.npc.setAggro(e);
+											npc.npc.setFollow(e);
 										}
 								    }
 								    

@@ -5,6 +5,7 @@ import net.gamerservices.npcx.*;
 import java.io.Console;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 import net.minecraft.server.EntityLiving;
@@ -24,6 +25,7 @@ import org.bukkit.entity.Spider;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 public class BasicHumanNpc extends BasicNpc {
@@ -60,6 +62,13 @@ public class BasicHumanNpc extends BasicNpc {
         this.mcEntity = entity;
     }
 
+    public List <Block> getLineOfSight(int amount)
+    {
+    	return this.getBukkitEntity().getLineOfSight(null, amount);
+    	
+    }
+    
+    
     public HumanEntity getBukkitEntity() {
         return (HumanEntity) this.mcEntity.getBukkitEntity();
     }
@@ -106,7 +115,7 @@ public class BasicHumanNpc extends BasicNpc {
     
     public void checkNotStuck()
     {
-    	if (stuck > 1400)
+    	if (stuck > 350)
     	{
     		this.setFollow(null);
     		this.setAggro(null);
@@ -215,40 +224,57 @@ public class BasicHumanNpc extends BasicNpc {
 			{
 				if (this.getFollow() != null)
 				{
+					Debug(1,this.getName() + ":follow:" + getFollow().toString()+":"+getFollow().getHealth());
+					// lets follow this entity
+					if (this.hp == 0 || this.getFollow().getHealth() == 0)
+					{
+						
+						// they're dead, stop following
+						this.setFollow(null);
+						this.setAggro(null);
+						
+						
+					} else {
+			    		Location locforface = this.getFaceLocationFromMe(getFollow().getLocation());
+			    		Location modifiedloc = new Location(getBukkitEntity().getWorld(),getBukkitEntity().getLocation().getX(),getBukkitEntity().getLocation().getY(),getBukkitEntity().getLocation().getZ(),locforface.getYaw(),locforface.getPitch());
+			    		forceMove(modifiedloc);
+						
 						Debug(1,this.getName() + ":follow:" + getFollow().toString()+":"+getFollow().getHealth());
-						// lets follow this entity
-						if (this.hp == 0 || this.getFollow().getHealth() == 0)
-						{
-							
-							// they're dead, stop following
-							this.setFollow(null);
-							this.setAggro(null);
-							
-							
-						} else {
-							
-							// they're alive lets check distance
-							double x1 = this.getFollow().getLocation().getX();
-				    		double y1 = this.getFollow().getLocation().getY();
-				    		double z1 = this.getFollow().getLocation().getZ();
+						
+						// they're alive lets check distance
+						double x1 = this.getFollow().getLocation().getX();
+				    	double y1 = this.getFollow().getLocation().getY();
+				    	double z1 = this.getFollow().getLocation().getZ();
+				    	
+				    	double x2 = this.getBukkitEntity().getLocation().getX();
+				    	double y2 = this.getBukkitEntity().getLocation().getY();
+				    	double z2 = this.getBukkitEntity().getLocation().getZ();
+				    	int xdist = (int) (x1 - x2);
+				    	int ydist = (int) (y1 - y2);
+				    	int zdist = (int) (z1 - z2);
+				    	
+				    	if (xdist > -30 && xdist < 30 && ydist > -30 && ydist < 30 && zdist > -30 && zdist < 30)
+				    	{
+				    		// face target
+				    		//this.getFaceLocationFromMe(this.getFollow().getLocation());
 				    		
-				    		double x2 = this.getBukkitEntity().getLocation().getX();
-				    		double y2 = this.getBukkitEntity().getLocation().getY();
-				    		double z2 = this.getBukkitEntity().getLocation().getZ();
-				    		int xdist = (int) (x1 - x2);
-				    		int ydist = (int) (y1 - y2);
-				    		int zdist = (int) (z1 - z2);
-				    		
-				    		if (xdist > -30 && xdist < 30 && ydist > -30 && ydist < 30 && zdist > -30 && zdist < 30)
+				    		if (isLineOfSight(this.getFollow()))
 				    		{
-				    			Debug(1,this.getName() + ":Attacking a monster near to me");
+				    			Debug(1,this.getName() + ":Following Entity near to me");
 				    			this.moveCloserToLocation(this.getFollow().getLocation());
-				    		} else {
-				    			// too far for me
-				    			this.setFollow(null);
+					   		
+					   		} else {
+					   			Debug(1,this.getName() + ":Stopped following near to me (no line of sight)");
+					    		this.setFollow(null);
 								this.setAggro(null);
-				    		}
-						}
+					   		}
+				    	} else {
+				    	// too far for me
+				    		Debug(1,this.getName() + ":Stopped following near to me (too far)");
+				    		this.setFollow(null);
+							this.setAggro(null);
+				    	}
+					}
 				}
 			}
 			
@@ -260,7 +286,7 @@ public class BasicHumanNpc extends BasicNpc {
 			{
 				// lets follow this entity
 				if (this.getAggro() != null)
-					{
+				{
 					if (this.hp == 0)
 					{
 						this.setFollow(null);
@@ -273,7 +299,28 @@ public class BasicHumanNpc extends BasicNpc {
 		}
     }
     
-    public Location getFaceLocationFromMe(Location location,boolean on) {
+    public boolean isLineOfSight(LivingEntity follow) {
+		// TODO Auto-generated method stub
+    	// Are they in a line of sight?
+		Location higherloc = this.getFollow().getLocation();
+		higherloc.setY(higherloc.getY()+1);
+		Block h = this.getBukkitEntity().getWorld().getBlockAt(higherloc);
+		
+    	for (Block b : this.getLineOfSight(8))
+    	{
+    		if (b == h)
+    		{
+    			return true;
+    		} 
+    	}
+    	
+		return false;
+	
+	}
+    
+    
+
+	public Location getFaceLocationFromMe(Location location) {
     	try
     	{
 			// citizens - https://github.com/fullwall/Citizens
@@ -438,7 +485,7 @@ public class BasicHumanNpc extends BasicNpc {
 			Debug(1,"moveCloserToLocation Moving towards: "+this.parent.currentpathspot+newloc);
 		}
 		
-		Location locforface = getFaceLocationFromMe(loc,true);
+		Location locforface = getFaceLocationFromMe(loc);
 		Location modifiedloc = new Location(newloc.getWorld(),newloc.getX(),newloc.getY(),newloc.getZ(),locforface.getYaw(),locforface.getPitch());
 		
 		forceMove(modifiedloc);
@@ -702,12 +749,6 @@ public class BasicHumanNpc extends BasicNpc {
 		}
 	}
 
-
-	float ComputeAngle(Location origin, Location target) 
-	{ 
-	     return (float)Math.atan2(target.getX() - origin.getX(), target.getZ() - origin.getZ()); 
-	}
-	
 	public void forceMove(Location loc)
 	{
 		
@@ -732,13 +773,6 @@ public class BasicHumanNpc extends BasicNpc {
 		
 		
 		this.mcEntity.c(loc.getX(), loc.getY(), loc.getZ(),loc.getYaw(), loc.getPitch());
-	}
-    
-	public void faceLocation(Location face)
-	{
-		Location oldloc = this.getBukkitEntity().getLocation();
-		Debug(1,"Direction was: "+this.getBukkitEntity().getLocation().getYaw()+"should be: "+ComputeAngle(this.getBukkitEntity().getLocation(),face));
-		this.mcEntity.c(oldloc.getX(),oldloc.getY(),oldloc.getZ(),ComputeAngle(this.getBukkitEntity().getLocation(),face),oldloc.getPitch());
 	}
 	
 	public void Panic(String type)

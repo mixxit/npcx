@@ -1226,7 +1226,7 @@ public class myNPC {
 				p.sendMessage("Error, your player is out of sync");
 				this.parent.fixDead();
 		}
-		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation(),true));
+		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation()));
 
 	}
 
@@ -1313,7 +1313,7 @@ public class myNPC {
 			p.sendMessage(npc.getName() + " says to you, 'Hey! Watch where you are going!'");
 		}
 		
-		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation(),true));
+		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation()));
 	}
 
 	

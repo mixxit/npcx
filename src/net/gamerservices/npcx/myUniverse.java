@@ -1116,7 +1116,6 @@ public class myUniverse {
 		            dbname = config.getProperty("db-name");
 		            dbport = config.getProperty("db-port");
 		            nations = config.getProperty("nations");
-		            dbversion = config.getProperty("db-version");
 		            
 		            dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname + "?autoReconnect=true";
 		            defaultworld = config.getProperty("world");
@@ -1130,7 +1129,8 @@ public class myUniverse {
 					config.setProperty(PROP_DBNAME,dbname);
 					config.setProperty(PROP_DBPORT,dbport);
 					config.setProperty(PROP_NATIONS,nations);
-		            config.setProperty(PROP_DBVERSION,dbversion);
+		            config.setProperty(PROP_DBVERSION,"1");
+		            this.dbversion = "1";
 					config.setProperty(PROP_WORLD,defaultworld);
 		            config.setProperty(PROP_UPDATE,"false");
 		            
