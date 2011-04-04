@@ -64,8 +64,12 @@ public class BasicHumanNpc extends BasicNpc {
 
     public List <Block> getLineOfSight(int amount)
     {
-    	return this.getBukkitEntity().getLineOfSight(null, amount);
-    	
+    	if (this.getBukkitEntity() != null)
+    	{
+    		return this.getBukkitEntity().getLineOfSight(null, amount);
+    	} else {
+    		return null;
+    	}
     }
     
     
@@ -302,16 +306,20 @@ public class BasicHumanNpc extends BasicNpc {
     public boolean isLineOfSight(LivingEntity follow) {
 		// TODO Auto-generated method stub
     	// Are they in a line of sight?
-		Location higherloc = this.getFollow().getLocation();
-		higherloc.setY(higherloc.getY()+1);
-		Block h = this.getBukkitEntity().getWorld().getBlockAt(higherloc);
-		
-    	for (Block b : this.getLineOfSight(8))
+    	
+    	if (this.getBukkitEntity() != null)
     	{
-    		if (b == h)
-    		{
-    			return true;
-    		} 
+			Location higherloc = this.getFollow().getLocation();
+			higherloc.setY(higherloc.getY()+1);
+			Block h = this.getBukkitEntity().getWorld().getBlockAt(higherloc);
+			
+	    	for (Block b : this.getLineOfSight(8))
+	    	{
+	    		if (b == h)
+	    		{
+	    			return true;
+	    		} 
+	    	}
     	}
     	
 		return false;
