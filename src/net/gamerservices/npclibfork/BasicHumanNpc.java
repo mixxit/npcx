@@ -305,6 +305,8 @@ public class BasicHumanNpc extends BasicNpc {
 			
 			try 
 			{
+				
+				
 				List < Block > list = this.getBukkitEntity().getLineOfSight(null,8);
 				if (list != null)
 				{
@@ -317,6 +319,9 @@ public class BasicHumanNpc extends BasicNpc {
 			    	}
 				} 
 			} catch (IllegalStateException e)
+			{
+				return false;
+			} catch (NullPointerException e)
 			{
 				return false;
 			}
