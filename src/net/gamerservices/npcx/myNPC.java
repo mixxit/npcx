@@ -1329,12 +1329,13 @@ public class myNPC {
 		
 		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation()));
 	}
-
-	
 	
 	public void onDeathFromPlayer(LivingEntity p) {
 		// TODO Auto-generated method stub
-	
+		int i = 0;
+		i++;
+		i = 0;
+		
 		if (this.parent.universe.isLivingEntityAnNPC(p))
 		{
 			// Killed by an npc
