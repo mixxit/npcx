@@ -1237,7 +1237,7 @@ public class myNPC {
 			}
 		} else {
 				// just drop the event
-				p.sendMessage("Error, your player is out of sync");
+				//p.sendMessage("Error, your player is out of sync");
 				this.parent.fixDead();
 		}
 		this.npc.forceMove(this.npc.getFaceLocationFromMe(p.getLocation()));

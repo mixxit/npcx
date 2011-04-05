@@ -312,6 +312,7 @@ public class myPlayer {
 							{
 								// created entry
 								count++;
+								this.parent.universe.playerfactions.put(Integer.toString(fe.id), fe);
 								player.player.sendMessage(ChatColor.YELLOW + "* Your standing with " + faction.name + " has gotten better!");
 							} else {
 								// didn't find an entry
