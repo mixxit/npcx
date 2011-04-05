@@ -1855,7 +1855,7 @@ public class npcx extends JavaPlugin {
             		       {
             		    	   if (fe.factionid == idVal)
             		    	   {
-            		    		   player.sendMessage(this.getFactionByID(fe.targetfactionid).name + " - "+ fe.amount);
+            		    		   player.sendMessage(fe.factionid + ":" + fe.targetfactionid + " - " + this.getFactionByID(fe.targetfactionid).name + " - "+ fe.amount);
             		    	   }
             		       }
             		       
