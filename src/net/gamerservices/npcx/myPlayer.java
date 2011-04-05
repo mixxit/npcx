@@ -6,6 +6,7 @@ import java.sql.Statement;
 
 import net.gamerservices.npclibfork.BasicHumanNpc;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -248,6 +249,8 @@ public class myPlayer {
 			return null;
 		}
 	}
+	
+	
 
 	public int getPlayerFactionStanding(myFaction faction) {
 		// TODO Auto-generated method stub
@@ -268,6 +271,64 @@ public class myPlayer {
 			return 0;
 		}
 		
+		
+	}
+
+
+	public void updateFactionPositive(myPlayer player, myNPC npc) {
+		// TODO Auto-generated method stub
+		for (myFactionEntry n : this.parent.universe.factionentries)
+		{
+			if (n.targetfactionid == npc.faction.id)
+			{
+				if (n.amount < 0)
+				{
+					// found a faction that hates this npcs faction, lets give the player positive faction with them 
+					myFaction faction = this.parent.getFactionByID(n.factionid);
+					
+					
+					
+					// TODO Auto-generated method stub
+					
+					try
+					{
+						int count = 0;
+						for (myPlayer_factionentry f : this.parent.universe.playerfactions.values())
+						{
+							if (f.factionid == n.factionid && f.playername.equals(this.player.getName()))
+							{
+								f.amount = f.amount + 1;
+								player.player.sendMessage(ChatColor.YELLOW + "* Your standing with " + faction.name + " has gotten better!");
+								count++;
+							}
+						}
+						
+						if (count == 0)
+						{
+							// Doesn't exist so lets make a new one
+							myPlayer_factionentry fe = createFactionEntry(n.factionid,faction.name,this.player.getName(),1);
+							
+							if (fe != null)
+							{
+								// created entry
+								count++;
+								player.player.sendMessage(ChatColor.YELLOW + "* Your standing with " + faction.name + " has gotten better!");
+							} else {
+								// didn't find an entry
+								
+							}
+						}
+						
+					} catch (Exception e)
+					{
+						e.printStackTrace();
+						
+					}
+				}
+			}
+			
+		}
+
 		
 	}
 	

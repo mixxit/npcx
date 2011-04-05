@@ -78,14 +78,13 @@ public class myUniverse {
 	
 	public HashMap<String, myZoneMember> zonemembers = new HashMap<String, myZoneMember>();
 	
-	public HashMap<String, myNpc_faction> npcfactions = new HashMap<String, myNpc_faction>();
-	
 	public HashMap<String, mySpawngroup> spawngroups = new HashMap<String, mySpawngroup>();
 	public HashMap<String, myPlayer> players = new HashMap<String, myPlayer>();
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
 	public List< Monster > monsters = new CopyOnWriteArrayList< Monster >();
 	public HashMap<String, myPlayer_factionentry> playerfactions = new HashMap<String, myPlayer_factionentry>();
-
+	public List< myFactionEntry > factionentries = new CopyOnWriteArrayList< myFactionEntry >();
+	
 	public List< myResearch > research = new CopyOnWriteArrayList< myResearch >();
 	
 	public myUniverse(npcx parent)
@@ -295,7 +294,7 @@ public class myUniverse {
 	
 	private boolean updateDB() {
 		// TODO Auto-generated method stub
-		String targetdbversion = "1.08";
+		String targetdbversion = "1.09";
 		System.out.println("npcx : Checking for DB Updates from DBVersion:"+this.dbversion);
 		if(this.dbversion.matches(targetdbversion))
 		{
@@ -850,7 +849,7 @@ public class myUniverse {
 				System.out.println("* Congratulations! Your NPCX database is now *");
 				System.out.println("*       updated to version 1.08              *");
 				System.out.println("**********************************************");
-				return true;
+				
 			} catch (SQLException e) {
 				System.out.println("**********************************************");
 				System.out.println("*   Problem during update to version 1.08    *");
@@ -862,7 +861,78 @@ public class myUniverse {
 			}
 		}
 		
+		if (this.dbversion.matches("1.08"))
+		{
+			// Create Player table
+			// Update size of triggerword response
+			Statement sqlCreatestmt;
+			try {
+				
+				sqlCreatestmt = conn.createStatement();
+				String  sqldrop = "DROP TABLE IF EXISTS faction_entries; ";
+				sqlCreatestmt.executeUpdate(sqldrop);
+				String sqlcreate = "CREATE TABLE faction_entries (id int(10) unsigned NOT NULL AUTO_INCREMENT,  faction_id int(10) unsigned DEFAULT NULL,  target_faction_id int(10) unsigned DEFAULT NULL,  amount int(11) DEFAULT NULL,  arg int(11) DEFAULT '1',  PRIMARY KEY (id),  UNIQUE KEY factiontarget (faction_id,target_faction_id),  KEY fk_factionidme (faction_id),  KEY fk_factionidthem (faction_id),  CONSTRAINT fk_factionidme FOREIGN KEY (faction_id) REFERENCES faction_list (id) ON DELETE NO ACTION ON UPDATE NO ACTION,  CONSTRAINT fk_factionidthem FOREIGN KEY (faction_id) REFERENCES faction_list (id) ON DELETE NO ACTION ON UPDATE NO ACTION)";
+				sqlCreatestmt.executeUpdate(sqlcreate);
+
+				sqlCreatestmt.close();
+	            Properties config = new Properties();
+				BufferedInputStream stream;
+				try
+				{
+					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
+					config.load(stream);
+			
+					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOSPREAD,nospread);
+					config.setProperty(PROP_NOCREEPER,nocreeper);
+					config.setProperty(PROP_DBHOST,dbhost);
+					config.setProperty(PROP_DBUSER,dbuser);
+					config.setProperty(PROP_DBPASS,dbpass);
+					config.setProperty(PROP_DBNAME,dbname);
+					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_NATIONS,nations);
+		            config.setProperty(PROP_DBVERSION,dbversion);
+					config.setProperty(PROP_WORLD,defaultworld);
+		            config.setProperty(PROP_UPDATE,"false");
+		            config.setProperty(PROP_DBVERSION, "1.09");
+		            this.dbversion = "1.09";
+		            File propfolder = parent.getDataFolder();
+		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		            propfile.createNewFile();
+		            
+		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+					config.store(stream1, "Default generated settings, please ensure mysqld matches");
+		            
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+					System.out.println("**********************************************");
+					System.out.println("*   Problem during update to version 1.09    *");
+					System.out.println("*     Can you access your config file?       *");
+					System.out.println("**********************************************");
+					return false;
+				}
+				
+				
+				System.out.println("**********************************************");
+				System.out.println("* Congratulations! Your NPCX database is now *");
+				System.out.println("*       updated to version 1.09              *");
+				System.out.println("**********************************************");
+				return true;
+			} catch (SQLException e) {
+				System.out.println("**********************************************");
+				System.out.println("*   Problem during update to version 1.09    *");
+				System.out.println("*  Please provide stacktrace below to devs   *");
+				System.out.println("**********************************************");
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
 		
+		
+
+
 		
 		return false;
 	}
@@ -980,9 +1050,17 @@ public class myUniverse {
 	            	
 	            	// Purge old tables
 	            	
-	            	
 	            	Statement sqlDropstmt = conn.createStatement();
 	            	String sqldrop = "DROP TABLE IF EXISTS npc_triggerwords; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
+		         
+		            sqldrop = "DROP TABLE IF EXISTS zone; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
+		            
+		            sqldrop = "DROP TABLE IF EXISTS zone_members; ";
+		            sqlDropstmt.executeUpdate(sqldrop);
+		            
+		            sqldrop = "DROP TABLE IF EXISTS faction_entries; ";
 		            sqlDropstmt.executeUpdate(sqldrop);
 
 		            sqldrop = "DROP TABLE IF EXISTS spawngroup_entries; ";
@@ -1161,12 +1239,12 @@ public class myUniverse {
 	public void loadData() {
 		// TODO Auto-generated method stub
 		loadPlayerFactions();
-		loadNpcFactions();
 
 		loadResearch();
 		loadZones();
 		loadMerchants();
 		loadFactions();
+		loadFactionEntries();
 		loadPathgroups();
 		loadLoottables();
 		loadSpawngroups();
@@ -1235,72 +1313,7 @@ public class myUniverse {
 			e.printStackTrace();
 		}
 	}
-	public void commitNpcFactions() {
-		// TODO Auto-generated method stub
-		try 
-        {
-           int countfaction = 0;
-			// save factions
-			for (myNpc_faction  e : npcfactions.values())
-			{
-				PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO npc_faction (npc_id,faction_id,amount) VALUES (?,?,?) ON DUPLICATE KEY UPDATE amount=VALUES(amount) ",Statement.RETURN_GENERATED_KEYS);
-				stmt.setInt(1,e.npcid);
-				stmt.setInt(2,e.factionid);
-				stmt.setInt(3,e.amount);
-				
-				stmt.executeUpdate();
-				ResultSet keyset = stmt.getGeneratedKeys();
-				int key = 0;
-				if ( keyset.next() ) {
-				    // Retrieve the auto generated key(s).
-				    key = keyset.getInt(1);
-				}
-				countfaction++;
 
-				stmt.close();
-			}
-			
-            
-        } catch (NullPointerException e) { 
-	 		System.out.println("npcx : ERROR - npc factions commit cancelled!");
-        } catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private void loadNpcFactions() {
-		// TODO Auto-generated method stub
-		try 
-        {
-            // Load faction_list
-            Statement s1 = conn.createStatement ();
-            s1.executeQuery ("SELECT * FROM npc_faction");
-            ResultSet rs1 = s1.getResultSet ();
-            int countfaction = 0;
-            System.out.println("npcx : loading npc factions");
-            while (rs1.next ())
-            {
-            	myNpc_faction z = new myNpc_faction(rs1.getInt("id"),rs1.getInt("npc_id"),rs1.getInt("faction_id"),rs1.getInt("amount"));
-            	z.id = rs1.getInt("id");
-            	z.npcid = rs1.getInt("npc_id");
-            	z.factionid = rs1.getInt("faction_id");
-            	z.amount = rs1.getInt("amount");
-            	
-            	countfaction++;
-            	npcfactions.put(Integer.toString(z.id),z);
-            }
-            rs1.close();
-            s1.close();
-            System.out.println("npcx : Loaded " + countfaction + " npc factions.");
-            
-        } catch (NullPointerException e) { 
-	 		System.out.println("npcx : ERROR - npc factions loading cancelled!");
-        } catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
 	private void loadPlayerFactions() {
 		// TODO Auto-generated method stub
@@ -1845,6 +1858,42 @@ public class myUniverse {
 			e.printStackTrace();
 		}
 	}
+	
+	private void loadFactionEntries() {
+		// TODO Auto-generated method stub
+		try 
+        {
+            // Load faction_list
+            Statement s1 = conn.createStatement ();
+            s1.executeQuery ("SELECT * FROM faction_entries");
+            ResultSet rs1 = s1.getResultSet ();
+            int countfaction = 0;
+            System.out.println("npcx : loading faction entries");
+            while (rs1.next ())
+            {
+            	myFactionEntry faction = new myFactionEntry();
+            	faction.id = rs1.getInt ("id");
+            	faction.factionid = rs1.getInt ("faction_id");
+            	faction.targetfactionid = rs1.getInt ("target_faction_id");
+            	faction.amount = rs1.getInt ("amount");
+            	faction.arg = rs1.getInt ("arg");
+
+            	countfaction++;
+            	this.factionentries.add(faction);
+            	
+            	
+            }
+            rs1.close();
+            s1.close();
+            System.out.println("npcx : Loaded " + countfaction + " faction entries.");
+            
+        } catch (NullPointerException e) { 
+	 		System.out.println("npcx : ERROR - faction entry loading cancelled!");
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 
 	public boolean checkChunks() {
@@ -1887,11 +1936,11 @@ public class myUniverse {
 		
 	}
 
-	public myPlayer findmyPlayerByPlayer(Player p) {
+	public myPlayer findmyPlayer(Player p) {
 		// TODO Auto-generated method stub
 		for (myPlayer player : this.players.values())
 		{
-			if (p == player.player)
+			if (player.name.equals(p.getName()))
 				return player;
 		}
 		return null;
@@ -2210,17 +2259,20 @@ public class myUniverse {
 			}
 			if (target != null)
 			{
-				for (myNpc_faction n : this.npcfactions.values())
+				if (targetfactionid > 0)
 				{
-					if (target != null && n.factionid == targetfactionid && n.npcid == Integer.parseInt(npc.id) && n.amount < -1000)
+					for (myFactionEntry fe : this.factionentries)
 					{
-						npc.npc.setAggro(e);
-						npc.npc.setFollow(e);
-						target.npc.setAggro(npc.npc.getBukkitEntity());
-						target.npc.setFollow(npc.npc.getBukkitEntity());
-						
-						return target;
-					}				
+						if (fe.targetfactionid == targetfactionid && fe.factionid == npc.faction.id && fe.amount < -1000)
+						{
+							npc.npc.setAggro(e);
+							npc.npc.setFollow(e);
+							target.npc.setAggro(npc.npc.getBukkitEntity());
+							target.npc.setFollow(npc.npc.getBukkitEntity());
+							
+							return target;
+						}				
+					}
 				}
 			}
 			
@@ -2333,7 +2385,7 @@ public class myUniverse {
 
 	public boolean togglePlayerZoneInfo(Player player) {
 		// TODO Auto-generated method stub
-		myPlayer myplayer = this.findmyPlayerByPlayer(player);
+		myPlayer myplayer = this.findmyPlayer(player);
 		if (myplayer.toggle == false)
 		{
 			myplayer.toggle = true;
@@ -2348,7 +2400,7 @@ public class myUniverse {
 
 	public String getPlayerToggle(Player player) {
 		// TODO Auto-generated method stub
-		myPlayer myplayer = this.findmyPlayerByPlayer(player);
+		myPlayer myplayer = this.findmyPlayer(player);
 		if (myplayer != null)
 		{
 			if (myplayer.toggle == true)
@@ -2667,6 +2719,24 @@ public class myUniverse {
 			
 	}
 	
+	public void sendFactionList(Player player) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		int count = 0;
+		player.sendMessage("Your faction status: ");
+
+		for (myPlayer_factionentry r : playerfactions.values())
+		{
+			if (r.playername.equals(player.getName()))
+			{
+				player.sendMessage(" * " + this.parent.getFactionByID(r.factionid).name+" - "+r.amount);
+				count++;
+			}
+		}
+		player.sendMessage("Total hits: " + count);
+
+			
+	}
 	
 	public void sendAllResearchList(Player player) {
 		// TODO Auto-generated method stub
@@ -2738,6 +2808,17 @@ public class myUniverse {
 			player.sendMessage(ChatColor.LIGHT_PURPLE + " * " + ChatColor.YELLOW +  r.name+ ChatColor.LIGHT_PURPLE + " Requires: $" + r.cost + " [" + ChatColor.YELLOW + r.prereq+ ChatColor.LIGHT_PURPLE + "] " + ChatColor.YELLOW + r.time + ChatColor.LIGHT_PURPLE + " turns to complete");
 		}
 	}
+
+	public void giveFactionHit(myPlayer player, myFaction faction, myNPC npc) {
+		// TODO Auto-generated method stub
+
+		player.updateFactionNegative(faction);
+		player.player.sendMessage(ChatColor.YELLOW + "* Your standing with " + faction.name + " has gotten worse!");
+
+		player.updateFactionPositive(player,npc);
+		
+	}
+
 
 	
 }

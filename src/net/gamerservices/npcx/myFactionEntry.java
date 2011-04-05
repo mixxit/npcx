@@ -5,4 +5,5 @@ public class myFactionEntry {
 	public int factionid;
 	public int targetfactionid;
 	public int amount;
+	public int arg;
 }

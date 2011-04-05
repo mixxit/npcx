@@ -1229,12 +1229,14 @@ public class myNPC {
 				{
 					this.parent.fixDead();
 
-					p.sendMessage("Error, your player is out of sync");
+					// just drop the event
+					//p.sendMessage("Error, your player is out of sync");
 					
 				}
 				
 			}
 		} else {
+				// just drop the event
 				p.sendMessage("Error, your player is out of sync");
 				this.parent.fixDead();
 		}
@@ -1375,9 +1377,13 @@ public class myNPC {
 			{
 				try
 				{
-					myPlayer player = this.parent.universe.findmyPlayerByPlayer((Player)p);
-					player.updateFactionNegative(this.faction);
-					((Player) p).sendMessage(ChatColor.YELLOW + "* Your standing with " + this.faction.name + " has gotten worse!");
+					myPlayer player = this.parent.universe.findmyPlayer(((Player)p));
+					
+					
+					this.parent.universe.giveFactionHit(player,this.faction, this);
+					
+					
+					
 				} catch (NullPointerException e)
 				{
 				}

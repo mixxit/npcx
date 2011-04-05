@@ -131,7 +131,6 @@ public class npcx extends JavaPlugin {
 	public void longCheck()
 	{
 		this.universe.commitPlayerFactions();
-		this.universe.commitNpcFactions();
 		
 		longtick.schedule(new LongTick(this), 1 * 20000);
 		
@@ -688,7 +687,7 @@ public class npcx extends JavaPlugin {
 			
 			if (this.universe.nations.equals("true"))
 			{
-				if (command.getName().toLowerCase().equals("civ")) {
+				if (command.getName().toLowerCase().equals("civ") || command.getName().toLowerCase().equals("c")) {
 					if (!(sender instanceof Player)) {
 		
 		                return false;
@@ -704,13 +703,21 @@ public class npcx extends JavaPlugin {
 		            	player.sendMessage("/civ pay playername amount - pays a player an amount");
 		            	player.sendMessage("/civ name name - name a civilisation area");
 		            	player.sendMessage("/civ toggle - toggle on/off area info");
+		            	player.sendMessage("/civ faction - lists your faction status");
 		            	
 		            	
 		            	
 		            	return false;
 		            }
+					
+					
+					
+					
 					String subCommand = args[0].toLowerCase();
 					
+					if (subCommand.equals("faction")) {
+	            		this.universe.sendFactionList(player);
+					}
 					if (subCommand.equals("research"))
 		            {
 						int playerx = this.universe.getZoneCoord(player.getLocation().getX());
@@ -761,6 +768,8 @@ public class npcx extends JavaPlugin {
 		            			}
 		            		}
 						}
+						
+						
 						
 						if (args[1].equals("list")) {
 		            		this.universe.sendResearchList(player);
@@ -1063,7 +1072,7 @@ public class npcx extends JavaPlugin {
         	// NPCX COMMAND MENU
         	//
         	
-            if (!command.getName().toLowerCase().equals("npcx")) {
+            if (!command.getName().toLowerCase().equals("npcx") && !command.getName().toLowerCase().equals("n")) {
             	
                 return false;
             }
@@ -1740,24 +1749,24 @@ public class npcx extends JavaPlugin {
             	
             	if (args.length < 2) {
             		player.sendMessage("Insufficient arguments /npcx faction create baseamount factionname");
+            		player.sendMessage("Insufficient arguments /npcx faction add factionid targetfactionid amount");
                 	player.sendMessage("Insufficient arguments /npcx faction list");
-                	player.sendMessage("Insufficient arguments /npcx faction npc npcid factionid amount");
                 	return false;
             		
             		
             		
                 }
             	
-            	if (args[1].equals("npc")) {
-            		if (args.length < 5) {
-            			player.sendMessage("Insufficient arguments /npcx faction npc add npcid factionid amount");
+            	if (args[1].equals("add")) {
+            		if (args.length < 4) {
+            			player.sendMessage("Insufficient arguments /npcx faction add factionid targetfactionid amount");
                     	
             		} else {
             			
             			// add to database
             		
             			
-            			PreparedStatement s2 = this.universe.conn.prepareStatement("INSERT INTO npc_faction (npc_id,faction_id,amount) VALUES (?,?,?);",Statement.RETURN_GENERATED_KEYS);
+            			PreparedStatement s2 = this.universe.conn.prepareStatement("INSERT INTO faction_entries (faction_id,target_faction_id,amount) VALUES (?,?,?);",Statement.RETURN_GENERATED_KEYS);
             			s2.setInt(1,Integer.parseInt(args[2]));
             			s2.setInt(2,Integer.parseInt(args[3]));
             			s2.setInt(3,Integer.parseInt(args[4]));
@@ -1770,14 +1779,21 @@ public class npcx extends JavaPlugin {
             			    
             			}
             			s2.close();
-            			myNpc_faction nf = new myNpc_faction(key, Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
-            			player.sendMessage("Added to npc faction ["+key+"] "+args[2]+"<" + args[3] + "="+ args[4]+ ".");
-            			this.universe.npcfactions.put(Integer.toString(nf.id), nf);
+            			myFactionEntry fe = new myFactionEntry();
+            			fe.id = key;
+            			fe.factionid = Integer.parseInt(args[2]);
+            			fe.targetfactionid = Integer.parseInt(args[3]);
+            			fe.amount = Integer.parseInt(args[4]);
+            			
+            			player.sendMessage("Added to faction entries ["+key+"] "+args[2]+"<" + args[3] + "="+ args[4]+ ".");
+            			this.universe.factionentries.add(fe);
         	            
         	            
             		}
         			
         		}
+            	
+            	
             	
             	if (args[1].equals("create")) {
             		if (args.length < 3) {
@@ -1834,6 +1850,15 @@ public class npcx extends JavaPlugin {
             		               "id = " + idVal
             		               + ", name = " + nameVal
             		               + ", base = " + baseVal);
+            		       
+            		       for (myFactionEntry fe : this.universe.factionentries)
+            		       {
+            		    	   if (fe.factionid == idVal)
+            		    	   {
+            		    		   player.sendMessage(this.getFactionByID(fe.targetfactionid).name + " - "+ fe.amount);
+            		    	   }
+            		       }
+            		       
             		       ++count;
             		   }
             		   rs.close ();
