@@ -1767,9 +1767,9 @@ public class npcx extends JavaPlugin {
             		
             			
             			PreparedStatement s2 = this.universe.conn.prepareStatement("INSERT INTO faction_entries (faction_id,target_faction_id,amount) VALUES (?,?,?);",Statement.RETURN_GENERATED_KEYS);
-            			s2.setInt(1,Integer.parseInt(args[2]));
-            			s2.setInt(2,Integer.parseInt(args[3]));
-            			s2.setInt(3,Integer.parseInt(args[4]));
+            			s2.setInt(1,Integer.parseInt(args[3]));
+            			s2.setInt(2,Integer.parseInt(args[4]));
+            			s2.setInt(3,Integer.parseInt(args[5]));
             			s2.executeUpdate();
             			ResultSet keyset = s2.getGeneratedKeys();
             			int key = 0;
@@ -1781,12 +1781,12 @@ public class npcx extends JavaPlugin {
             			s2.close();
             			myFactionEntry fe = new myFactionEntry();
             			fe.id = key;
-            			fe.factionid = Integer.parseInt(args[2]);
-            			fe.targetfactionid = Integer.parseInt(args[3]);
-            			fe.amount = Integer.parseInt(args[4]);
+            			fe.factionid = Integer.parseInt(args[3]);
+            			fe.targetfactionid = Integer.parseInt(args[4]);
+            			fe.amount = Integer.parseInt(args[5]);
             			
-            			player.sendMessage("Added to faction entries ["+key+"] "+args[2]+"<" + args[3] + "="+ args[4]+ ".");
-            			this.universe.factionentries.add(fe);
+            			player.sendMessage("Added to faction entries ["+key+"] "+args[3]+"<" + args[4] + "="+ args[5]+ ".");
+            			this.universe.factionentries.put(Integer.toString(fe.id),fe);
         	            
         	            
             		}
@@ -1851,7 +1851,7 @@ public class npcx extends JavaPlugin {
             		               + ", name = " + nameVal
             		               + ", base = " + baseVal);
             		       
-            		       for (myFactionEntry fe : this.universe.factionentries)
+            		       for (myFactionEntry fe : this.universe.factionentries.values())
             		       {
             		    	   if (fe.factionid == idVal)
             		    	   {

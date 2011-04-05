@@ -83,7 +83,7 @@ public class myUniverse {
 	public HashMap<String, myNPC> npcs = new HashMap<String, myNPC>();
 	public List< Monster > monsters = new CopyOnWriteArrayList< Monster >();
 	public HashMap<String, myPlayer_factionentry> playerfactions = new HashMap<String, myPlayer_factionentry>();
-	public List< myFactionEntry > factionentries = new CopyOnWriteArrayList< myFactionEntry >();
+	public HashMap<String, myFactionEntry> factionentries = new HashMap<String, myFactionEntry>();
 	
 	public List< myResearch > research = new CopyOnWriteArrayList< myResearch >();
 	
@@ -1879,7 +1879,7 @@ public class myUniverse {
             	faction.arg = rs1.getInt ("arg");
 
             	countfaction++;
-            	this.factionentries.add(faction);
+            	this.factionentries.put(Integer.toString(faction.id),faction);
             	
             	
             }
@@ -2261,7 +2261,7 @@ public class myUniverse {
 			{
 				if (targetfactionid > 0)
 				{
-					for (myFactionEntry fe : this.factionentries)
+					for (myFactionEntry fe : this.factionentries.values())
 					{
 						if (fe.targetfactionid == targetfactionid && fe.factionid == npc.faction.id && fe.amount < -1000)
 						{
@@ -2734,7 +2734,7 @@ public class myUniverse {
 					myFaction rf = this.parent.getFactionByID(r.factionid);
 					if (rf != null)
 					{
-						player.sendMessage(" * " + rf.name+" - "+r.amount);
+						player.sendMessage(" * " + rf.name+"("+r.id+") - "+r.amount);
 						count++;
 					}
 				} catch (NullPointerException ex)

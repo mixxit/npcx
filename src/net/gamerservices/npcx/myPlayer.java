@@ -277,7 +277,7 @@ public class myPlayer {
 
 	public void updateFactionPositive(myPlayer player, myNPC npc) {
 		// TODO Auto-generated method stub
-		for (myFactionEntry n : this.parent.universe.factionentries)
+		for (myFactionEntry n : this.parent.universe.factionentries.values())
 		{
 			if (n.targetfactionid == npc.faction.id)
 			{
