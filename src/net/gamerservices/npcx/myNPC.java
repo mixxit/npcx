@@ -1332,9 +1332,6 @@ public class myNPC {
 	
 	public void onDeathFromPlayer(LivingEntity p) {
 		// TODO Auto-generated method stub
-		int i = 0;
-		i++;
-		i = 0;
 		
 		if (this.parent.universe.isLivingEntityAnNPC(p))
 		{
