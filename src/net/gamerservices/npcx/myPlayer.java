@@ -203,6 +203,7 @@ public class myPlayer {
 			
 			if (fe != null)
 			{
+				this.parent.universe.playerfactions.put(Integer.toString(fe.id),fe);
 				return true;
 			} else {
 				// didn't find an entry
