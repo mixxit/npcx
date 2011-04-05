@@ -2729,11 +2729,17 @@ public class myUniverse {
 		{
 			if (r.playername.equals(player.getName()))
 			{
-				myFaction rf = this.parent.getFactionByID(r.factionid);
-				if (rf != null)
+				try 
 				{
-					player.sendMessage(" * " + rf.name+" - "+r.amount);
-					count++;
+					myFaction rf = this.parent.getFactionByID(r.factionid);
+					if (rf != null)
+					{
+						player.sendMessage(" * " + rf.name+" - "+r.amount);
+						count++;
+					}
+				} catch (NullPointerException ex)
+				{
+					
 				}
 			}
 		}
