@@ -2729,8 +2729,12 @@ public class myUniverse {
 		{
 			if (r.playername.equals(player.getName()))
 			{
-				player.sendMessage(" * " + this.parent.getFactionByID(r.factionid).name+" - "+r.amount);
-				count++;
+				myFaction rf = this.parent.getFactionByID(r.factionid);
+				if (rf != null)
+				{
+					player.sendMessage(" * " + rf.name+" - "+r.amount);
+					count++;
+				}
 			}
 		}
 		player.sendMessage("Total hits: " + count);
