@@ -1,6 +1,6 @@
 <project name="npcx" default="dist" basedir=".">
         <property name="pluginname" value="npcx"/>
-        <property name="bukkit.jar" location="../dist/Bukkit.jar"/>
+        <property name="cbukkit.jar" location="../dist/craftbukkit.jar"/>
         <property name="plugins" location="../dist/plugins/"/>
 
         <property name="src" location="src"/>
@@ -14,7 +14,7 @@
         <target name="compile" depends="init">
                 <javac srcdir="${src}" destdir="${bin}" includeantruntime="false">
                         <classpath>
-                                <pathelement location="${bukkit.jar}"/>
+                                <pathelement location="${cbukkit.jar}"/>
                         </classpath>
                 </javac>
         </target>
