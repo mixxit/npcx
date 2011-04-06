@@ -12,8 +12,7 @@
         </target>
 
         <target name="compile" depends="init">
-                <javac srcdir="${src}/main/java" destdir="${bin}" 
-includeantruntime="false">
+                <javac srcdir="${src}" destdir="${bin}" includeantruntime="false">
                         <classpath>
                                 <pathelement location="${bukkit.jar}"/>
                         </classpath>
