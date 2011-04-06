@@ -31,8 +31,7 @@
         </target>
 
         <target name="deploy" depends="dist">
-                <copy file="${dist}/${pluginname}.jar" 
-todir="${plugins}"/>
+                <copy file="${dist}/${pluginname}.jar" todir="${plugins}"/>
         </target>
 
         <target name="clean">
