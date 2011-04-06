@@ -419,6 +419,16 @@ https://github.com/mixxit/npcx/issues
 FAQ
 =============================================
 
+Q It doesnt work
+
+A Delete npcx
+
+Q I'm having trouble with this plugin with Citizens, DwarfCraft etc...
+
+A This plugin has only been tested with itself and a few other plugins such as Towny
+It is likely those other plugins are making use of a different version of npclib and 
+sadly we don't support this at the moment, delete npcx or the conflicting plugin
+
 Q Where can i get this for CB Version XXX
 
 A You can't it's only supported by the RB listed in the thread topic. If you get this from anywhere
