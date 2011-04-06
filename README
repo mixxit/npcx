@@ -20,34 +20,50 @@ _____________
 # Commands
 # 
 
-Code:
+All of the following commands will list syntax to more subcommands:
+
+ * Op only! *
+
 /npcx spawngroup
 /npcx npc 
 /npcx pathgroup
 /npcx loottable
-
-Special Trigger Words:
-'default' - sets default response to unknown word
-'attack' - sets default response to being attacked
-
-
-EG: /npcx npc triggerword add 1 default My default response!
+/npcx faction
+/npcx merchant
 
 #
 # Installation Steps
 #
 
+The following guide is intended for server owners and admins and you should understand the nature
+of system administration and configuring services. If not, then you might have significant issues with this
+plugin and I would recommend you look for another plugin such as citizens.
 
-Step1 - Install MySQL
-=============================================
+I'm not going to show you how to use mysql, answer the same question that is answered a three posts before 
+or covering questions that you should know as a server admin - I _really_ don't find this enjoyable use of 
+my free time and certainly didn't have this in mind when sharing my plugin - i just made it for my server 
+and thought some others might want to use it for whatever purpose.
 
-- > Install MySQL Server on Windows or via your repo manager on linux
+Since the time I released this I have had many questions from people who seem to expect me to teach them 
+how to install mysql on a thousand different platforms or how to debug a server and then get really upset 
+with me when I don't answer their questions. 
+
+So in short, if you lack the skills go find some other solution.
+
+Step1 - Install MySQL and create database and user account
+==========================================================
+
+A) Install MySQL Server on Windows or via your repo manager on linux
 http://dev.mysql.com/downloads/mysql/
 
-- > (Windows) Install MySQL WorkBench to create databases and new accounts on windows
+B) (Windows) Install MySQL WorkBench to create databases and new accounts on windows
 http://dev.mysql.com/downloads/workbench/
 
-- > (Linux Hosted) Commandline option
+or
+
+B) (Linux Hosted) Use the mysql command line
+
+(see below for B)
 
 ----------------------------------------------
 - Using MySQL Workbench on Windows to create - 
@@ -85,6 +101,9 @@ Create a bukkit/lib folder if you dont have it
 Extract the mysql connect jar file from the following zip file): http://mysql.eukhost.com/Downloads/Connector-J/mysql-connector-java-5.1.6.tar.gz
 Copy the JAR file (mysql-connector-java-5.1.6-bin.jar) from inside the zip into your bukkit/lib folder.
 
+Most people don't actually read this sentence and decide that they are quite happy with whatever
+mysql files they have in their lib folder. Don't assume!
+
 Step3
 =============================================
 
@@ -93,12 +112,15 @@ Add npcx.jar to your bukkit/plugins folder
 Step4
 =============================================
 
-If your world name is different to 'world' you will need to now close bukkit, edit your npcx.properties file and change world to the correct worldname
+If your world name is different to 'world' you will need to now close bukkit, 
+edit your npcx.properties file and change world to the correct worldname
 
 Step5
 =============================================
 
-Launch bukkit and login as an OP
+Launch bukkit and login as an Operator
+
+People still ask me why they can't access /npcx ..
 
 Step 6
 =============================================
@@ -119,12 +141,10 @@ Guard should now spawn permanently at the spawngroups location.
 
 Right clicking will begin (T) chat with him. Moving out of range or right clicking him again will end chat.
 
-To have him respond to words or change his default response, see the sections below.
-
+To have him respond to words or change his default response, weapons etc see the /npcx npc commands
 
 Using NPCX
 =============================================
-
 
 Creating Spawngroups
 =============================================
@@ -360,6 +380,14 @@ Op Commands
 /npcx civ money playername - returns playernames balance
 /npcx civ unclaim - unclaims an area
 
+Reporting bugs
+=============================================
+
+Support is provided for the latest version of NPCX listed on github. If you have issues you
+must post the problem in the issue tracker after reading this file and the thread for existing
+answers.
+
+https://github.com/mixxit/npcx/issues
 
 FAQ
 =============================================
@@ -368,16 +396,43 @@ Q Any chance of sqlite in the near future?
 
 A No sorry, no plans to implement this at all
 
-Q I get error .... [SEVERE] com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure ......
+Q How can i choose the exact skin I want to use for my npc?
 
-A Did you create the user npcx + password and database npcx and assign permissions in MySQL?
+A You can't, however - if the skin is already attached to a same named minecraft player then it will use it
 
-Q I get error ..... java.lang.ClassNotFoundException: com.mysql.jdbc.Driver 
+Q How do i remove Npcs?
 
-A Did you copy the mysql connector into your bukkit/lib folder?
+A You use the npcx spawngroup delete command
 
-Q...sun.reflect.UnsafeQualifiedObjectFieldAccessorImpl.get(UnsafeQualifiedObjectFieldAccessorImpl.java:38) ....
-A Did you change your world name in the npcx.properties file?
+Q How do I see help for a command like how do I change npcs armour and weapons? 
+
+A See /npcx npc
+
+Q How much land is claimed by the /civ buy command?
+
+A 16x16
+
+Q My npcs dont show weapons but I have given them one
+
+A You need to give the npc a helmet, this is a bug
+
+Q Can i set unlimited items on a merchant?
+
+A Yep! Set the /npcx merchant category to nolimit
+
+Q Does this plugin work with iconomy?
+
+A If it's the version we built with and it's currently installed, it will use it. If not it will fall back on npcx's economy
+
+Q How do I enable civs?
+
+A Open NPCX.PROPERTIES file and change nations=false to nations=true
+
+Q How do I wipe my database
+
+A The correct way is to delete the npcx folder
+
+
 
 Donate
 http://www.gamerservices.net/donate
