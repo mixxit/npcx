@@ -35,35 +35,51 @@ All of the following commands will list syntax to more subcommands:
 # Installation Steps
 #
 
-The following guide is intended for server owners and admins and you should understand the nature
-of system administration and configuring services. If not, then you might have significant issues with this
-plugin and I would recommend you look for another plugin such as citizens.
+The following guide is intended for junior server admins and you should understand the nature
+of system administration and configuring services. If not, then you might have significant issues 
+with this plugin and I would recommend you look for another plugin instead.
+
+If you are currently having someone else manage your server for you then do not attempt this guide,
+ and certainly don't come asking us for help. Educate yourself, or refer it to someone who knows how 
+ to perform the very basic steps of setting up mysql for your platform.
 
 I'm not going to show you how to use mysql, answer the same question that is answered a three posts before 
 or covering questions that you should know as a server admin - I _really_ don't find this enjoyable use of 
 my free time and certainly didn't have this in mind when sharing my plugin - i just made it for my server 
 and thought some others might want to use it for whatever purpose.
 
-Since the time I released this I have had many questions from people who seem to expect me to teach them 
-how to install mysql on a thousand different platforms or how to debug a server and then get really upset 
-with me when I don't answer their questions. 
+Since the time I released this I have had many questions from people who seem to think they employ 
+me and that it's acceptable to flame me or my plugin because of their lack of skill. 
 
-So in short, if you lack the skills go find some other solution.
+This is not what a developer likes to read when he flicks through his thread over a coffee in the morning
+so think twice before giving someone abuse over something they provided for free.
+
+So in short, if you lack the skills for basic linux or windows server administration, databases, reading
+logs etc... close this plugin now.
+
+Finally, I am not a java developer, nor a developer by trade. I simply picked up java while messing
+around with hmod (mixxitplugin) and a bit more while tinkering with npclib for bukkit which this
+mod is extended from. Also this is a very early product, so expect many bugs (post on our github issue tracker)
+and is probably also heavy on performance. If you want an example our test server is a 2gb machine with around 
+120 npcs active at once without an issue - so just keep in mind that each npc you add the more cpu/mem/swap
+the server will require.
+
+Ok now that that's over and done with here are the steps you need to get setup and running:
 
 Step1 - Install MySQL and create database and user account
 ==========================================================
 
-A) Install MySQL Server on Windows or via your repo manager on linux
-http://dev.mysql.com/downloads/mysql/
+A) Install MySQL Server (probably minimum 5.1) on Windows or via your repo manager on linux or finally
+via source (yes you should know this) http://dev.mysql.com/downloads/mysql/
 
 B) (Windows) Install MySQL WorkBench to create databases and new accounts on windows
 http://dev.mysql.com/downloads/workbench/
+(see below for more info)
 
 or
 
-B) (Linux Hosted) Use the mysql command line
-
-(see below for B)
+B) (Linux Hosted and Windows Command prompt) Use the mysql command line
+(see below for more info)
 
 ----------------------------------------------
 - Using MySQL Workbench on Windows to create - 
@@ -145,6 +161,17 @@ To have him respond to words or change his default response, weapons etc see the
 
 Using NPCX
 =============================================
+
+Resetting NPCX
+=============================================
+The official way of resetting npcx and its database is by removing the npcx folder in your plugins directory 
+- on next launch this will wipe your database tables and start from fresh. This is the best way to 
+upgrade between revisions at the moment. If you want to move over old npcs and data you are completely 
+responsible for this (although a very easy task for a junior server admin)
+
+Will there be another way of doing this in the future? Probably not, you'll need to build your own
+solution to this if this becomes a regular thing although I don't generally change the database 
+schema that often.
 
 Creating Spawngroups
 =============================================
@@ -391,6 +418,25 @@ https://github.com/mixxit/npcx/issues
 
 FAQ
 =============================================
+
+Q Where can i get this for CB Version XXX
+
+A You can't it's only supported by the RB listed in the thread topic. If you get this from anywhere
+but the official github url then congratulations you probably just installed someone elses plugin
+riddled with trojans.
+
+Q Why does /reload duplicate my npcs
+
+A Its not supported yet
+
+Q Do you support uquest, pluginx, pluginy etc...
+
+A Is it written in the readme?
+
+Q How do I set permissions?
+
+A You don't! You just give OP access to anyone you want to use the NPCX command. Why? Cause it's still
+early in development and we don't want anyone but skilled server owners from using this on their server
 
 Q Any chance of sqlite in the near future?
 
