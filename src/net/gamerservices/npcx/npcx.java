@@ -92,6 +92,10 @@ public class npcx extends JavaPlugin {
 				{
 					for (myLoottable_entry lte : lt.loottable_entries)
 					{
+						ItemStack item = new ItemStack(lte.itemid,lte.amount);
+						item.setTypeId(lte.itemid);
+						item.setAmount(lte.amount);
+						
 						npc.getBukkitEntity().getWorld().dropItem(
 								new Location (
 										npc.getBukkitEntity().getWorld(),
@@ -99,7 +103,7 @@ public class npcx extends JavaPlugin {
 										npc.getBukkitEntity().getLocation().getY(),
 										npc.getBukkitEntity().getLocation().getZ()
 										),
-								new ItemStack(lte.itemid));
+								item);
 						
 					}
 				}
