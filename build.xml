@@ -26,7 +26,7 @@
                         <fileset dir="${bin}"/>
                         <fileset file="${src}/plugin.yml"/>
 		        <manifest>
-                               <attribute name="Main-Class" value="../lib/mysql-connector-java-5.1.6-bin.jar"/>
+                              <attribute name="Class-Path" value="../lib/mysql-connector-java-5.1.6-bin.jar"/>
                         </manifest>
                 </jar>
         </target>
