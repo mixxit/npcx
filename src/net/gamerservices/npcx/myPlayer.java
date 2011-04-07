@@ -258,10 +258,13 @@ public class myPlayer {
 		try {
 			for (myPlayer_factionentry e : this.parent.universe.playerfactions.values())
 			{
-				if (e.factionid == faction.id )
-				{
-					return e.amount;
-				}
+				if (e.playername.equals(this.player.getName()) && e.factionid == faction.id)
+		        {
+					if (e.factionid == faction.id )
+					{
+						return e.amount;
+					}
+		        }
 			}
 			
 			return 0;
