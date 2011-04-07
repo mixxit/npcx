@@ -2339,6 +2339,7 @@ public class myUniverse {
 						//System.out.println("Found the player, marked him as dead");
 						p.player = null;
 						p.dead = true;
+						p.respawned = false;
 						
 					}
 				} else {

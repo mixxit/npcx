@@ -464,8 +464,14 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerRespawn(PlayerRespawnEvent event)
 	{
-		// moved to ondeath
 		
+		for (myPlayer player : parent.universe.players.values()){
+			if (player.player == event.getPlayer())
+			{
+				
+				player.respawned = true;
+			}
+		}
 		
 	}
 	
@@ -479,6 +485,7 @@ public class npcxPListener extends PlayerListener {
 			{
 				
 				player.dead = true;
+				player.respawned = false;
 				this.parent.informNpcDeadPlayer(event.getPlayer());
 				
 				//System.out.println("npcx : removed player ("+ player.player.getName()+")");

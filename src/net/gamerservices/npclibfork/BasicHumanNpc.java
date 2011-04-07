@@ -819,6 +819,7 @@ public class BasicHumanNpc extends BasicNpc {
 	        					{
 	        						//System.out.println("npcx : player about to respawn, assigning them to the dead list");
 	        						player.dead = true;
+	        						player.respawned = false;
 	        						((Player) ent).sendMessage("You have been slaughtered by " + getName());
 	        						
 	        					}

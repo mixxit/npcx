@@ -544,34 +544,39 @@ public class npcx extends JavaPlugin {
 		{
 			if (player.dead == true)
 			{
-				//System.out.println("npcx : reestablishing player");
-				String list = "";
-				try
+				if (player.respawned != true)
 				{
-					for (World w : getServer().getWorlds())
+				
+					//System.out.println("npcx : reestablishing player");
+					String list = "";
+					try
 					{
-						for (Player p : w.getPlayers())
+						for (World w : getServer().getWorlds())
 						{
-							list += p.getName() + ":" + p.getEntityId() + ",";
-							if (player.name.equals(p.getName()))
+							for (Player p : w.getPlayers())
 							{
-								player.player = p;
-								//System.out.println("npcx : success!");
-
-								player.dead = false;
-								count++;
+								list += p.getName() + ":" + p.getEntityId() + ",";
+								if (player.name.equals(p.getName()))
+								{
+									player.player = p;
+									//System.out.println("npcx : success!");
+	
+									player.dead = false;
+									
+									count++;
+								}
 							}
 						}
+						
+					} catch (ConcurrentModificationException e)
+					{
+						//we loop soon anyway
+						//System.out.println("npcx : FAILED establishing dead player");
 					}
-					
-				} catch (ConcurrentModificationException e)
-				{
-					//we loop soon anyway
-					//System.out.println("npcx : FAILED establishing dead player");
-				}
-				if (count == 0)
-				{
-				//System.out.println("Searched but found 0 in: "+list);
+					if (count == 0)
+					{
+					//System.out.println("Searched but found 0 in: "+list);
+					}
 				}
 			}
 		}

@@ -27,6 +27,8 @@ public class myPlayer {
 	public int lastchunkz;
 	public String lastchunkname;
 	public boolean toggle = true;
+	public boolean respawned = true;
+	
 	
 	
 	myPlayer(npcx parent,Player player, String name)
