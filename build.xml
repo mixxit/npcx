@@ -1,7 +1,7 @@
 <project name="npcx" default="dist" basedir=".">
         <property name="pluginname" value="npcx"/>
         <property name="cbukkit.jar" location="../../../dist/craftbukkit.jar"/>
-        <property name="plugins" location="../../../dist/plugins/"/>
+        <property name="plugins" location="../../../dist/plugins"/>
 
         <property name="src" location="src"/>
         <property name="bin" location="bin"/>
