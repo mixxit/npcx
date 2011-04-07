@@ -1053,11 +1053,11 @@ public class myUniverse {
 	            	Statement sqlDropstmt = conn.createStatement();
 	            	String sqldrop = "DROP TABLE IF EXISTS npc_triggerwords; ";
 		            sqlDropstmt.executeUpdate(sqldrop);
-		         
-		            sqldrop = "DROP TABLE IF EXISTS zone; ";
+
+		            sqldrop = "DROP TABLE IF EXISTS zone_members; ";
 		            sqlDropstmt.executeUpdate(sqldrop);
 		            
-		            sqldrop = "DROP TABLE IF EXISTS zone_members; ";
+		            sqldrop = "DROP TABLE IF EXISTS zone; ";
 		            sqlDropstmt.executeUpdate(sqldrop);
 		            
 		            sqldrop = "DROP TABLE IF EXISTS faction_entries; ";
