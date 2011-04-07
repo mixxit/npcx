@@ -9,6 +9,7 @@
 
         <target name="init">
                 <mkdir dir="${bin}"/>
+                <mkdir dir="${dist}"/>
         </target>
 
         <target name="compile" depends="init">
