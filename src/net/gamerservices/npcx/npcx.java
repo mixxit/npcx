@@ -213,16 +213,18 @@ public class npcx extends JavaPlugin {
 									    			if (npc.npc.parent.faction != null)
 									    			{
 									    				// missing faction addition to base
-									    				int newfactvalue = npc.npc.parent.faction.base + player.getPlayerFactionStanding(npc.npc.parent.faction);
+									    				int newfactvalue = player.getPlayerFactionStandingWithBase(npc.npc.parent.faction);
 									    				if (newfactvalue <= -1000)
 									    				{
 									    				         npc.npc.setAggro(player.player);
 									    				         npc.npc.setFollow(player.player);
 									    				} else {
 									    				         // I am happy with you I won't attack
+									    						
 									    				}
 									    			} else {
 									    				//System.out.println("npcx : i have no faction so ill be be neutral");
+
 									    			}
 									    		}
 										}

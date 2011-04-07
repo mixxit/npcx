@@ -253,26 +253,29 @@ public class myPlayer {
 	
 	
 
-	public int getPlayerFactionStanding(myFaction faction) {
+	public int getPlayerFactionStandingWithBase(myFaction faction) {
 		// TODO Auto-generated method stub
 		try {
+			
+			
 			for (myPlayer_factionentry e : this.parent.universe.playerfactions.values())
 			{
 				if (e.playername.equals(this.player.getName()) && e.factionid == faction.id)
 		        {
 					if (e.factionid == faction.id )
 					{
-						return e.amount;
+						return e.amount + faction.base;
 					}
 		        }
 			}
-			
-			return 0;
+			// cant find any specific entries lets just return their base
+			return faction.base;
 
 		} catch (Exception e)
 		{
+			// cant find any specific entries lets just return their base
 			e.printStackTrace();
-			return 0;
+			return faction.base;
 		}
 		
 		
