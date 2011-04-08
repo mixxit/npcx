@@ -1220,7 +1220,7 @@ public class npcx extends JavaPlugin {
             			}
             			stmt.close();
             			
-        	            player.sendMessage("Spawngroup ["+ key + "] now active at your position");
+        	            player.sendMessage("Spawngroup ID ["+ key + "] now active at your position");
             			mySpawngroup sg = new mySpawngroup(this);
             			sg.id = key;
             			sg.name = args[2];
@@ -1339,7 +1339,7 @@ public class npcx extends JavaPlugin {
             			s2.setString(2,args[3]);
             		    
             			s2.executeUpdate();
-        	            player.sendMessage("NPC ["+ args[3] + "] added to group ["+ args[2] + "]");
+        	            player.sendMessage("NPC ID ["+ args[3] + "] added to group ["+ args[2] + "]");
             			
         	            // add to cached spawngroup
         	            for (mySpawngroup sg : universe.spawngroups.values())
@@ -1631,7 +1631,7 @@ public class npcx extends JavaPlugin {
             			s2.setString(3,args[4]);
             			
             			s2.executeUpdate();
-        	            player.sendMessage("NPC ["+ args[3] + "x"+args[4]+"] added to group ["+ args[2] + "]");
+        	            player.sendMessage("NPC ID ["+ args[3] + "x"+args[4]+"] added to group ["+ args[2] + "]");
             			
         	            // add to cached loottable
         	            for (myLoottable lt : this.universe.loottables)
@@ -2779,7 +2779,7 @@ public class npcx extends JavaPlugin {
             			    key = keyset.getInt(1);
             			    
             			}
-            			player.sendMessage("Created npc: " + args[2] + " ID:[" + key  + "]");
+            			player.sendMessage("Created npc : " + args[2] + " NPC ID:[" + key  + "]");
         	            
         	            s2.close();
         	            

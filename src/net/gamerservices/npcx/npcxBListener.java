@@ -12,6 +12,10 @@ public class npcxBListener extends BlockListener {
     }
     
     public void onBlockIgnite(BlockIgniteEvent event) {
+    	if(event.isCancelled())
+        {
+            return;
+        }
     	if (this.parent.universe.nospread.equals("true"))
     	{
 	    	

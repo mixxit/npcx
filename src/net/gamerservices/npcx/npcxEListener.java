@@ -31,7 +31,10 @@ public class npcxEListener extends EntityListener
 	
 	@Override
 	public void onEntityDamage(EntityDamageEvent event) {
-	
+		if(event.isCancelled())
+        {
+            return;
+        }
 		if (event.getEntity() instanceof HumanEntity) 
 		{
 			
@@ -62,7 +65,10 @@ public class npcxEListener extends EntityListener
 	@Override
 	public void onEntityExplode	(	EntityExplodeEvent 	event	)
 	{
-		
+		if(event.isCancelled())
+        {
+            return;
+        }
 		
 		if (event.getEntity() instanceof Monster)
 		{
@@ -87,7 +93,10 @@ public class npcxEListener extends EntityListener
 	@Override
 	public void onCreatureSpawn	( CreatureSpawnEvent event)	
 	{
-		
+		if(event.isCancelled())
+        {
+            return;
+        }
 		if (event.getEntity() instanceof Monster)
 		{
 			//System.out.println("npcx : registered monster");
@@ -102,7 +111,10 @@ public class npcxEListener extends EntityListener
 	
     public void onEntityTarget(EntityTargetEvent event) {
 
-		
+		if(event.isCancelled())
+        {
+            return;
+        }
 		//System.out.println("npcx : target onentityevent");
 		
         if (event instanceof NpcEntityTargetEvent) {

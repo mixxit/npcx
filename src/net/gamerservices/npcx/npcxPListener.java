@@ -35,6 +35,10 @@ public class npcxPListener extends PlayerListener {
     }
 	public void onPlayerMove(PlayerMoveEvent event)
 	{
+		if(event.isCancelled())
+        {
+            return;
+        }
 		if (this.parent.universe.nations.matches("true"))
 		{
 			
@@ -97,6 +101,10 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerTeleport(PlayerTeleportEvent event)
 	{
+		if(event.isCancelled())
+        {
+            return;
+        }
 		if (this.parent.universe.nations.matches("true"))
 		{
 			
@@ -153,7 +161,10 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerInteract(PlayerInteractEvent event)
 	{
-		
+		if(event.isCancelled())
+        {
+            return;
+        }
 		if (this.parent.universe.nations != null)
 		{
 			if (this.parent.universe.nations.equals("true"))
@@ -362,6 +373,7 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerJoin(PlayerJoinEvent event) 
     {
+		
 		myPlayer player = new myPlayer(this.parent,event.getPlayer(),event.getPlayer().getName());
 
 		
@@ -421,6 +433,10 @@ public class npcxPListener extends PlayerListener {
 	
 	public void onPlayerChat(PlayerChatEvent event)
     {
+		if(event.isCancelled())
+        {
+            return;
+        }
 		for (myPlayer player : parent.universe.players.values()){
 			if (player.player == event.getPlayer())
 			{

@@ -44,6 +44,7 @@ public class npcxWListener extends WorldListener {
 	
 	@Override
 	public void onChunkLoad(ChunkLoadEvent e) {
+		
 		parent.registerChunk(e.getChunk());
 		try
 		{
