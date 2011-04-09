@@ -3,7 +3,7 @@ package net.gamerservices.npcx;
 import org.bukkit.inventory.ItemStack;
 
 public class myMerchantItem {
-	public ItemStack item = new ItemStack(0);
+	public ItemStack item = new ItemStack(1,1);
 	
 	public double price = 0;
 	

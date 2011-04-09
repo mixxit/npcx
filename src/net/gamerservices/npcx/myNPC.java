@@ -285,9 +285,11 @@ public class myNPC {
 			}	
 			
 			
-			ItemStack item = new ItemStack(0);
+			ItemStack item = new ItemStack(1,1);
+			
 			try 
 			{
+				System.out.println("Finding material: " + arg2);
 				item.setTypeId(Material.matchMaterial(arg2).getId());
 			} catch (NullPointerException e)
 			{
@@ -302,6 +304,8 @@ public class myNPC {
 				return;
 			}
 			
+			
+			
 			try
 			{
 				item.setAmount(Integer.parseInt(arg3));
@@ -312,13 +316,25 @@ public class myNPC {
 				return;
 			}
 			
+			// check if the item type is null incase it didnt find the material type
+
 			int count = 0;
+
+			
 			for (ItemStack curitem : myplayer.player.getInventory().getContents())
 			{
-				if (curitem.getTypeId() == item.getTypeId())
+				
+				try {
+					
+					if (curitem.getTypeId() == item.getTypeId())
+					{
+						count = count + curitem.getAmount();
+						//player.player.sendMessage(npc.getName() + " says to you, '"+ curitem.getTypeId() +"/"+curitem.getAmount() +"'");
+					}
+				} catch (NullPointerException e)
 				{
-					count = count + curitem.getAmount();
-					//player.player.sendMessage(npc.getName() + " says to you, '"+ curitem.getTypeId() +"/"+curitem.getAmount() +"'");
+					// empty slot
+					// skip this item
 				}
 				
 				
@@ -549,7 +565,7 @@ public class myNPC {
 			} else {
 				
 				myMerchantItem Merchantitem = new myMerchantItem();
-				ItemStack item = new ItemStack(0);
+				ItemStack item = new ItemStack(1,1);
 				Merchantitem.item = item;
 				// todo price
 				int amount = 0;
@@ -605,10 +621,18 @@ public class myNPC {
 				int count = 0;
 				for (ItemStack curitem : player.player.getInventory().getContents())
 				{
-					if (curitem.getTypeId() == item.getTypeId())
+					try 
 					{
-						count = count + curitem.getAmount();
-						//player.player.sendMessage(npc.getName() + " says to you, '"+ curitem.getTypeId() +"/"+curitem.getAmount() +"'");
+					
+						if (curitem.getTypeId() == item.getTypeId())
+						{
+							count = count + curitem.getAmount();
+							//player.player.sendMessage(npc.getName() + " says to you, '"+ curitem.getTypeId() +"/"+curitem.getAmount() +"'");
+						}
+					}
+					catch (NullPointerException e)
+					{
+						// skip its an empty slot
 					}
 					
 					
@@ -864,7 +888,7 @@ public class myNPC {
 					{
 						//System.out.println("Item matched!");
 						
-							ItemStack i = new ItemStack(itemid);
+							ItemStack i = new ItemStack(itemid,1);
 							i.setAmount(amount);
 							// Update cache
 							entry.amount = entry.amount;
@@ -904,7 +928,7 @@ public class myNPC {
 						{
 							if (entry.amount >= amount)
 							{
-								ItemStack i = new ItemStack(itemid);
+								ItemStack i = new ItemStack(itemid,1);
 								i.setAmount(amount);
 								// Update cache
 								
@@ -922,7 +946,7 @@ public class myNPC {
 								// TODO - NEEDS TO MOVE
 								if (entry.amount >= amount)
 								{
-									ItemStack i = new ItemStack(itemid);
+									ItemStack i = new ItemStack(itemid,1);
 									i.setAmount(amount);
 									// Update cache
 									
@@ -936,7 +960,7 @@ public class myNPC {
 							} else {
 							
 							// UNLIMITED 
-							ItemStack i = new ItemStack(itemid);
+							ItemStack i = new ItemStack(itemid,1);
 							i.setAmount(amount);
 							// Update cache
 							
@@ -1511,11 +1535,11 @@ public class myNPC {
 
 	public void requipArmour() {
 		// TODO Auto-generated method stub
-		ItemStack iprimary = new ItemStack(weapon);
-		ItemStack ihelmet = new ItemStack(helmet);
-		ItemStack ichest = new ItemStack(chest);
-		ItemStack ilegs = new ItemStack(legs);
-		ItemStack iboots = new ItemStack(boots);
+		ItemStack iprimary = new ItemStack(weapon,1);
+		ItemStack ihelmet = new ItemStack(helmet,1);
+		ItemStack ichest = new ItemStack(chest,1);
+		ItemStack ilegs = new ItemStack(legs,1);
+		ItemStack iboots = new ItemStack(boots,1);
         npc.getBukkitEntity().getInventory().setItemInHand(iprimary);
         npc.getBukkitEntity().getInventory().setHelmet(ihelmet);
         npc.getBukkitEntity().getInventory().setChestplate(ichest);

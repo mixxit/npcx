@@ -2488,7 +2488,7 @@ public class npcx extends JavaPlugin {
         	            	{
         	            		
         	            		n.chest = Integer.parseInt(args[3]);
-        	            		ItemStack i = new ItemStack(n.chest);
+        	            		ItemStack i = new ItemStack(n.chest,1);
         	            		i.setTypeId(Integer.parseInt(args[3]));
 
         	            		n.npc.getBukkitEntity().getInventory().setChestplate(i);
@@ -2526,7 +2526,7 @@ public class npcx extends JavaPlugin {
         	            	{
         	            		
         	            		n.helmet = Integer.parseInt(args[3]);
-        	            		ItemStack i = new ItemStack(n.helmet);
+        	            		ItemStack i = new ItemStack(n.helmet,1);
         	            		i.setTypeId(Integer.parseInt(args[3]));
         	            		n.npc.getBukkitEntity().getInventory().setHelmet(i);
         	            		player.sendMessage("npcx : Updated living npc to cached helmet ("+args[3]+"): "+n.helmet);
@@ -2562,7 +2562,7 @@ public class npcx extends JavaPlugin {
         	            	{
         	            		
         	            		n.weapon = Integer.parseInt(args[3]);
-        	            		ItemStack i = new ItemStack(n.weapon);
+        	            		ItemStack i = new ItemStack(n.weapon,1);
         	            		i.setTypeId(Integer.parseInt(args[3]));
 
         	            		n.npc.getBukkitEntity().getInventory().setItemInHand(i);
@@ -2600,7 +2600,7 @@ public class npcx extends JavaPlugin {
         	            	{
         	            		
         	            		n.boots = Integer.parseInt(args[3]);
-        	            		ItemStack i = new ItemStack(n.boots);
+        	            		ItemStack i = new ItemStack(n.boots,1);
         	            		i.setTypeId(Integer.parseInt(args[3]));
 
         	            		n.npc.getBukkitEntity().getInventory().setBoots(i);
@@ -2639,7 +2639,7 @@ public class npcx extends JavaPlugin {
         	            	{
         	            		
         	            		n.legs = Integer.parseInt(args[3]);
-        	            		ItemStack i = new ItemStack(n.legs);
+        	            		ItemStack i = new ItemStack(n.legs,1);
         	            		i.setTypeId(Integer.parseInt(args[3]));
 
         	            		n.npc.getBukkitEntity().getInventory().setLeggings(i);
