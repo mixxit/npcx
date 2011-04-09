@@ -2979,7 +2979,8 @@ public class npcx extends JavaPlugin {
 		}
 		
 		// TODO Auto-generated method stub
-		player.sendMessage("Error: No access privileges");
+		// lets not spam everything
+		//player.sendMessage("Error: No access privileges");
 		return false;
 	}
 	
