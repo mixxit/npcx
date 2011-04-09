@@ -67,7 +67,7 @@ public class myUniverse {
 	public File propfolder;
 	
 	// default world name
-	public String defaultworld;
+	public String fallbackworld;
 
 	// Lists of objects that are universal
 	public List< myFaction > factions = new CopyOnWriteArrayList< myFaction >();
@@ -183,7 +183,7 @@ public class myUniverse {
 				dbversion = config.getProperty("db-version");
 				nations = config.getProperty("nations");
 				
-				this.defaultworld = config.getProperty("world");
+				this.fallbackworld = config.getProperty("world");
 				
 				update = config.getProperty("update");
 				
@@ -226,7 +226,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPORT,dbport);
 		            config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
-					config.setProperty(PROP_WORLD,defaultworld);
+					config.setProperty(PROP_WORLD,fallbackworld);
 		            config.setProperty(PROP_UPDATE,update);
 		            
 		            File propfolder = parent.getDataFolder();
@@ -278,8 +278,12 @@ public class myUniverse {
 		// TODO i need to handle this instead
 		for (World w : parent.getServer().getWorlds())
 		{
-			if (w.getName().matches(this.defaultworld))
+			// is there a world to fall back on when i cant find one?
+			
+			if (w.getName().matches(this.fallbackworld))
 			{
+				
+				// found, lets proceed
 				System.out.println("npcx : loadsettings() ended");
 				return true;
 			}
@@ -294,7 +298,7 @@ public class myUniverse {
 	
 	private boolean updateDB() {
 		// TODO Auto-generated method stub
-		String targetdbversion = "1.09";
+		String targetdbversion = "1.10";
 		System.out.println("npcx : Checking for DB Updates from DBVersion:"+this.dbversion);
 		if(this.dbversion.matches(targetdbversion))
 		{
@@ -328,7 +332,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPORT,dbport);
 					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
-					config.setProperty(PROP_WORLD,defaultworld);
+					config.setProperty(PROP_WORLD,fallbackworld);
 		            config.setProperty(PROP_UPDATE,"false");
 		            config.setProperty(PROP_DBVERSION, "1.01");
 		            
@@ -400,7 +404,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPORT,dbport);
 					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
-					config.setProperty(PROP_WORLD,defaultworld);
+					config.setProperty(PROP_WORLD,fallbackworld);
 		            config.setProperty(PROP_UPDATE,"false");
 		            config.setProperty(PROP_DBVERSION, "1.02");
 		            this.dbversion = "1.02";
@@ -480,7 +484,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPORT,dbport);
 					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
-					config.setProperty(PROP_WORLD,defaultworld);
+					config.setProperty(PROP_WORLD,fallbackworld);
 		            config.setProperty(PROP_UPDATE,"false");
 		            config.setProperty(PROP_DBVERSION, "1.03");
 		            this.dbversion = "1.03";
@@ -553,7 +557,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPORT,dbport);
 					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
-					config.setProperty(PROP_WORLD,defaultworld);
+					config.setProperty(PROP_WORLD,fallbackworld);
 		            config.setProperty(PROP_UPDATE,"false");
 		            config.setProperty(PROP_DBVERSION, "1.04");
 		            this.dbversion = "1.04";
@@ -620,7 +624,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPORT,dbport);
 					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
-					config.setProperty(PROP_WORLD,defaultworld);
+					config.setProperty(PROP_WORLD,fallbackworld);
 		            config.setProperty(PROP_UPDATE,"false");
 		            config.setProperty(PROP_DBVERSION, "1.05");
 		            this.dbversion = "1.05";
@@ -689,7 +693,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPORT,dbport);
 					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
-					config.setProperty(PROP_WORLD,defaultworld);
+					config.setProperty(PROP_WORLD,fallbackworld);
 		            config.setProperty(PROP_UPDATE,"false");
 		            config.setProperty(PROP_DBVERSION, "1.06");
 		            this.dbversion = "1.06";
@@ -756,7 +760,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPORT,dbport);
 					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
-					config.setProperty(PROP_WORLD,defaultworld);
+					config.setProperty(PROP_WORLD,fallbackworld);
 		            config.setProperty(PROP_UPDATE,"false");
 		            config.setProperty(PROP_DBVERSION, "1.07");
 		            this.dbversion = "1.07";
@@ -823,7 +827,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPORT,dbport);
 					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
-					config.setProperty(PROP_WORLD,defaultworld);
+					config.setProperty(PROP_WORLD,fallbackworld);
 		            config.setProperty(PROP_UPDATE,"false");
 		            config.setProperty(PROP_DBVERSION, "1.08");
 		            this.dbversion = "1.08";
@@ -892,7 +896,7 @@ public class myUniverse {
 					config.setProperty(PROP_DBPORT,dbport);
 					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,dbversion);
-					config.setProperty(PROP_WORLD,defaultworld);
+					config.setProperty(PROP_WORLD,fallbackworld);
 		            config.setProperty(PROP_UPDATE,"false");
 		            config.setProperty(PROP_DBVERSION, "1.09");
 		            this.dbversion = "1.09";
@@ -930,9 +934,72 @@ public class myUniverse {
 			}
 		}
 		
-		
+		if (this.dbversion.matches("1.09"))
+		{
+			// Create Player table
+			// Update size of triggerword response
+			Statement sqlCreatestmt;
+			try {
+				
+				sqlCreatestmt = conn.createStatement();
+				String sqlcreate = "ALTER TABLE pathgroup ADD COLUMN world VARCHAR(45) NULL AFTER category ;";
+				sqlCreatestmt.executeUpdate(sqlcreate);
 
-
+				sqlCreatestmt.close();
+	            Properties config = new Properties();
+				BufferedInputStream stream;
+				try
+				{
+					stream = new BufferedInputStream(new FileInputStream(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES));
+					config.load(stream);
+			
+					config.setProperty(PROP_NOWILD,nowild);
+					config.setProperty(PROP_NOSPREAD,nospread);
+					config.setProperty(PROP_NOCREEPER,nocreeper);
+					config.setProperty(PROP_DBHOST,dbhost);
+					config.setProperty(PROP_DBUSER,dbuser);
+					config.setProperty(PROP_DBPASS,dbpass);
+					config.setProperty(PROP_DBNAME,dbname);
+					config.setProperty(PROP_DBPORT,dbport);
+					config.setProperty(PROP_NATIONS,nations);
+		            config.setProperty(PROP_DBVERSION,dbversion);
+					config.setProperty(PROP_WORLD,fallbackworld);
+		            config.setProperty(PROP_UPDATE,"false");
+		            config.setProperty(PROP_DBVERSION, "1.10");
+		            this.dbversion = "1.10";
+		            File propfolder = parent.getDataFolder();
+		            File propfile = new File(propfolder.getAbsolutePath() + File.separator + FILE_PROPERTIES);
+		            propfile.createNewFile();
+		            
+		            BufferedOutputStream stream1 = new BufferedOutputStream(new FileOutputStream(propfile.getAbsolutePath()));
+					config.store(stream1, "Default generated settings, please ensure mysqld matches");
+		            
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+					System.out.println("**********************************************");
+					System.out.println("*   Problem during update to version 1.10    *");
+					System.out.println("*     Can you access your config file?       *");
+					System.out.println("**********************************************");
+					return false;
+				}
+				
+				
+				System.out.println("**********************************************");
+				System.out.println("* Congratulations! Your NPCX database is now *");
+				System.out.println("*       updated to version 1.10              *");
+				System.out.println("**********************************************");
+				return true;
+			} catch (SQLException e) {
+				System.out.println("**********************************************");
+				System.out.println("*   Problem during update to version 1.10    *");
+				System.out.println("*  Please provide stacktrace below to devs   *");
+				System.out.println("**********************************************");
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
 		
 		return false;
 	}
@@ -1196,7 +1263,7 @@ public class myUniverse {
 		            nations = config.getProperty("nations");
 		            
 		            dsn = "jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname + "?autoReconnect=true";
-		            defaultworld = config.getProperty("world");
+		            fallbackworld = config.getProperty("world");
 		            
 					config.setProperty(PROP_NOWILD,nowild);
 					config.setProperty(PROP_NOSPREAD,nospread);
@@ -1209,7 +1276,7 @@ public class myUniverse {
 					config.setProperty(PROP_NATIONS,nations);
 		            config.setProperty(PROP_DBVERSION,"1");
 		            this.dbversion = "1";
-					config.setProperty(PROP_WORLD,defaultworld);
+					config.setProperty(PROP_WORLD,fallbackworld);
 		            config.setProperty(PROP_UPDATE,"false");
 		            
 		            File propfolder = parent.getDataFolder();
@@ -1469,7 +1536,14 @@ public class myUniverse {
             spawngroup.yaw = (float) Double.parseDouble(rs1.getString ("yaw"));
             spawngroup.pitch = (float) Double.parseDouble(rs1.getString ("pitch"));
             
-            Location loc = new Location(parent.getServer().getWorld(this.defaultworld),spawngroup.x,spawngroup.y,spawngroup.z);
+            if (rs1.getString("world") == null)
+            {
+            	// no world set for this npc, need to change it to the fallback world
+            	spawngroup.world = this.parent.getServer().getWorld(this.fallbackworld);
+            } else {
+            	spawngroup.world = this.parent.getServer().getWorld(rs1.getString("world"));
+            }
+            Location loc = new Location(spawngroup.world,spawngroup.x,spawngroup.y,spawngroup.z);
             
             spawngroup.pathgroup = dbGetSpawngrouppg(spawngroup.id);
             
@@ -1536,6 +1610,7 @@ public class myUniverse {
 			e.printStackTrace();
 		} catch (NullPointerException e) { 
 	 		System.out.println("npcx : ERROR - spawngroup loading cancelled!");
+	 		e.printStackTrace();
 	 		
         }
 	}
@@ -1610,7 +1685,14 @@ public class myUniverse {
             	pathgroup.id = rspg.getInt ("id");
             	pathgroup.name = rspg.getString ("name");
             	pathgroup.category = rspg.getInt ("category");
-
+            	if (rspg.getString("world").equals(""))
+            	{
+            		pathgroup.world = this.parent.getServer().getWorld(rspg.getString("world"));
+            	} else {
+            		// old format, best attach the fallback world to it
+            		pathgroup.world = this.parent.getServer().getWorld(this.fallbackworld);
+            		
+            	}
             	Statement sFindEntries = conn.createStatement();
             	sFindEntries.executeQuery("SELECT * FROM pathgroup_entries WHERE pathgroup = " + pathgroup.id);
             	ResultSet rsEntries = sFindEntries.getResultSet ();
@@ -1618,7 +1700,7 @@ public class myUniverse {
             	while (rsEntries.next ())
 	            {
             		
-            		Location pgloc = new Location(parent.getServer().getWorld(this.defaultworld),rsEntries.getInt("x"),rsEntries.getInt("y"),rsEntries.getInt("z"),rsEntries.getFloat("yaw"),rsEntries.getFloat("pitch"));
+            		Location pgloc = new Location(pathgroup.world,rsEntries.getInt("x"),rsEntries.getInt("y"),rsEntries.getInt("z"),rsEntries.getFloat("yaw"),rsEntries.getFloat("pitch"));
             		
             		myPathgroup_entry entry = new myPathgroup_entry(pgloc,rsEntries.getInt("id"),pathgroup,rsEntries.getInt("s"));
             		

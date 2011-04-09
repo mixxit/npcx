@@ -367,7 +367,7 @@ public class npcx extends JavaPlugin {
 												//System.out.println("npcx : made spawngroup active");
 												Double  pitch = new Double(spawngroup.pitch);
 												Double yaw = new Double(spawngroup.yaw);
-												BasicHumanNpc hnpc = npc.Spawn(npc.spawngroup.id+"-"+npc.id, npc.name, this.getServer().getWorld(this.universe.defaultworld), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
+												BasicHumanNpc hnpc = npc.Spawn(npc.spawngroup.id+"-"+npc.id, npc.name, spawngroup.world, spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
 												npc.npc = hnpc;
 												ItemStack iprimary = new ItemStack(npc.weapon,1);
 												ItemStack ihelmet = new ItemStack(npc.helmet,1);
@@ -1221,13 +1221,15 @@ public class npcx extends JavaPlugin {
             			float pitch = player.getLocation().getPitch();
             			float yaw = player.getLocation().getYaw();
             			
-            			PreparedStatement stmt = this.universe.conn.prepareStatement("INSERT INTO spawngroup (name,x,y,z,pitch,yaw) VALUES (?,?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
+            			PreparedStatement stmt = this.universe.conn.prepareStatement("INSERT INTO spawngroup (name,x,y,z,pitch,yaw,world) VALUES (?,?,?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
             			stmt.setString(1,args[2]);
             			stmt.setString(2, Double.toString(x));
             		    stmt.setString(3, Double.toString(y));
             		    stmt.setString(4, Double.toString(z));
             		    stmt.setString(5, Double.toString(pitch));
             		    stmt.setString(6, Double.toString(yaw));
+            		    stmt.setString(7, player.getLocation().getWorld().getName());
+            		    
             			stmt.executeUpdate();
             			ResultSet keyset = stmt.getGeneratedKeys();
             			int key = 0;
@@ -1376,7 +1378,7 @@ public class npcx extends JavaPlugin {
                      		    int count = 0;
                      		    while (rsNPC.next ())
                      		    {
-                     		       Location loc = new Location(getServer().getWorld(this.universe.defaultworld),0,0,0,0,0);
+                     		       Location loc = new Location(sg.world,0,0,0,0,0);
             	            		
                      		       myNPC npc = new myNPC(this,universe.fetchTriggerWords(Integer.parseInt(args[3])), loc, "dummy");
                      		       npc.name = rsNPC.getString ("name");
@@ -1443,6 +1445,8 @@ public class npcx extends JavaPlugin {
             			
             			s2.executeUpdate();
             			player.sendMessage("Updated Spawngroup " + args[2] + " to your position");
+            			player.sendMessage("Warning: This does not change the world of the spawngroup");
+            			
                 		
         	            // Update cached spawngroups
         	            for (mySpawngroup sg : this.universe.spawngroups.values())
@@ -1470,7 +1474,7 @@ public class npcx extends JavaPlugin {
 	        	            			np.npc.spawnz = sg.z;
 	        	            			np.npc.spawnyaw = sg.yaw;
 	        	            			np.npc.spawnpitch = sg.pitch;
-	        	            			Location locnpc = new Location(getServer().getWorld(this.universe.defaultworld),loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
+	        	            			Location locnpc = new Location(sg.world,loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
 	        	            			np.npc.forceMove(locnpc);
 	        	            			
         	            			}
@@ -2016,8 +2020,10 @@ public class npcx extends JavaPlugin {
             		} else {
             			
             			
-            			PreparedStatement statementPCreate = this.universe.conn.prepareStatement("INSERT INTO pathgroup (name) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
+            			PreparedStatement statementPCreate = this.universe.conn.prepareStatement("INSERT INTO pathgroup (name,world) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
             			statementPCreate.setString(1, args[2]);
+            			statementPCreate.setString(2, player.getLocation().getWorld().getName());
+            			
             			statementPCreate.executeUpdate();
         	            
         	            ResultSet keyset = statementPCreate.getGeneratedKeys();
@@ -2032,6 +2038,7 @@ public class npcx extends JavaPlugin {
             			myPathgroup pathgroup = new myPathgroup();
             			pathgroup.id = key;
             			pathgroup.name = args[2];
+            			pathgroup.world = player.getWorld();
 
             			this.universe.pathgroups.add(pathgroup);
             			
