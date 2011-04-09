@@ -1334,6 +1334,7 @@ public class myUniverse {
             	myPlayer player = new myPlayer(this.parent,null,rs1.getString("name"));
             	player.id = rs1.getInt("id");
     			parent.universe.players.put(player.name, player);
+    			countplayer++;
             }
             rs1.close();
             s1.close();
@@ -1603,7 +1604,7 @@ public class myUniverse {
         }
         rs1.close ();
         s1.close ();
-        System.out.println (count1 + " spawngroups loaded");
+        System.out.println ("npcx : Loaded " + count1 + " spawngroups.");
 		} catch (SQLException e)
 		{
 			System.out.println("npcx : ERROR - spawngroup loading cancelled!");
@@ -1685,7 +1686,7 @@ public class myUniverse {
             	pathgroup.id = rspg.getInt ("id");
             	pathgroup.name = rspg.getString ("name");
             	pathgroup.category = rspg.getInt ("category");
-            	if (rspg.getString("world") == null)
+            	if (rspg.getString("world") != null)
             	{
             		pathgroup.world = this.parent.getServer().getWorld(rspg.getString("world"));
             	} else {
@@ -1725,6 +1726,7 @@ public class myUniverse {
             
         } catch (NullPointerException e) { 
 	 		System.out.println("npcx : ERROR - pathgroup loading cancelled!");
+	 		e.printStackTrace();
         } catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2054,7 +2056,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName().equals(player.getName()))
+			if (p.name.equals(player.getName()))
 			{
 				p.lastmyzone = myzone;
 			}
@@ -2065,7 +2067,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName().equals(player.getName()))
+			if (p.name.equals(player.getName()))
 			{
 				return p.lastmyzone;
 			}
@@ -2077,7 +2079,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName().equals(player.getName()))
+			if (p.name.equals(player.getName()))
 			{
 				return p.lastchunkx;
 			}
@@ -2090,7 +2092,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName().equals(player.getName()))
+			if (p.name.equals(player.getName()))
 			{
 				p.lastchunkx = x;
 			}
@@ -2102,7 +2104,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName().equals(player.getName()))
+			if (p.name.equals(player.getName()))
 			{
 				return p.lastchunkz;
 			}
@@ -2114,7 +2116,7 @@ public class myUniverse {
 		// TODO Auto-generated method stub
 		for (myPlayer p : players.values())
 		{
-			if (p.player.getName().equals(player.getName()))
+			if (p.name.equals(player.getName()))
 			{
 				p.lastchunkz = z;
 			}

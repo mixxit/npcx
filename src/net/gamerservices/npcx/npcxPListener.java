@@ -376,7 +376,30 @@ public class npcxPListener extends PlayerListener {
 		
 		myPlayer player = new myPlayer(this.parent,event.getPlayer(),event.getPlayer().getName());
 
+		int count = 0;
+		for (myPlayer p : this.parent.universe.players.values())
+		{
+			//System.out.println("Testing " + p.name + " against actual player: " + event.getPlayer().getName());
+			if (p.name.equals(event.getPlayer().getName()))
+			{
+				// attach them
+				//System.out.println("Attaching player");
+				p.player = event.getPlayer();
+				count++;
+			}
+		}
 		
+		// this player wasnt matched up
+		if (count == 0)
+		{
+			//System.out.println("npcx : added new player ("+ event.getPlayer().getName()+")");
+			parent.universe.players.put(player.name, player);
+			
+			parent.universe.dbCreatePlayer(player);
+
+		}
+		
+		// check nation stuff
 		
 		if (this.parent.universe.nations.matches("true"))
 		{
@@ -409,23 +432,7 @@ public class npcxPListener extends PlayerListener {
 			event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"This server runs "+ChatColor.YELLOW+"NPCX"+ChatColor.LIGHT_PURPLE+" with Civilizations enabled!");
 			event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE+"To claim your own piece of paradise use /civ buy!");
 		}
-		int count = 0;
-		for (myPlayer p : this.parent.universe.players.values())
-		{
-			if (p.name.equals(event.getPlayer().getName()))
-			{
-				// attach them
-				p.player = event.getPlayer();
-				count++;
-			}
-		}
-		if (count == 0)
-		{
-			//System.out.println("npcx : added new player ("+ event.getPlayer().getName()+")");
-			parent.universe.players.put(player.player.getName(), player);
-			parent.universe.dbCreatePlayer(player);
-
-		}
+		
 		
     }
 	
