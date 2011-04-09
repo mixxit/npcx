@@ -1685,7 +1685,7 @@ public class myUniverse {
             	pathgroup.id = rspg.getInt ("id");
             	pathgroup.name = rspg.getString ("name");
             	pathgroup.category = rspg.getInt ("category");
-            	if (rspg.getString("world").equals(""))
+            	if (rspg.getString("world") == null)
             	{
             		pathgroup.world = this.parent.getServer().getWorld(rspg.getString("world"));
             	} else {

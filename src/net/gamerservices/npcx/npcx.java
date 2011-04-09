@@ -2020,7 +2020,7 @@ public class npcx extends JavaPlugin {
             		} else {
             			
             			
-            			PreparedStatement statementPCreate = this.universe.conn.prepareStatement("INSERT INTO pathgroup (name,world) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
+            			PreparedStatement statementPCreate = this.universe.conn.prepareStatement("INSERT INTO pathgroup (name,world) VALUES (?,?)",Statement.RETURN_GENERATED_KEYS);
             			statementPCreate.setString(1, args[2]);
             			statementPCreate.setString(2, player.getLocation().getWorld().getName());
             			
