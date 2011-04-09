@@ -1198,7 +1198,7 @@ public class myNPC {
     					
 					}
 					
-					if (p.isOp())
+					if (this.parent.isAdmin(p))
 					{
 						p.sendMessage("NPCID ("+tNPCID+"):SG ("+tGPID+"):F ("+tFID+"):PG ("+tPGID+"):L ("+tLTID+"):M ("+tMID+")");
 					}

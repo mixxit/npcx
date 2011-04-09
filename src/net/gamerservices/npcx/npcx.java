@@ -1,4 +1,7 @@
 package net.gamerservices.npcx;
+import com.nijiko.permissions.PermissionHandler;
+import com.nijikokun.bukkit.Permissions.Permissions;
+import org.bukkit.plugin.Plugin;
 import com.nijiko.coelho.iConomy.iConomy;
 
 import net.gamerservices.npclibfork.BasicHumanNpc;
@@ -15,6 +18,7 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
@@ -67,6 +71,13 @@ public class npcx extends JavaPlugin {
     private static iConomy iConomy = null;
     private static Server Server = null;
     // end iconomy
+    
+    // permissions mod
+    
+    public static PermissionHandler Permissions;
+    
+    // end permissions mod
+    
 	public BasicHumanNpcList npclist = new BasicHumanNpcList();
 	private Timer tick = new Timer();
 	private Timer longtick = new Timer();
@@ -700,6 +711,7 @@ public class npcx extends JavaPlugin {
         think();
         longCheck();
         
+        setupPermissions();
         
 	}
 	
@@ -1112,7 +1124,7 @@ public class npcx extends JavaPlugin {
                 return false;
             }
             
-            if (sender.isOp() == false) {
+            if (isAdmin(((Player)sender)) == false) {
 
                 return false;
             }
@@ -2940,5 +2952,53 @@ public class npcx extends JavaPlugin {
 		*/
 	}
 
+	public boolean isAdmin(Player player) {
+		// first if they are an op they get access regardless
+		if (player.isOp())
+		{
+			return true;
+		}
+		
+		
+		try 
+		{
+			// if we have permissions installed check that
+			if ((this).Permissions.has(player, "npcx.fulladmin")) {
+			      return true;
+			}
+		}catch (NoClassDefFoundError e )
+		{
+			// permissions not installed, fall through to the error below
+		} 
+		catch (CommandException e)
+		{
+			// permissions not installed, fall through to the error below
+		} catch (Exception e )
+		{
+			// permissions not installed, fall through to the error below
+		}
+		
+		// TODO Auto-generated method stub
+		player.sendMessage("Error: No access privileges");
+		return false;
+	}
+	
+	// permissions mod
+	
+	private void setupPermissions() {
+	      Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
+
+	      if (this.Permissions == null) {
+	          if (test != null) {
+	              this.Permissions = ((Permissions)test).getHandler();
+	          } else {
+	              this.logger.info("Permission system not detected, defaulting to OP");
+	          }
+	      }
+	  }
+	
+	// end permissions mod
+
 
 }
+

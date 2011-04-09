@@ -170,7 +170,7 @@ public class npcxPListener extends PlayerListener {
 			if (this.parent.universe.nations.equals("true"))
 			{			
 			
-				if (!event.getPlayer().isOp())
+				if (!this.parent.isAdmin(event.getPlayer()))
 				{
 					if (this.parent.universe.nowild != null)
 					{
