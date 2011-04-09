@@ -14,6 +14,13 @@ Version 0.01 - Got a basic implementation going
 Test Server: 89.145.87.92
 
 
+
+#
+# Permissions
+# 
+
+You may now also make use of permissions using the node npcx.fulladmin
+
 _____________
 
 #
@@ -21,8 +28,6 @@ _____________
 # 
 
 All of the following commands will list syntax to more subcommands:
-
- * Op only! *
 
 /npcx spawngroup
 /npcx npc 
