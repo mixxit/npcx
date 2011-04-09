@@ -2431,11 +2431,7 @@ public class myUniverse {
 						p.respawned = false;
 						
 					}
-				} else {
-					System.out.println("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
-					//player.kickPlayer("Failed to interogate myPlayer ("+p.name+") due to a missing playerentity object");
-					// Kick?
-				}
+				} 
 		}
 		
 		//System.out.println("***************************************");
