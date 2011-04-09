@@ -289,7 +289,7 @@ public class myNPC {
 			
 			try 
 			{
-				System.out.println("Finding material: " + arg2);
+				//System.out.println("Finding material: " + arg2);
 				item.setTypeId(Material.matchMaterial(arg2).getId());
 			} catch (NullPointerException e)
 			{
