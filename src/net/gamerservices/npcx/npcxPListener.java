@@ -423,6 +423,8 @@ public class npcxPListener extends PlayerListener {
 		{
 			//System.out.println("npcx : added new player ("+ event.getPlayer().getName()+")");
 			parent.universe.players.put(player.player.getName(), player);
+			parent.universe.dbCreatePlayer(player);
+
 		}
 		
     }

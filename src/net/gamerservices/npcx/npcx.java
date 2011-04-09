@@ -73,15 +73,9 @@ public class npcx extends JavaPlugin {
 
 
 	public boolean checkchunks = false;
-	public void onNPCDeath(BasicHumanNpc npc)
+	public void onNPCDeathWithLoot(BasicHumanNpc npc)
 	{
-		for (myPlayer player : universe.players.values()){
-				if (player.target == npc)
-				{
-					player.target = null;
-					
-				}
-		}
+		
 		
 		
 		for (myLoottable lt : this.universe.loottables)
@@ -109,6 +103,19 @@ public class npcx extends JavaPlugin {
 				}
 			}
 		}
+		this.onNPCDeath(npc);
+		
+	}
+	
+	public void onNPCDeath(BasicHumanNpc npc)
+	{
+		for (myPlayer player : universe.players.values()){
+			if (player.target == npc)
+			{
+				player.target = null;
+				
+			}
+		}
 		
 		npclist.remove(npc);
 		universe.npcs.remove(npc);
@@ -120,12 +127,8 @@ public class npcx extends JavaPlugin {
 			npc.parent.spawngroup.activecountdown = 100;
 		}
 		
-		
-		
-		
-		
-		
 	}
+	
 
 	public double getDistance(double d, double e)
 	{
@@ -366,11 +369,13 @@ public class npcx extends JavaPlugin {
 												Double yaw = new Double(spawngroup.yaw);
 												BasicHumanNpc hnpc = npc.Spawn(npc.spawngroup.id+"-"+npc.id, npc.name, this.getServer().getWorld(this.universe.defaultworld), spawngroup.x, spawngroup.y, spawngroup.z,yaw , pitch);
 												npc.npc = hnpc;
-												ItemStack iprimary = new ItemStack(npc.weapon);
-												ItemStack ihelmet = new ItemStack(npc.helmet);
-												ItemStack ichest = new ItemStack(npc.chest);
-												ItemStack ilegs = new ItemStack(npc.legs);
-												ItemStack iboots = new ItemStack(npc.boots);
+												ItemStack iprimary = new ItemStack(npc.weapon,1);
+												ItemStack ihelmet = new ItemStack(npc.helmet,1);
+												ItemStack ichest = new ItemStack(npc.chest,1);
+												ItemStack ilegs = new ItemStack(npc.legs,1);
+												ItemStack iboots = new ItemStack(npc.boots,1);
+												
+												
 								                npc.npc.getBukkitEntity().getInventory().setItemInHand(iprimary);
 								                npc.npc.getBukkitEntity().getInventory().setHelmet(ihelmet);
 								                npc.npc.getBukkitEntity().getInventory().setChestplate(ichest);
@@ -380,6 +385,8 @@ public class npcx extends JavaPlugin {
 												this.npclist.put(spawngroup.id + "-" + npc.id, hnpc);
 												this.universe.npcs.put(spawngroup.id+"-"+npc.id,npc);
 												spawngroup.active = true;
+												
+												
 											
 										}
 									}
@@ -424,8 +431,16 @@ public class npcx extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		// TODO Auto-generated method stub
+		// Reload or shutdown event
 		 try {
 			 	this.universe.commitPlayerFactions();
+			 	
+			 	// Disable all objects in game
+			
+			 	this.universe.onDisable();
+			 	
+			 	
+			 	
 	            PluginDescriptionFile pdfFile = this.getDescription();
 	            logger.log(Level.INFO, pdfFile.getName() + " version " + pdfFile.getVersion() + " disabled.");
 	        } catch (Exception e) {
@@ -651,6 +666,8 @@ public class npcx extends JavaPlugin {
 			 return false;
 		 }
 		 
+		 
+		 
 	 }
 	
 	@Override
@@ -667,6 +684,7 @@ public class npcx extends JavaPlugin {
 		// TODO Auto-generated method stub
         if (EventsSetup() == false)
         {
+        	System.out.println("Events not loading correctly");
         	return;
         }
         
@@ -2786,25 +2804,6 @@ public class npcx extends JavaPlugin {
             		}
         			
         		}
-            	
-            	
-            	
-            	
-            	/*
-            	 * Disabled temporarily
-            	 * 
-            	if (args[1].equals("spawn")) {
-	            		player.sendMessage("Spawning new (temporary) NPC: " + args[2]);
-	                    // temporary
-	            		Location loc = new Location(player.getWorld(),player.getLocation().getX(),player.getLocation().getY(),player.getLocation().getZ(),player.getLocation().getYaw(),player.getLocation().getPitch());
-	            		 myNPC npc = new myNPC(this, null, loc, args[2]);
-	            		 npc.Spawn(args[2],loc);
-	            		 this.universe.npcs.put("ZZSpawns"+"-"+npc.id,npc);
-	            		 this.npclist.put(args[2], npc.npc);
-	            		 
-	            		return true;
-                }
-                */
             }
             
         } catch (Exception e) {

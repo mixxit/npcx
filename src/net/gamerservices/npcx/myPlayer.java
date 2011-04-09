@@ -28,6 +28,7 @@ public class myPlayer {
 	public String lastchunkname;
 	public boolean toggle = true;
 	public boolean respawned = true;
+	public int id;
 	
 	
 	

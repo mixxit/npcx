@@ -1248,8 +1248,38 @@ public class myUniverse {
 		loadPathgroups();
 		loadLoottables();
 		loadSpawngroups();
+		loadPlayers();
+		matchPlayers();
 	}
 	
+	private void loadPlayers() {
+		// TODO Auto-generated method stub
+		try 
+        {
+            // Load faction_list
+            Statement s1 = conn.createStatement ();
+            s1.executeQuery ("SELECT * FROM player");
+            ResultSet rs1 = s1.getResultSet ();
+            int countplayer = 0;
+            System.out.println("npcx : loading players");
+            while (rs1.next ())
+            {
+            	myPlayer player = new myPlayer(this.parent,null,rs1.getString("name"));
+            	player.id = rs1.getInt("id");
+    			parent.universe.players.put(player.name, player);
+            }
+            rs1.close();
+            s1.close();
+            System.out.println("npcx : Loaded " + countplayer + " players.");
+            
+        } catch (NullPointerException e) { 
+	 		System.out.println("npcx : ERROR - player loading cancelled!");
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	private void loadResearch() {
 		// TODO Auto-generated method stub
 		// Load faction_list
@@ -1468,31 +1498,6 @@ public class myUniverse {
 	            	npc.chest = rs11.getInt("chest");
 	            	npc.legs = rs11.getInt("legs");
 	            	npc.boots = rs11.getInt("boots");
-	            	
-	            	if (npc.weapon == 0)
-	            	{
-	            		npc.weapon = 267;
-	            	}
-	            	
-	            	if (npc.helmet == 0)
-	            	{
-	            		// no helmet >_<
-	            		npc.helmet = 0;
-	            	}
-	            	
-	            	if (npc.chest == 0)
-	            	{
-	            		npc.chest = 307;
-	            	}
-	            	
-	            	if (npc.legs == 0)
-	            	{
-	            		npc.legs = 308;
-	            	}
-	            	if (npc.boots == 0)
-	            	{
-	            		npc.boots = 309;
-	            	}
 	            	
 	            	for (myMerchant merchant : merchants)
 	            	{
@@ -2829,6 +2834,106 @@ public class myUniverse {
 
 		player.updateFactionPositive(player,npc);
 		
+	}
+	
+	public void doDepop()
+	{
+		// depops all npcs
+		for (mySpawngroup spawngroup : spawngroups.values())
+		{
+			for (myNPC npc : spawngroup.npcs.values())
+			{
+				if (npc.npc != null && npc.npc.getBukkitEntity() != null)
+				{
+					npc.npc.despawn();
+				}
+			}
+			
+		}
+	}
+
+	public void onDisable() {
+		// TODO Auto-generated method stub
+		// Server is shutting down or plugin reloading
+		
+		this.doDepop();
+		
+		factions = new CopyOnWriteArrayList< myFaction >();
+		loottables = new CopyOnWriteArrayList< myLoottable >();
+		pathgroups = new CopyOnWriteArrayList< myPathgroup >();
+		merchants = new CopyOnWriteArrayList< myMerchant >();
+		zones = new CopyOnWriteArrayList< myZone >();
+		
+		zonemembers = new HashMap<String, myZoneMember>();
+		
+		spawngroups = new HashMap<String, mySpawngroup>();
+		players = new HashMap<String, myPlayer>();
+		npcs = new HashMap<String, myNPC>();
+		monsters = new CopyOnWriteArrayList< Monster >();
+		playerfactions = new HashMap<String, myPlayer_factionentry>();
+		factionentries = new HashMap<String, myFactionEntry>();
+		
+		research = new CopyOnWriteArrayList< myResearch >();
+
+		
+		
+		
+	}
+
+	public void matchPlayers() {
+		// TODO Auto-generated method stub
+		// Matches in game players with the player cache after a /reload
+		this.parent.dbg("Matching players");
+		for (World w : this.parent.getServer().getWorlds())
+		{
+			for (Player p : w.getPlayers())
+			{
+				System.out.println("Matching player:" + p.getName());
+				// found a player in a world, lets assign him to a player
+				for (myPlayer mp : this.players.values())
+				{
+					System.out.println("Checking if player:" + p.getName() + " is " + mp.name);
+					
+					if (mp.name.equals(p.getName()))
+					{
+						System.out.println("Matched a player with a myplayer");
+						mp.player = p;
+					} 
+				}
+				
+			}
+		}
+		
+	}
+
+	public void dbCreatePlayer(myPlayer player) {
+		// TODO Auto-generated method stub
+		try 
+        {
+			PreparedStatement stmt = this.parent.universe.conn.prepareStatement("INSERT INTO player (name) VALUES (?) ON DUPLICATE KEY UPDATE name=VALUES(name) ",Statement.RETURN_GENERATED_KEYS);
+			stmt.setString(1,player.name);
+			
+			stmt.executeUpdate();
+			ResultSet keyset = stmt.getGeneratedKeys();
+			int key = 0;
+			if ( keyset.next() ) {
+			    // Retrieve the auto generated key(s).
+			    key = keyset.getInt(1);
+			}
+			
+			if (key != 0)
+			{
+				player.id = key;
+			}
+
+			stmt.close();
+            
+        } catch (NullPointerException e) { 
+	 		System.out.println("npcx : ERROR - player db creation cancelled!");
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 

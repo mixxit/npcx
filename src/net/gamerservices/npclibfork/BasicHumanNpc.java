@@ -1030,7 +1030,7 @@ public class BasicHumanNpc extends BasicNpc {
 			            		
 			            		//System.out.println("I just died!!");		            		
 			            		this.onDeathFromPlayer((LivingEntity)p);
-			            		this.parent.parent.onNPCDeath(this);
+			            		this.parent.parent.onNPCDeathWithLoot(this);
 			            		
 			            	}
 			            } 
@@ -1043,6 +1043,20 @@ public class BasicHumanNpc extends BasicNpc {
 			        }
 				
 		    }
+	}
+
+
+	public void despawn() {
+		// TODO Auto-generated method stub
+		
+		for (myPlayer player : this.parent.parent.universe.players.values()){
+			if (player.target == this)
+			{
+				player.target = null;
+				
+			}
+		}
+		this.parent.parent.onNPCDeath(this);
 	}
 
 }
