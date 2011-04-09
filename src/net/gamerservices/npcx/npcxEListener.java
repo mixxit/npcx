@@ -45,7 +45,6 @@ public class npcxEListener extends EntityListener
 				npc.onDamage(event);
 			}
 			
-		    
 		}
 	}
 	@Override
