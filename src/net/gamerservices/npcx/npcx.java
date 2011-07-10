@@ -59,16 +59,17 @@ public class npcx extends JavaPlugin {
 
 	private static final Logger logger = Logger.getLogger("Minecraft");
 	
-	
 	private npcxEListener mEntityListener;
 	private npcxPListener mPlayerListener;
 	private npcxWListener mWorldListener;
+	private npcxSListener mServerListener;
 	private npcxBListener mBlockListener;
+	
 	public myUniverse universe;
 	int tickx = 7200000;
 	// iconomy
-	private static PluginListener PluginListener = null;
-    private static iConomy iConomy = null;
+	iConomy iConomy = null;
+    boolean useiConomy;
     private static Server Server = null;
     // end iconomy
     
@@ -117,6 +118,8 @@ public class npcx extends JavaPlugin {
 		this.onNPCDeath(npc);
 		
 	}
+	
+	
 	
 	public void onNPCDeath(BasicHumanNpc npc)
 	{
@@ -617,12 +620,12 @@ public class npcx extends JavaPlugin {
 	        return Server;
 	 }
 
-	 public static iConomy getiConomy() {
+	 public iConomy getiConomy() {
 	        return iConomy;
 	 }
 	    
-	 public static boolean setiConomy(iConomy plugin) {
-	        if (iConomy == null) {
+	 public boolean setiConomy(iConomy plugin) {
+	        if (iConomy == null && this.useiConomy) {
 	            iConomy = plugin;
 	        } else {
 	            return false;
@@ -636,13 +639,12 @@ public class npcx extends JavaPlugin {
 		 {
 		 System.out.println("npcx : registering monitored events");
 		 this.Server = getServer();
-	     this.PluginListener = new PluginListener(this);
-		 getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
 		 PluginManager pm = getServer().getPluginManager();
 
          mEntityListener = new npcxEListener(this);
          mPlayerListener = new npcxPListener(this);
          mWorldListener = new npcxWListener(this);
+         mServerListener = new npcxSListener(this);
          mBlockListener = new npcxBListener(this);
          
          pm.registerEvent(Type.CHUNK_LOAD, mWorldListener, Priority.Normal, this);
@@ -665,6 +667,10 @@ public class npcx extends JavaPlugin {
          pm.registerEvent(Type.PLAYER_QUIT, mPlayerListener, Priority.Normal, this);
          
          pm.registerEvent(Type.PLAYER_CHAT, mPlayerListener, Priority.Normal, this); 
+         
+
+         pm.registerEvent(Type.PLUGIN_ENABLE, mServerListener, Priority.Monitor, this);
+         pm.registerEvent(Type.PLUGIN_DISABLE, mServerListener, Priority.Monitor, this);
          
          return true;
 		 } catch (NoSuchFieldError e)

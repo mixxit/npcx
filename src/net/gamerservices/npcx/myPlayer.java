@@ -42,84 +42,59 @@ public class myPlayer {
 	
 
 	public int getPlayerBalance(Player player) {
-		// TODO Auto-generated method stub
-		try
-		{
-			Account account = iConomy.getAccount(player.getName());
-			return (int)account.getMainBankAccount().getHoldings().balance();
-		} catch (NoClassDefFoundError e)
-		{
-			
-			//e.printStackTrace();
-			// We don't have iConomy
-			return this.getNPCXBalance();
-		}catch (NullPointerException e)
-		{
-			this.getNPCXBalance();
-			// We don't have iConomy
-			return this.getNPCXBalance();
-		}
-	}
+        if (parent.useiConomy && iConomy.getAccount(player.getName()) != null) {
+            return (int) iConomy.getAccount(player.getName()).getHoldings().balance();
+        }
+        return this.getNPCXBalance();
+    }
 
-	public void subtractPlayerBalance(Player player, int totalcost) {
-		// TODO Auto-generated method stub
-		try
-		{
-			Account account = iConomy.getAccount(player.getName());
-			account.getMainBankAccount().getHoldings().subtract(totalcost);
-		} catch (NoClassDefFoundError e)
-		{
-			
-			this.setNPCXBalance(this.getNPCXBalance()-totalcost);
-			// We don't have iConomy
-			
-			
-		}catch (NullPointerException e)
-		{
-			
-			this.setNPCXBalance(this.getNPCXBalance()-totalcost);
-			
-		}
-	}
-	
+    public void subtractPlayerBalance(Player player, int totalcost) {
+        try {
+            Account account = iConomy.getAccount(player.getName());
+            if (account != null && parent.useiConomy) {
+                account.getHoldings().subtract(totalcost);
+            } else {
+                this.setNPCXBalance(this.getNPCXBalance() - totalcost);
+            }
+        } catch (NoClassDefFoundError e) {
+            this.setNPCXBalance(this.getNPCXBalance() - totalcost);
+        }
+    }
 
-	public void addPlayerBalance(Player player, int totalcost) {
-		// TODO Auto-generated method stub
-		try
-		{
-			Account account = iConomy.getAccount(player.getName());
-			account.getMainBankAccount().getHoldings().add(totalcost);
-		} catch (NoClassDefFoundError e)
-		{
-			// We don't have iConomy
-			this.setNPCXBalance(this.getNPCXBalance()+totalcost);
-			
-		}catch (NullPointerException e)
-		{
-			// We don't have iConomy
-			this.setNPCXBalance(this.getNPCXBalance()+totalcost);
-			
-		}
-	}
+    public void addPlayerBalance(Player player, int totalcost) {
+        try {
+            Account account = iConomy.getAccount(player.getName());
+            if (account != null && parent.useiConomy) {
+                account.getHoldings().add(totalcost);
+            } else {
+                this.setNPCXBalance(this.getNPCXBalance() + totalcost);
+            }
+        } catch (NoClassDefFoundError e) {
+            // We don't have iConomy
+            this.setNPCXBalance(this.getNPCXBalance() + totalcost);
+        }
+    }
 
-	public boolean hasPlayerEnoughPlayerBalance(Player player, float totalcost) {
-		// TODO Auto-generated method stub
-		
-		try
-		{
-			Account account = iConomy.getAccount(player.getName());
-			return account.getMainBankAccount().getHoldings().hasEnough(totalcost);
-		} catch (NoClassDefFoundError e)
-		{
-			
-			if (this.getNPCXBalance() >= totalcost)
-			{
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
+    public boolean hasPlayerEnoughPlayerBalance(Player player, float totalcost) {
+        try {
+            if (parent.useiConomy) {
+                Account account = iConomy.getAccount(player.getName());
+                return account.getHoldings().hasEnough(totalcost);
+            } else {
+                if (this.getNPCXBalance() >= totalcost) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (NoClassDefFoundError e) {
+            if (this.getNPCXBalance() >= totalcost) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 	
 	public int getNPCXBalance()
 	{

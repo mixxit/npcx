@@ -181,6 +181,8 @@ public class myUniverse {
 				dbport = config.getProperty("db-port");
 				dbversion = config.getProperty("db-version");
 				nations = config.getProperty("nations");
+                parent.useiConomy = config.getProperty("use-iConomy", "true").equals("true") ? true : false;
+
 				
 				this.fallbackworld = config.getProperty("world");
 				
