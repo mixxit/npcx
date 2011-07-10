@@ -29,7 +29,7 @@ public class NpcNetworkManager extends NetworkManager {
     }
 
     @Override
-    public void a(Packet paramPacket) {
+    public void queue(Packet paramPacket) {
     }
 
     @Override
@@ -41,16 +41,11 @@ public class NpcNetworkManager extends NetworkManager {
     }
 
     @Override
-    public SocketAddress b() {
-        return super.b();
+    public SocketAddress getSocketAddress() {
+        return super.getSocketAddress();
     }
 
     @Override
-    public void c() {
-    }
-
-    @Override
-    public int d() {
-        return 0;
+    public void d() {
     }
 }

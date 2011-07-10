@@ -785,7 +785,7 @@ public class BasicHumanNpc extends BasicNpc {
 		this.lastloc = this.getBukkitEntity().getLocation().getBlock();
 		
 		
-		this.mcEntity.c(loc.getX(), loc.getY(), loc.getZ(),loc.getYaw(), loc.getPitch());
+		this.mcEntity.setLocation(loc.getX(), loc.getY(), loc.getZ(),loc.getYaw(), loc.getPitch());
 	}
 	
 	public void Panic(String type)

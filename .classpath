@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="E:/Docs/src/iConomy.jar"/>
-	<classpathentry kind="lib" path="E:/Docs/src/craftbukkit-0.0.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="E:/Docs/src/Permissions.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dev/lib/craftbukkit-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dev/lib/iConomy.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dev/lib/Permissions.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

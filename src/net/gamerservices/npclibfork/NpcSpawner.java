@@ -72,20 +72,20 @@ public class NpcSpawner {
             Float yaw2 = new Float(yaw);
             Float pitch2 = new Float(pitch);
             
-            eh.c(x, y, z, yaw2.floatValue(), pitch2.floatValue());
+            eh.setLocation(x, y, z, yaw2.floatValue(), pitch2.floatValue());
 
-            int m = MathHelper.b(eh.locX / 16.0D);
-            int n = MathHelper.b(eh.locZ / 16.0D);
+            int m = MathHelper.floor(eh.locX / 16.0D);
+            int n = MathHelper.floor(eh.locZ / 16.0D);
 
-            ws.c(m, n).a(eh);
-            ws.b.add(eh);
+            ws.getChunkAt(m, n).a(eh);
+            ws.entityList.add(eh);
 
             //ws.b(eh);
             Class params[] = new Class[1];
             params[0] = Entity.class;
 
             Method method;
-            method = net.minecraft.server.World.class.getDeclaredMethod("b", params);
+            method = net.minecraft.server.World.class.getDeclaredMethod("c", params);
             method.setAccessible(true);
             Object margs[] = new Object[1];
             margs[0] = eh;
@@ -103,7 +103,7 @@ public class NpcSpawner {
 
     public static void RemoveBasicHumanNpc(BasicHumanNpc npc) {
         try {
-            npc.getMCEntity().world.e(npc.getMCEntity());
+            npc.getMCEntity().world.removeEntity(npc.getMCEntity());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -113,20 +113,7 @@ public class NpcSpawner {
 
 
     public static LivingEntity SpawnMob(CreatureType type, World world, double x, double y, double z) {
-        try {
-            WorldServer ws = GetWorldServer(world);
-
-            Entity eh = EntityTypes.a(type.getName(), ws);
-            eh.c(x, y, z, 0, 0);
-            ws.a(eh);
-
-            return (LivingEntity)eh.getBukkitEntity();
-
-        } catch (Exception e) {
-           e.printStackTrace();
-        }
-
-        return null;
+    	return world.spawnCreature(new org.bukkit.Location(world, x, y, z), type);
     }
 
 }

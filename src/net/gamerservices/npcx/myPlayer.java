@@ -10,8 +10,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.nijiko.coelho.iConomy.iConomy;
-import com.nijiko.coelho.iConomy.system.Account;
+import com.iConomy.*;
+import com.iConomy.system.Account;
 
 
 public class myPlayer {
@@ -45,8 +45,8 @@ public class myPlayer {
 		// TODO Auto-generated method stub
 		try
 		{
-			Account account = iConomy.getBank().getAccount(player.getName());
-			return (int)account.getBalance();
+			Account account = iConomy.getAccount(player.getName());
+			return (int)account.getMainBankAccount().getHoldings().balance();
 		} catch (NoClassDefFoundError e)
 		{
 			
@@ -65,8 +65,8 @@ public class myPlayer {
 		// TODO Auto-generated method stub
 		try
 		{
-			Account account = iConomy.getBank().getAccount(player.getName());
-			account.subtract(totalcost);
+			Account account = iConomy.getAccount(player.getName());
+			account.getMainBankAccount().getHoldings().subtract(totalcost);
 		} catch (NoClassDefFoundError e)
 		{
 			
@@ -87,8 +87,8 @@ public class myPlayer {
 		// TODO Auto-generated method stub
 		try
 		{
-			Account account = iConomy.getBank().getAccount(player.getName());
-			account.add(totalcost);
+			Account account = iConomy.getAccount(player.getName());
+			account.getMainBankAccount().getHoldings().add(totalcost);
 		} catch (NoClassDefFoundError e)
 		{
 			// We don't have iConomy
@@ -107,8 +107,8 @@ public class myPlayer {
 		
 		try
 		{
-			Account account = iConomy.getBank().getAccount(player.getName());
-			return account.hasEnough(totalcost);
+			Account account = iConomy.getAccount(player.getName());
+			return account.getMainBankAccount().getHoldings().hasEnough(totalcost);
 		} catch (NoClassDefFoundError e)
 		{
 			

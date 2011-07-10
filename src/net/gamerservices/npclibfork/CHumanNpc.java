@@ -1,5 +1,5 @@
 package net.gamerservices.npclibfork;
-
+import net.minecraft.server.NetHandler;
 import java.util.logging.Logger;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityHuman;
@@ -23,8 +23,14 @@ public class CHumanNpc extends EntityPlayer {
     public CHumanNpc(MinecraftServer minecraftserver, World world, String s, ItemInWorldManager iteminworldmanager) {
         super(minecraftserver, world, s, iteminworldmanager);
 
-        NetworkManager netMgr = new NpcNetworkManager(new NpcSocket(), "npc mgr", null);
-        this.a = new NpcNetHandler(minecraftserver, this, netMgr);
+        NetworkManager netMgr = new NpcNetworkManager(new NpcSocket(), "npc mgr", new NetHandler() {
+            @Override
+            public boolean c() {
+                return false;
+            }
+        });
+        this.netServerHandler = new NpcNetHandler(minecraftserver, this, netMgr);
+        netMgr.a(this.netServerHandler);
 
         this.lastTargetId = -1;
         this.lastBounceId = -1;
@@ -32,9 +38,7 @@ public class CHumanNpc extends EntityPlayer {
     }
 
     public void animateArmSwing() {
-        this.b.k.a(this, new Packet18ArmAnimation(this, 1));
-        
-        
+    	 this.b.getTracker(this.dimension).a(this, new Packet18ArmAnimation(this, 1));
     }
 
     public void forceSetName(String n)

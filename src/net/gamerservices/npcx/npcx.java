@@ -2,7 +2,7 @@ package net.gamerservices.npcx;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import org.bukkit.plugin.Plugin;
-import com.nijiko.coelho.iConomy.iConomy;
+import com.iConomy.*;
 
 import net.gamerservices.npclibfork.BasicHumanNpc;
 import net.gamerservices.npclibfork.BasicHumanNpcList;

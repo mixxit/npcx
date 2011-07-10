@@ -4,7 +4,7 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.PluginEvent;
 import org.bukkit.event.server.ServerListener;
 
-import com.nijiko.coelho.iConomy.iConomy;
+import com.iConomy.*;
 import org.bukkit.plugin.Plugin;
 
 public class PluginListener extends ServerListener {
