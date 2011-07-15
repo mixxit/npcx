@@ -260,6 +260,7 @@ Added 'EVENT_DEATH' - Triggers when player kills an npc
 Added 'EVENT_KILLED' - Triggers when npc kills a player
 Added 'EVENT_DEATH' - Triggers when a player bounces an npc
 Added 'EVENT_CLOSE' - Triggers when a player becomes close to an npc
+Added 'EVENT_RECEIVEXXX' - Triggers when a player uses the [give] command to give the npc item number XXX
 Added 'ATTACK' - Triggers when an npc becomes attacked by a player
 
 Events in responses
@@ -279,6 +280,41 @@ Code:
 /npcx npc triggerword add NPCID(NUMBER) default Dont call me an idiot <--- when a player says anything it will return Dont call me an idiot
 Code:
 /npcx npc triggerword add NPCID(NUMBER) idiot NPCATTACK <--- when a player says idiot it will attack him
+
+About Creating Quests
+---------------------
+Quests are done in the same fashion of everquest - you have two choices of ways to go with this as they did in everquest.
+
+Option 1) You make the quests using the [hint] system. For example
+
+Hello!
+Hello Mixxit, I just don't know what to do since my [wife] went missing
+Who is your wife?
+My wife is carlotta, i love her so much and i'm so worried about her, i wish someone could [help] me find her
+I'll help
+Great! Oh thank you so much mixxit, she was last seen near highguard
+
+At this point the player knows that the guy has lost his wife, carlotta and she was last seen near highguard, he wants your help to find her
+
+From here you can add triggerwords to ever npc in HighGuard to respond to 'carlotta' or maybe even teh npcs name who gave you the quest. You ask them about her, if they've seen her etc, till eventually you find her and she gives you the right [triggerword] to say to him or maybe even use the 'give' command to give him a flower or a piece of paper that could act as a note from her
+
+Option 2) You make the quests using triggerwords but do not use [hints]
+
+This is a more interesting one, as it stops players from chewing through your content as fast as you make it. Essentially its the same process but you dont provide [brackets] around triggerwords, it's up to the player to use his/her intelligence to figure out the right questions to ask
+
+This worked really well in EverQuest because it meant there were more than just the [bracket] quests. Infact Sony made an announcement that only 1/4 of everquests quests had been found - this meant that there were over 3/4 of quest rewards that nobody had ever even seen! Imagine how powerful some of those items might be if it's a really long 'epic' quest
+
+---
+
+I would suggest your newbie area is populated with [bracket] quests and mixed in with many hidden quests that will extend the lifetime of the game for the player. Infact they may have even figured out all your quests but they will still be trying to find more because they just don't know how many there are
+
+This also means that when players start asking you 'IS THIS A HIDDEN QUEST?? OMG IT WOULD BE AWESOME IF IT IS'
+
+Then the players begin to push cool content ideas onto you whilst not knowing if this is something you have already implemented
+
+-
+
+Hope that helps, do your best to make use of [give] which every npc can do - the event is EVENT_RECEIVEXXX where XXX is the item id you want the npc to respond on
 
 Chat Variables in responses
 --------------------------
