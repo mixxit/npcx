@@ -18,7 +18,6 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.CreatureType;
 
-
 public class NpcSpawner {
 
     protected static WorldServer GetWorldServer(World world) {
@@ -31,11 +30,12 @@ public class NpcSpawner {
             return (WorldServer) f.get(w);
 
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
 
         return null;
     }
+
     private static MinecraftServer GetMinecraftServer(Server server) {
 
         if (server instanceof CraftServer) {
@@ -71,7 +71,7 @@ public class NpcSpawner {
             eh.forceSetName(name);
             Float yaw2 = new Float(yaw);
             Float pitch2 = new Float(pitch);
-            
+
             eh.setLocation(x, y, z, yaw2.floatValue(), pitch2.floatValue());
 
             int m = MathHelper.floor(eh.locX / 16.0D);
@@ -80,7 +80,7 @@ public class NpcSpawner {
             ws.getChunkAt(m, n).a(eh);
             ws.entityList.add(eh);
 
-            //ws.b(eh);
+            // ws.b(eh);
             Class params[] = new Class[1];
             params[0] = Entity.class;
 
@@ -91,8 +91,7 @@ public class NpcSpawner {
             margs[0] = eh;
             method.invoke(ws, margs);
 
-
-            return new BasicHumanNpc(parent, eh, uniqueId, name, x,y,z, yaw2, pitch2);
+            return new BasicHumanNpc(parent, eh, uniqueId, name, x, y, z, yaw2, pitch2);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,16 +103,14 @@ public class NpcSpawner {
     public static void RemoveBasicHumanNpc(BasicHumanNpc npc) {
         try {
             npc.getMCEntity().world.removeEntity(npc.getMCEntity());
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-
     public static LivingEntity SpawnMob(CreatureType type, World world, double x, double y, double z) {
-    	return world.spawnCreature(new org.bukkit.Location(world, x, y, z), type);
+        return world.spawnCreature(new org.bukkit.Location(world, x, y, z), type);
     }
 
 }

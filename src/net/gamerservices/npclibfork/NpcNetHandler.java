@@ -1,15 +1,14 @@
 package net.gamerservices.npclibfork;
 
 import net.minecraft.server.*;
+
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 
-public class NpcNetHandler extends NetServerHandler 
-{
+public class NpcNetHandler extends NetServerHandler {
 
     public NpcNetHandler(MinecraftServer minecraftserver, EntityPlayer entityplayer, NetworkManager netMgr) {
         super(minecraftserver, netMgr, entityplayer);
         netMgr.a(this);
-
     }
 
     @Override
@@ -46,6 +45,10 @@ public class NpcNetHandler extends NetServerHandler
     }
 
     @Override
+    public void a(Packet packet) {
+    }
+
+    @Override
     public void sendPacket(Packet packet) {
     }
 
@@ -69,13 +72,11 @@ public class NpcNetHandler extends NetServerHandler
     public void a(Packet255KickDisconnect packet255kickdisconnect) {
     }
 
-   
-
     @Override
     public int b() {
         return 0;
     }
-    
+
     @Override
     public void sendMessage(String s) {
     }
@@ -84,7 +85,7 @@ public class NpcNetHandler extends NetServerHandler
     public String getName() {
         return "";
     }
-    
+
     @Override
     public void a(Packet7UseEntity packet7useentity) {
     }

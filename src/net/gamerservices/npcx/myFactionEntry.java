@@ -1,9 +1,9 @@
 package net.gamerservices.npcx;
 
 public class myFactionEntry {
-	public int id;
-	public int factionid;
-	public int targetfactionid;
-	public int amount;
-	public int arg;
+    public int id;
+    public int factionid;
+    public int targetfactionid;
+    public int amount;
+    public int arg;
 }

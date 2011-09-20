@@ -1,45 +1,62 @@
 <project name="npcx" default="dist" basedir=".">
-        <property name="pluginname" value="npcx"/>
-        <property name="cbukkit.jar" location="../../../dist/craftbukkit.jar"/>
-        <property name="plugins" location="../../../dist/plugins"/>
+    <property name="src.dir" location="src"/>
+    <property name="resources.dir" location="src/resources"/>
+    <property name="build.dir" location="build"/>
+    <property name="dist.dir" location="dist"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="release.dir" location="release"/>
 
-        <property name="src" location="src"/>
-        <property name="bin" location="bin"/>
-        <property name="dist" location="dist"/>
+    <fileset dir="${lib.dir}" id="libs">
+        <include name="Bukkit.jar"/>
+        <include name="Craftbukkit.jar"/>
+        <include name="WorldEdit.jar"/>
+        <include name="Permissions.jar"/>
+        <include name="iConomy.jar"/>
+    </fileset>
 
-        <target name="init">
-                <mkdir dir="${bin}"/>
-                <mkdir dir="${dist}"/>
-        </target>
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+    </target>
 
-        <target name="compile" depends="init">
-                <javac srcdir="${src}" destdir="${bin}" includeantruntime="false">
-                        <classpath>
-                                <pathelement location="${cbukkit.jar}"/>
-                        </classpath>
-                </javac>
-        </target>
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="true">
+            <classpath>
+                <fileset refid="libs"/>
+            </classpath>
+        </javac>
+    </target>
 
-        <target name="dist" depends="compile">
-                <mkdir dir="${dist}"/>
-                <jar jarfile="${dist}/${pluginname}.jar">
-                        <fileset dir="${bin}"/>
-                        <fileset file="${src}/plugin.yml"/>
-		        <manifest>
-                              <attribute name="Class-Path" value="../lib/mysql-connector-java-5.1.6-bin.jar"/>
-                        </manifest>
-                </jar>
-        </target>
+    <target name="jar" depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <manifest file="manifest.mf" mode="replace">
+            <attribute name="Class-Path" value="../lib/mysql-connector-java-bin.jar WorldEdit.jar ../WorldEdit.jar"/>
+        </manifest>
+        <delete file="${build.dir}/plugin.yml"/>
+        <copy tofile="${build.dir}/plugin.yml" file="${src.dir}/plugin.yml"/>
+        <replace file="${build.dir}/plugin.yml" token="%VERSION%" value="${version}"/>
+        <jar jarfile="${dist.dir}/npcx.jar" basedir="${build.dir}" manifest="manifest.mf"/>
+        <delete file="manifest.mf"/>
+    </target>
 
-        <target name="deploy" depends="dist">
-                <copy file="${dist}/${pluginname}.jar" todir="${plugins}"/>
-        </target>
+    <target name="dist">
+        <property name="version" value="nightly"/>
+        <antcall target="jar"/>
+    </target>
 
-        <target name="clean">
-                <delete dir="${bin}"/>
-                <delete dir="${dist}"/>
-        </target>
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="release">
+        <input message="Enter version:" addproperty="version"/>
+        <antcall target="jar"/>
+        <delete dir="${release.dir}"/>
+        <mkdir dir="${release.dir}"/>
+        <copy tofile="${release.dir}/CHANGELOG.txt" file="CHANGELOG.txt"/>
+        <copy tofile="${release.dir}/LICENSE.txt" file="LICENSE.txt"/>
+        <copy tofile="${release.dir}/README.txt" file="README.txt"/>
+        <copy tofile="${release.dir}/npcx.jar" file="${dist.dir}/npcx.jar"/>
+        <zip destfile="${release.dir}/npcx-${version}.zip" basedir="${release.dir}" excludes="*.zip plugin.yml"/>
+    </target>
 </project>
-
-
-

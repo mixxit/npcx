@@ -1,0 +1,505 @@
+NPCX
+=========================
+
+npcx - npc spawngroups
+
+Source: https://github.com/wizjany/npcx
+
+Implements everquest style npc spawngroups and allows you to make 
+persistent npcs/rare npcs spawn around your map. Npcs will also fight 
+back if attacked and even talk on right click.
+
+Note from wizjany: I have no clue how everquest works, so from now on
+this plugin is going where I want it to. Sorry. That also means I'm
+probably going to be making WorldEdit a dependency for permissions
+and command handling and stuff. Oh, and deprecating Civilizations.
+If you have complaints, update it yourself, I'm only do this for
+my own server, not for you <3.
+
+P.S thanks for fullwall's Citizens for helping me fix the NPE (people
+in #craftbook that night will know what I'm talking about) and sk89q for
+letting me borrow some of his code (especially the build.xml)...
+
+
+#
+# Permissions
+# 
+
+You may now also make use of permissions using the node npcx.fulladmin
+I'm going to redo this system sometime.
+_____________
+
+#
+# Commands
+# 
+
+All of the following commands will list syntax to more subcommands:
+
+/npcx spawngroup
+/npcx npc 
+/npcx pathgroup
+/npcx loottable
+/npcx faction
+/npcx merchant
+
+#
+# Installation Steps
+#
+
+The following guide is intended for junior server admins and you should understand the nature
+of system administration and configuring services. If not, then you might have significant issues 
+with this plugin and I would recommend you look for another plugin instead.
+
+If you are currently having someone else manage your server for you then do not attempt this guide,
+ and certainly don't come asking us for help. Educate yourself, or refer it to someone who knows how 
+ to perform the very basic steps of setting up mysql for your platform.
+
+I'm not going to show you how to use mysql, answer the same question that is answered a three posts before 
+or covering questions that you should know as a server admin - I _really_ don't find this enjoyable use of 
+my free time and certainly didn't have this in mind when sharing my plugin - i just made it for my server 
+and thought some others might want to use it for whatever purpose.
+
+Since the time I released this I have had many questions from people who seem to think they employ 
+me and that it's acceptable to flame me or my plugin because of their lack of skill. 
+
+This is not what a developer likes to read when he flicks through his thread over a coffee in the morning
+so think twice before giving someone abuse over something they provided for free.
+
+So in short, if you lack the skills for basic linux or windows server administration, databases, reading
+logs etc... close this plugin now.
+
+Finally, I am not a java developer, nor a developer by trade. I simply picked up java while messing
+around with hmod (mixxitplugin) and a bit more while tinkering with npclib for bukkit which this
+mod is extended from. Also this is a very early product, so expect many bugs (post on our github issue tracker)
+and is probably also heavy on performance. If you want an example our test server is a 2gb machine with around 
+120 npcs active at once without an issue - so just keep in mind that each npc you add the more cpu/mem/swap
+the server will require.
+
+Ok now that that's over and done with here are the steps you need to get setup and running:
+
+Step1 - Install MySQL and create database and user account
+==========================================================
+
+A) Install MySQL Server (probably minimum 5.1) on Windows or via your repo manager on linux or finally
+via source (yes you should know this) http://dev.mysql.com/downloads/mysql/
+
+B) (Windows) Install MySQL WorkBench to create databases and new accounts on windows
+http://dev.mysql.com/downloads/workbench/
+(see below for more info)
+
+or
+
+B) (Linux Hosted and Windows Command prompt) Use the mysql command line
+(see below for more info)
+
+----------------------------------------------
+- Using MySQL Workbench on Windows to create - 
+----------------------------------------------
+Login to MySQL Workbench as the root user you created when installing MySQL Server
+create a new database called 'npcx'
+create a new user called npcx with the password 'p4ssw0rd!' - assign this user ALL privileges to the npcx database
+
+Steps:
+
+Create a new database in MySQL Workbench
+In work bench create a new connection on the left under SQL Development using your user/pass (probably root) then on the top left click Add Schema, just name 'npcx' then press Apply
+
+Create a new user in MySQL Workbench
+Now come out of SQL Development and go to the right of workbench and into Server Administration, connect again using the details above and click Users and Privileges on the left - now click Add Account in the bottom left and fill in the details : npcx for the username, p4ssw0rd! for the password and then press Apply
+
+Now goto the schema privileges tab above select npcx on the user list on the left and click Add Entry click Schemas matching pattern or name and select npcx, press OK
+
+--------------------------------------------
+- Linux using mysql command line to create -
+--------------------------------------------
+from linux shell:
+mysql -u root -p
+Code:
+CREATE DATABASE npcx;
+CREATE USER 'npcx'@'localhost' IDENTIFIED BY 'p4ssw0rd!';
+GRANT ALL PRIVILEGES ON npcx.* TO 'npcx'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+Step2
+=============================================
+Install the mysql connector for npcx
+
+Create a bukkit/lib folder if you dont have it
+Extract the mysql connect jar file from the following zip file): http://mysql.eukhost.com/Downloads/Connector-J/mysql-connector-java-5.1.6.tar.gz
+Copy the JAR file (mysql-connector-java-5.1.6-bin.jar) from inside the zip into your bukkit/lib folder.
+
+Most people don't actually read this sentence and decide that they are quite happy with whatever
+mysql files they have in their lib folder. Don't assume!
+
+Step3
+=============================================
+
+Add npcx.jar to your bukkit/plugins folder
+
+Step4
+=============================================
+
+If your world name is different to 'world' you will need to now close bukkit, 
+edit your npcx.properties file and change world to the correct worldname
+
+Step5
+=============================================
+
+Launch bukkit and login as an Operator
+
+People still ask me why they can't access /npcx ..
+
+Step 6
+=============================================
+Begin creating your first spawn group at your location with
+
+Code:
+/npcx spawngroup create myfirstgroup     <--- creates a spawngroup called myfirst group
+* REMEMBER THE SPAWNGROUP ID THIS GIVES YOU
+Now create an npc called Guard
+Code:
+/npcx npc create Guard      <----- creates a guard called Guard
+* REMEMBER THE NPCID THIS GIVES YOU
+Now add guard's id to your spawn group number
+Code:
+/npcx spawngroup add SPAWNGROUPID(NUMBER) NPCID(NUMBER)   <--- adds npc ID (number) to spawngroup ID (number)
+
+Guard should now spawn permanently at the spawngroups location.
+
+Right clicking will begin (T) chat with him. Moving out of range or right clicking him again will end chat.
+
+To have him respond to words or change his default response, weapons etc see the /npcx npc commands
+
+Using NPCX
+=============================================
+
+Resetting NPCX
+=============================================
+The official way of resetting npcx and its database is by removing the npcx folder in your plugins directory 
+- on next launch this will wipe your database tables and start from fresh. This is the best way to 
+upgrade between revisions at the moment. If you want to move over old npcs and data you are completely 
+responsible for this (although a very easy task for a junior server admin)
+
+Will there be another way of doing this in the future? Probably not, you'll need to build your own
+solution to this if this becomes a regular thing although I don't generally change the database 
+schema that often.
+
+Creating Spawngroups
+=============================================
+
+Spawngroups are placed at any X Y Z co-ordinate and contain a group of npcs. Any one of them could spawn. Spawngroups can also be empty. They are the basis for static npc spawning.
+
+Add npcs to the spawngroup by using the /npcx spawngroup add command. An npc out of this group will now spawn at the designated position.
+
+Code:
+/npcx spawngroup create spawngroupname <----- Adds a new blank spawngroup container at your position
+/npcx spawngroup add spawngroupid(NUMBER) npcid(NUMBER) <------ Adds an npc to the spawngroup container
+/npcx spawngroup list - lists all spawngroups
+Overview:
+
+A spawngroup is like a container. It contains many npcs and any one of them could spawn randomly. If you placed just one npc in the group only one npc would spawn. This allows you to create 'rare' npcs by having lots of the same npc in a container and then 1 rare.
+Spawngroups need to be assigned to a location, which is assigned based on the admins location. Once assigned that group will spawn in that location and remain stationary
+
+If a path is assigned to the spawn group, the npc will follow the path continuously after spawning
+
+Once an NPC in a SpawnGroup dies a new npc will be chosen out of the spawn group to spawn in its place after a default set time (ie 20 minutes) at the location of 'spawngroup place'
+
+todo: functionality
+adds an npc to a spawngroup with a chance to spawn percentage
+move spawngroup spawn at your location
+assigns a path to the spawngroup
+
+Creating NPCs
+=============================================
+
+Code:
+/npcx npc create name <---- Creates a new npc (that needs to be added to a spawngroup)
+/npcx npc list <---- Lists all npcs (this needs to support querying by name output limits)
+Overview:
+NPCs are just that, definitions of the mob you want to appear in game. There can be multiple of the same. They are temporary and do not return after death.
+
+An npc can be in many spawngroups, for example if you wanted a custom npc called 'Thief' to spawn in several locations you would put the npc into many spawn groups
+Npcs have chat responses attached to them that allow them to offer quests and have alternate greeting messages.
+
+In the future these npcs will support npctypes which determines how the npc will respond to 
+right click, attack, etc events
+
+ie for: bankers, normal npcs, merchants etc
+Also loottables will be assignable
+
+todo: functionality
+creates a new npc with name
+
+Adding NPCs to containers
+=============================================
+
+Code:
+/npcx spawngroup add spawngroupid(NUMBER) npcid(NUMBER)
+
+get these from spawngroup list and npc list
+
+
+Quest System / Chat to NPCs
+
+=============================================
+
+Right clicking an npc sets it as your chat target. You can say anything to the npc using the usual (T) chat command.
+
+The npc will then run this text through myNPC.parseChat()
+
+You can get an npc to respond to triggerwords with predefined responses which admins will be able to attach to an npc using slash commands such as 'Hello' responding with 'Hello, do you want to help with a [quest]' which leads onto the next chat response of 'Quest'
+Syntax
+
+Code:
+/npcx npc triggerword add NPCID(number) wordtorespondon responsegoeshereandcan have spaces
+Adding a new triggerword called 'default' to an npc will override the npcs default response to unknown questions
+
+ie:
+Code:
+/npcx npc triggerword add NPCID(number) default My default response!
+Note: An npc without any triggerwords will respond with 'Im sorry name im rather busy right now'
+Note: you cannot talk to temporary 'spawn' npcs as they have no responses configured
+
+Variables as Triggerwords
+-------------------------
+Added 'EVENT_DEATH' - Triggers when player kills an npc
+Added 'EVENT_KILLED' - Triggers when npc kills a player
+Added 'EVENT_DEATH' - Triggers when a player bounces an npc
+Added 'EVENT_CLOSE' - Triggers when a player becomes close to an npc
+Added 'ATTACK' - Triggers when an npc becomes attacked by a player
+
+Events in responses
+-------------------
+Syntax: 
+Added 'NPCSUMMONPLAYER' event to triggerword responses <--- Summons player to npc
+Added 'NPCSUMMONZOMBIE' event to triggerword responses <--- Summons one zombie at npc
+Added 'NPCATTACK' event to triggerword responses - <--- Forces npc to attack player
+Added 'NPCSUMMONWOLF' event to triggerword responses - <--- Summons one wolf at the npc
+
+Code:
+/npcx npc triggerword add NPCID(NUMBER) TRIGGERWORD NPCATTACK <--- attacks based on triggerword
+- then the npc will attack when spoken to.
+
+Or a scenario like this:
+Code:
+/npcx npc triggerword add NPCID(NUMBER) default Dont call me an idiot <--- when a player says anything it will return Dont call me an idiot
+Code:
+/npcx npc triggerword add NPCID(NUMBER) idiot NPCATTACK <--- when a player says idiot it will attack him
+
+Chat Variables in responses
+--------------------------
+Added 'bankbalance' -Placing the text bankbalance in a triggerword reply will have the NPC respond with the players bank balance
+Added 'playername' - Placing the text playername in a triggerword reply will have the NPC respond with the players name
+Added 'playerbalance' - Placing the text playerbalance in a triggerword reply will have the NPC respond with the players bank balance
+
+
+NPC Merchants
+=============================================
+
+Similar to chat, npc merchants can be accessed by right clicking the npc and taking to them.
+
+Merchants can also be configured with custom triggerwords, just like a normal NPC
+
+To change an npc from a normal type into a merchant type
+Code:
+/npcx npc category NPCID(number) merchant   <--- Transforms the npc into a merchant
+Begin talking to the npc to buy and sell from it
+
+To load it with items as an admin create a merchant list
+
+/npcx merchant create merchantlistname  <---- creates a merchantlist named whatever
+add stuff to it like goldingots (id 266)
+/npcx merchant add MERCHANTID(NUMBER) ITEMID AMOUNT PRICETOBUYAT PRICETOSELLAT <---- adds an item to a merchant list
+
+Attach the merchant list to an npcID
+/npcx npc merchant NPCID MERCHANTID(NUMBER) <---- attachs a merchantlist to an npc
+
+NPC Combat
+=============================================
+
+Npcs will currently engage in combat and chase anyone that attacks them. When they die, they will be gone forever unless a spawngroup respawns them.
+Npcs will also attack nearby monsters
+Need to add loottables to onnpcdeath and perhaps an area of effect 'panic' that will request other npcs around it come to its aid
+Also need to implement factions to cause a permanent faction hit for a player when murdering an npc
+
+Making NPCs attack players
+=============================================
+
+First create a faction with a baseamount of anything lower than -1000
+
+Code:
+/npcx faction create -1000 Bandits
+Get the faction id with
+Code:
+/npcx faction list
+Assign the faction to the npc, his faction will now be aggressive to anyone by default and he will now attack players.
+Code:
+/npcx npc faction FACTIONID(number)
+Adding loot to NPCs
+
+First create a loottable with a name to describe its content
+/npcx loottable create banditloot
+
+Now get the ID of banditloot
+Code:
+/npcx loottable list
+Now assign an item to the loottable
+Code:
+* YOU MUST USE ITEM NUMBERS FOR THE ITEM ID *
+* Reference here: http://www.minecraftwiki.net/wiki/Data_values *
+
+/npcx loottable add LOOTTABLEID(NUMBER) ITEMID(NUMBER) AMOUNT
+
+Now assign the loottable to the npc
+Code:
+/npcx npc loottable NPCID(number) LOOTTABLEID(number)
+
+Path Groups - (WIP)
+=============================================
+
+Overview:
+
+Path groups are containers of path locations assigned to SpawnGroups. They are used to determine the route of an npc after it spawns
+
+Create a pathgroup container
+Code:
+/npcx pathgroup create Name
+
+then
+Code:
+/npcx pathgroup list
+
+to get the ID
+Stand where you want position 1 to be
+Code:
+/npcx pathgroup add PATHGROUPID(NUMBER) POSITIONNO(NUMBER)
+
+Stand where you want position 2 to be
+Code:
+/npcx pathgroup add PATHGROUPID(NUMBER) POSITIONNO(NUMBER)
+
+Then assign the path to a spawngroup
+Code:
+/npcx spawngroup pathgroup SPAWNGROUPID(NUMBER) PATHGROUPID(NUMBER)
+
+
+Civilisations
+============================
+
+This section of the mod is a toggleable option that allows players to purchase areas of the game and protect it for themselves.  My hope with this extension is to allow players to buy town guards, shops they can load with items and also other features like a research/tech tree that players can work on to unlock new features.  
+
+Because this mod has always been about bots it's important to note that this option is false by default. Protection is a big thing for any server admin and I am currently only running this on my server. If you want to try it out feel free but by no-means don't drop your tried and trusted protection system for this one.
+
+This option is enabled via the npcx.properties file
+
+nations=true
+
+This enables players to purchase areas of the world for themselves and grant other players to build in it.
+
+If you do not have iConomy installed, it will fall back on the internal NPCX economy that the bots and banker events use
+
+To compliment this area of the mod you may find the following settings useful
+
+nocreeper=true - no creeper explosions
+nowild=true - no building in the wild <-- needs to be tested
+nospread=true - no fire spread or lighter usage
+
+Commands
+-----------------------
+/civ buy - buys a land area for 25000 coin
+/civ add playername - adds a new player to your land area
+/civ balance  - returns your iconomy balance or npcx balance
+/civ here - returns the name and location of the area you are standing in 
+/civ abandon - abandons the area returning 5000 coin
+/civ pay playername amount - pays playername amount
+
+Op Commands
+/npcx civ givemoney playername - adds money to player
+/npcx civ money playername - returns playernames balance
+/npcx civ unclaim - unclaims an area
+
+Reporting bugs
+=============================================
+
+Support is provided for the latest version of NPCX listed on github. If you have issues you
+must post the problem in the issue tracker after reading this file and the thread for existing
+answers.
+
+https://github.com/wizjany/npcx/issues
+
+FAQ
+=============================================
+
+Q It doesnt work
+
+A Delete npcx
+
+Q I'm having trouble with this plugin with Citizens, DwarfCraft etc...
+
+A This plugin has only been tested with itself and a few other plugins such as Towny
+It is likely those other plugins are making use of a different version of npclib and 
+sadly we don't support this at the moment, delete npcx or the conflicting plugin
+
+Q Where can i get this for CB Version XXX
+
+A You can't it's only supported by the RB listed in the thread topic. If you get this from anywhere
+but the official github url then congratulations you probably just installed someone elses plugin
+riddled with trojans.
+
+Q Why does /reload duplicate my npcs
+
+A Its not supported yet
+
+Q Do you support uquest, pluginx, pluginy etc...
+
+A Is it written in the readme?
+
+Q How do I set permissions?
+
+A You don't! You just give OP access to anyone you want to use the NPCX command. Why? Cause it's still
+early in development and we don't want anyone but skilled server owners from using this on their server
+
+Q Any chance of sqlite in the near future?
+
+A No sorry, no plans to implement this at all
+
+Q How can i choose the exact skin I want to use for my npc?
+
+A You can't, however - if the skin is already attached to a same named minecraft player then it will use it
+
+Q How do i remove Npcs?
+
+A You use the npcx spawngroup delete command
+
+Q How do I see help for a command like how do I change npcs armour and weapons? 
+
+A See /npcx npc
+
+Q How much land is claimed by the /civ buy command?
+
+A 16x16
+
+Q My npcs dont show weapons but I have given them one
+
+A You need to give the npc a helmet, this is a bug
+
+Q Can i set unlimited items on a merchant?
+
+A Yep! Set the /npcx merchant category to nolimit
+
+Q Does this plugin work with iconomy?
+
+A If it's the version we built with and it's currently installed, it will use it. If not it will fall back on npcx's economy
+
+Q How do I enable civs?
+
+A Open NPCX.PROPERTIES file and change nations=false to nations=true
+
+Q How do I wipe my database
+
+A The correct way is to delete the npcx folder
+
+
+
+Donate
+http://www.gamerservices.net/donate

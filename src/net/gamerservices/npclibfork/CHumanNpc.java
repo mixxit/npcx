@@ -1,15 +1,18 @@
 package net.gamerservices.npclibfork;
-import net.minecraft.server.NetHandler;
+
 import java.util.logging.Logger;
+
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.NetworkManager;
+import net.minecraft.server.NetHandler;
 import net.minecraft.server.Packet18ArmAnimation;
 import net.minecraft.server.World;
 import net.minecraft.server.WorldServer;
+
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.entity.EntityTargetEvent;
 
@@ -38,26 +41,25 @@ public class CHumanNpc extends EntityPlayer {
     }
 
     public void animateArmSwing() {
-    	 this.b.getTracker(this.dimension).a(this, new Packet18ArmAnimation(this, 1));
+        this.b.getTracker(this.dimension).a(this, new Packet18ArmAnimation(this, 1));
     }
 
-    public void forceSetName(String n)
-    {
-    	this.displayName = n;
+    public void forceSetName(String n) {
+        this.displayName = n;
     }
-    
+
     @Override
-    public boolean a(EntityHuman entity) {
+    public boolean b(EntityHuman entity) {
 
         EntityTargetEvent event = new NpcEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(), NpcEntityTargetEvent.NpcTargetReason.NPC_RIGHTCLICKED);
         CraftServer server = ((WorldServer) this.world).getServer();
         server.getPluginManager().callEvent(event);
 
-        return super.a(entity);
+        return super.b(entity);
     }
 
     @Override
-    public void b(EntityHuman entity) {
+    public void a_(EntityHuman entity) {
         if (lastTargetId == -1 || lastTargetId != entity.id) {
             EntityTargetEvent event = new NpcEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(), NpcEntityTargetEvent.NpcTargetReason.CLOSEST_PLAYER);
             CraftServer server = ((WorldServer) this.world).getServer();
@@ -65,7 +67,7 @@ public class CHumanNpc extends EntityPlayer {
         }
         lastTargetId = entity.id;
 
-        super.b(entity);
+        super.a_(entity);
     }
 
     @Override
@@ -74,7 +76,7 @@ public class CHumanNpc extends EntityPlayer {
             EntityTargetEvent event = new NpcEntityTargetEvent(getBukkitEntity(), entity.getBukkitEntity(), NpcEntityTargetEvent.NpcTargetReason.NPC_BOUNCED);
             CraftServer server = ((WorldServer) this.world).getServer();
             server.getPluginManager().callEvent(event);
-            
+
             lastBounceTick = System.currentTimeMillis();
         }
 
