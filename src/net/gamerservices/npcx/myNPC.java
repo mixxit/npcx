@@ -160,6 +160,9 @@ public class myNPC {
         if (count == 0 && size == 0) {
             // too spammy
             // say(myplayer,"I'm sorry. I'm rather busy right now.");
+        	
+        	
+
 
         } else {
             int count2 = 0;
@@ -177,6 +180,8 @@ public class myNPC {
             if (count2 == 0) {
                 // too spammy
                 // say(myplayer,"I'm sorry. I'm rather busy right now.");
+            	
+            	
 
             }
 
